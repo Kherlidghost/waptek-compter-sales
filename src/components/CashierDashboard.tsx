@@ -88,14 +88,14 @@ export function CashierDashboard({
     appendNotifications([
       {
         channel: "dashboard",
-        recipient: "admin@computermarket.local",
+        recipient: "seekergur@gmail.com",
         message: `Payment confirmed for ${orderId}. Order moved to paid approved${order ? ` for ${formatNaira(order.total)}` : ""}.`,
         status: "sent_simulated",
         source: "cashier",
       },
       {
         channel: "email",
-        recipient: "customer@computermarket.local",
+        recipient: "scotfield382@gmail.com",
         message: `Payment confirmed for ${orderId}. Your order is now approved and visible to the vendor/admin team.`,
         status: "sent_simulated",
         source: "cashier",

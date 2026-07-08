@@ -26,3 +26,20 @@ export function routeAccess(pathname: string) {
 export function isUserRole(value: unknown): value is UserRole {
   return value === "admin" || value === "manager" || value === "cashier" || value === "vendor" || value === "customer";
 }
+
+const allowedRedirectPrefixes = [
+  "/",
+  ...protectedRoutes.map((r) => r.prefix),
+  ...Object.values(roleHome),
+  "/products",
+  "/categories",
+  "/repairs",
+  "/cart",
+  "/order-confirmation",
+  "/orders",
+];
+
+export function isSafeRedirect(next: string | null): next is string {
+  if (!next || !next.startsWith("/") || next.startsWith("//")) return false;
+  return allowedRedirectPrefixes.some((prefix) => next === prefix || next.startsWith(`${prefix}/`));
+}

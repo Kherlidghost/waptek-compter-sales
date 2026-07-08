@@ -2,6 +2,8 @@
 
 The app signs users in with Supabase Auth. A row in `public.profiles` is not enough for login. Each demo account must exist in **Authentication -> Users** first, and the matching `public.profiles.id` value must be the same UUID as `auth.users.id`.
 
+Never create production staff/customer accounts by inserting fake UUIDs into `public.profiles`. Supabase Auth generates the real user UUID. The profile row must follow that UUID.
+
 ## Required Demo Users
 
 Create these users with password:
@@ -12,33 +14,49 @@ Password123!
 
 | Email | Role |
 | --- | --- |
-| `admin@computermarket.local` | `admin` |
-| `manager@computermarket.local` | `manager` |
-| `cashier@computermarket.local` | `cashier` |
-| `vendor@computermarket.local` | `vendor` |
-| `customer@computermarket.local` | `customer` |
+| `seekergur@gmail.com` | `admin` |
+| `captainshadow331@gmail.com` | `manager` |
+| `hauwaadamuyau6@gmail.com` | `cashier` |
+| `whiteamigo89@gmail.com` | `vendor` |
+| `scotfield382@gmail.com` | `customer` |
 
 ## Create Users In Supabase Dashboard
 
-1. Open Supabase Dashboard.
-2. Go to **Authentication -> Users**.
-3. Click **Add user**.
-4. Enter the email and password `Password123!`.
-5. Confirm the email automatically if the option is shown.
-6. Repeat for every required user above.
-7. Copy each user's Auth UUID from the Users table.
-8. Open Table Editor -> `profiles`.
-9. Confirm each profile row has the same UUID in `profiles.id`.
+1. Run `supabase/schema.sql` in SQL Editor first.
+2. Open Supabase Dashboard.
+3. Go to **Authentication -> Users**.
+4. Click **Add user**.
+5. Enter the email and password `Password123!`.
+6. Confirm the email automatically if the option is shown.
+7. Repeat for every required user above.
+8. Run `supabase/auth-profile-sync.sql`.
+9. Run `supabase/seed.sql`.
+10. Open Table Editor -> `profiles`.
+11. Confirm each profile row has the same UUID in `profiles.id` as the Auth user.
+
+`supabase/auth-profile-sync.sql` reads `auth.users` by email and creates or updates the matching `profiles` rows with the right roles. It also creates or updates the approved demo vendor for the vendor account.
+
+`supabase/seed.sql` is now limited to non-auth business seed data: branches, categories, and products. It intentionally does not write to Supabase Auth internals, `public.profiles`, or `public.vendors`.
 
 ## Fix Profile UUIDs
 
-If a demo login fails but the profile row exists, the profile UUID probably does not match the Auth user UUID. Run the helper SQL in:
+If a demo login fails but the profile row exists, the profile UUID probably does not match the Auth user UUID. Re-run the helper SQL in:
 
 ```text
 supabase/auth-profile-sync.sql
 ```
 
 Use it after all five users exist in Supabase Auth.
+
+The helper:
+
+- lists the real Auth UUIDs for the demo emails
+- upserts `public.profiles` using those UUIDs
+- creates or updates the approved vendor row for the vendor account
+- shows the final email -> Auth UUID -> profile role mapping
+
+The helper already uses the real role emails listed above. If a role owner
+changes later, update `supabase/auth-profile-sync.sql` before running it again.
 
 ## Registration Behavior
 

@@ -2,12 +2,18 @@ import Link from "next/link";
 import { ProductGrid } from "@/components/ProductCard";
 import { ProductExplorer } from "@/components/ProductExplorer";
 import { PublicHeader } from "@/components/PublicHeader";
+import { SignedOutToast } from "@/components/SignedOutToast";
 import { getStorefrontCatalog } from "@/lib/catalog";
 import { branches, categories, formatNaira, products } from "@/lib/marketplace-data";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ signed_out?: string }>;
+}) {
+  const params = await searchParams;
   const catalog = await getStorefrontCatalog();
   const catalogProducts = catalog.products.length > 0 ? catalog.products : products;
   const catalogCategories = catalog.categories.length > 0 ? catalog.categories : categories;
@@ -16,6 +22,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
+      <SignedOutToast show={params.signed_out === "1"} />
       <PublicHeader />
 
       <main>

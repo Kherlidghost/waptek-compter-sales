@@ -39,12 +39,14 @@ Open `http://localhost:3000`.
 1. Create a new Supabase project on the Free plan.
 2. Open SQL Editor.
 3. Run `supabase/schema.sql`.
-4. Run `supabase/seed.sql`.
-5. Confirm these Storage buckets exist:
+4. Create the demo users in Supabase Dashboard -> Authentication -> Users. See `AUTH_SETUP.md`.
+5. Run `supabase/auth-profile-sync.sql` to link real Auth UUIDs to profile roles and create the approved demo vendor.
+6. Run `supabase/seed.sql` to load branches, categories, and sample products.
+7. Confirm these Storage buckets exist:
    - `product-images` public bucket, max 5 MB, image MIME types
    - `payment-receipts` private bucket, max 5 MB, image/PDF MIME types
-6. Confirm RLS is enabled on all public tables.
-7. Confirm the storage object policies from `schema.sql` exist for product images and payment receipts.
+8. Confirm RLS is enabled on all public tables.
+9. Confirm the storage object policies from `schema.sql` exist for product images and payment receipts.
 
 The schema file creates tables, enums, indexes, triggers, storage buckets, grants, and RLS policies. If a bucket already exists, keep it and verify its public/private setting matches the list above.
 
@@ -60,23 +62,25 @@ Password123!
 
 | Role | Email | Route |
 | --- | --- | --- |
-| Admin | `admin@computermarket.local` | `/admin` |
-| Manager | `manager@computermarket.local` | `/manager` |
-| Cashier | `cashier@computermarket.local` | `/cashier` |
-| Vendor | `vendor@computermarket.local` | `/vendor` |
-| Customer | `customer@computermarket.local` | `/products`, `/cart`, `/checkout`, `/orders` |
+| Admin | `seekergur@gmail.com` | `/admin` |
+| Manager | `captainshadow331@gmail.com` | `/manager` |
+| Cashier | `hauwaadamuyau6@gmail.com` | `/cashier` |
+| Vendor | `whiteamigo89@gmail.com` | `/vendor` |
+| Customer | `scotfield382@gmail.com` | `/products`, `/cart`, `/checkout`, `/orders` |
 
 Use `/login` to verify role-based routing. Staff users go directly to their role dashboard. Customers go to `/orders`, or back to `/checkout` when they started checkout as a guest.
 
-### If Auth Users Are Not Created By SQL
+### Auth User Setup
 
-`supabase/seed.sql` attempts to create the demo users in `auth.users` and then creates matching rows in `public.profiles`. Some Supabase projects may restrict direct Auth user creation from SQL Editor. If the test logins fail, create the users manually in Supabase:
+`supabase/seed.sql` does not create Auth users, profiles, or vendors, and it does not use fake profile UUIDs. Supabase Auth owns user IDs in production. Create the demo users first, then run the profile sync helper to map roles to the real Auth UUIDs:
 
-1. Go to Supabase Dashboard → Authentication → Users.
+1. Go to Supabase Dashboard -> Authentication -> Users.
 2. Click **Add user**.
 3. Create each email from the table above with password `Password123!`.
-4. Run the profile/vendor/category/product seed sections from `supabase/seed.sql` again if needed.
-5. In Table Editor → `profiles`, confirm each user id exists with the correct role:
+4. Confirm each email if Supabase shows that option.
+5. Run `supabase/auth-profile-sync.sql`.
+6. Run `supabase/seed.sql`.
+7. In Table Editor -> `profiles`, confirm each user id exists with the correct role:
    - `admin`
    - `manager`
    - `cashier`
@@ -105,15 +109,15 @@ Use `/login` to verify role-based routing. Staff users go directly to their role
 3. Open a product details page from the listing.
 4. Add a product to cart and open `/cart` as a guest.
 5. Click checkout and confirm it redirects to `/login?next=/checkout`.
-6. Sign in as `customer@computermarket.local` and confirm it returns to `/checkout`.
+6. Sign in as `scotfield382@gmail.com` and confirm it returns to `/checkout`.
 7. Fill customer details and upload a receipt image/PDF.
 8. Submit checkout and confirm redirect to `/order-confirmation?order=...`.
 9. Open `/orders` as the customer and confirm the new order appears.
-10. Sign in as `cashier@computermarket.local`.
+10. Sign in as `hauwaadamuyau6@gmail.com`.
 11. Open `/cashier`, open the uploaded receipt, then confirm or reject payment.
-12. Sign in as `admin@computermarket.local` and confirm the online order status panel shows the updated status.
-13. Sign in as `manager@computermarket.local` and confirm the order status is visible.
-14. Sign in as `vendor@computermarket.local` and confirm vendor-visible order status and online product upload.
+12. Sign in as `seekergur@gmail.com` and confirm the online order status panel shows the updated status.
+13. Sign in as `captainshadow331@gmail.com` and confirm the order status is visible.
+14. Sign in as `whiteamigo89@gmail.com` and confirm vendor-visible order status and online product upload.
 15. From `/vendor`, create a product with an uploaded image and confirm the image lands in the `product-images` bucket.
 16. Open `/repair` or `/repairs` and submit a repair request.
 

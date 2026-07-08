@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { isUserRole, roleHome } from "@/lib/auth";
+import { isSafeRedirect, isUserRole, roleHome } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/supabase-config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -40,10 +40,11 @@ export async function loginAction(formData: FormData) {
   const { data: profile } = user
     ? await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle()
     : { data: null };
-  const fallback = isUserRole(profile?.role) ? roleHome[profile.role] : roleHome.customer;
+  const role = isUserRole(profile?.role) ? profile.role : "customer";
+  const destination = role === "customer" && isSafeRedirect(next) ? next : roleHome[role];
 
   revalidatePath("/", "layout");
-  redirect(next.startsWith("/") ? next : fallback);
+  redirect(destination);
 }
 
 export async function signUpAction(formData: FormData) {
@@ -83,5 +84,5 @@ export async function logoutAction() {
   }
 
   revalidatePath("/", "layout");
-  redirect("/login");
+  redirect("/?signed_out=1");
 }

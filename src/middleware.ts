@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { isUserRole, roleHome, routeAccess } from "@/lib/auth";
+import { isSafeRedirect, isUserRole, roleHome, routeAccess } from "@/lib/auth";
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
@@ -17,7 +17,7 @@ export async function middleware(request: NextRequest) {
   if (!access) {
     if (pathname === "/login" && user) {
       const next = request.nextUrl.searchParams.get("next");
-      if (next?.startsWith("/")) {
+      if (isSafeRedirect(next)) {
         return NextResponse.redirect(new URL(next, request.url));
       }
 
