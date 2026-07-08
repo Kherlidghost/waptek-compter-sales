@@ -16,6 +16,11 @@ export async function middleware(request: NextRequest) {
 
   if (!access) {
     if (pathname === "/login" && user) {
+      const next = request.nextUrl.searchParams.get("next");
+      if (next?.startsWith("/")) {
+        return NextResponse.redirect(new URL(next, request.url));
+      }
+
       const role = await getRole(supabase, user.id);
       return NextResponse.redirect(new URL(roleHome[role], request.url));
     }

@@ -5,15 +5,14 @@ export const roleHome: Record<UserRole, string> = {
   manager: "/manager",
   cashier: "/cashier",
   vendor: "/vendor",
-  customer: "/",
+  customer: "/orders",
 };
 
 export const protectedRoutes: Array<{ prefix: string; roles: UserRole[] }> = [
   { prefix: "/admin", roles: ["admin"] },
-  { prefix: "/manager", roles: ["admin", "manager"] },
-  { prefix: "/cashier", roles: ["admin", "manager", "cashier"] },
+  { prefix: "/manager", roles: ["manager"] },
+  { prefix: "/cashier", roles: ["cashier"] },
   { prefix: "/vendor", roles: ["vendor"] },
-  { prefix: "/cart", roles: ["admin", "manager", "cashier", "vendor", "customer"] },
   { prefix: "/checkout", roles: ["admin", "manager", "cashier", "vendor", "customer"] },
   { prefix: "/orders", roles: ["admin", "manager", "cashier", "vendor", "customer"] },
   { prefix: "/wishlist", roles: ["admin", "manager", "cashier", "vendor", "customer"] },

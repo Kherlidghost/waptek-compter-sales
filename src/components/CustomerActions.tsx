@@ -67,7 +67,7 @@ export function ProductCustomerActions({ product }: { product: Product }) {
       >
         {inWishlist ? "Remove from wishlist" : "Save to wishlist"}
       </button>
-      <Link className="rounded-md border border-slate-300 px-4 py-3 text-center text-sm font-bold hover:bg-slate-100" href="/checkout">
+      <Link className="rounded-md border border-slate-300 px-4 py-3 text-center text-sm font-bold hover:bg-slate-100" href="/login?next=/checkout">
         Buy with bank transfer
       </Link>
       <a

@@ -16,10 +16,7 @@ export type LocalReview = {
   comment: string;
 };
 
-export const defaultCart: CartLine[] = [
-  { productId: products[0].id, quantity: 1 },
-  { productId: products[2].id, quantity: 1 },
-];
+export const defaultCart: CartLine[] = [];
 
 export const defaultWishlist = [products[1].id, products[4].id];
 

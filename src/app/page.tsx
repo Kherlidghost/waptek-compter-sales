@@ -3,7 +3,7 @@ import { ProductGrid } from "@/components/ProductCard";
 import { ProductExplorer } from "@/components/ProductExplorer";
 import { PublicHeader } from "@/components/PublicHeader";
 import { getStorefrontCatalog } from "@/lib/catalog";
-import { branches, categories, dashboardStats, formatNaira, products } from "@/lib/marketplace-data";
+import { branches, categories, formatNaira, products } from "@/lib/marketplace-data";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +22,7 @@ export default async function Home() {
         <section className="bg-slate-950 text-white">
           <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
             <div className="flex flex-col justify-center">
-              <p className="text-sm font-semibold uppercase tracking-wide text-emerald-300">Local POC · Nigeria computer marketplace</p>
+              <p className="text-sm font-semibold uppercase tracking-wide text-emerald-300">Nigeria Computer Marketplace</p>
               <h1 className="mt-4 max-w-3xl text-4xl font-black leading-tight sm:text-5xl">
                 Multi-vendor computer sales, accessories, repair requests, and manual bank transfer orders.
               </h1>
@@ -42,7 +42,7 @@ export default async function Home() {
               {[
                 ["Branches", catalogBranches.length.toString()],
                 ["Live stock units", catalogProducts.reduce((sum, product) => sum + product.stock, 0).toString()],
-                ["POC revenue", formatNaira(dashboardStats.revenue)],
+                ["Marketplace value", formatNaira(catalogProducts.reduce((sum, product) => sum + product.price * product.stock, 0))],
               ].map(([label, value]) => (
                 <div key={label} className="rounded-md bg-white p-4 text-slate-950">
                   <p className="text-sm text-slate-500">{label}</p>

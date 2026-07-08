@@ -23,7 +23,7 @@ export default async function DashboardRouterPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login?next=/dashboard");
+    redirect("/login");
   }
 
   const { data } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();

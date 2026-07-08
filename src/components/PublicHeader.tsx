@@ -3,12 +3,8 @@ import Link from "next/link";
 const navItems = [
   { href: "/categories", label: "Categories" },
   { href: "/products", label: "Products" },
-  { href: "/wishlist", label: "Wishlist" },
-  { href: "/orders", label: "Orders" },
   { href: "/repairs", label: "Repairs" },
-  { href: "/demo", label: "Demo" },
   { href: "/login", label: "Login" },
-  { href: "/dashboard", label: "Dashboard" },
 ];
 
 export function PublicHeader() {
@@ -26,9 +22,6 @@ export function PublicHeader() {
           ))}
           <Link className="rounded-md px-3 py-2 hover:bg-slate-100" href="/cart">
             Cart
-          </Link>
-          <Link className="rounded-md bg-emerald-700 px-3 py-2 text-white hover:bg-emerald-800" href="/checkout">
-            Checkout
           </Link>
         </div>
       </nav>

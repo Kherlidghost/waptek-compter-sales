@@ -64,7 +64,22 @@ Password123!
 | Vendor | `vendor@computermarket.local` | `/vendor` |
 | Customer | `customer@computermarket.local` | `/products`, `/cart`, `/checkout`, `/orders` |
 
-Use `/login` and then `/dashboard` to verify role-based routing.
+Use `/login` to verify role-based routing. Staff users go directly to their role dashboard. Customers go to `/orders`, or back to `/checkout` when they started checkout as a guest.
+
+### If Auth Users Are Not Created By SQL
+
+`supabase/seed.sql` attempts to create the demo users in `auth.users` and then creates matching rows in `public.profiles`. Some Supabase projects may restrict direct Auth user creation from SQL Editor. If the test logins fail, create the users manually in Supabase:
+
+1. Go to Supabase Dashboard → Authentication → Users.
+2. Click **Add user**.
+3. Create each email from the table above with password `Password123!`.
+4. Run the profile/vendor/category/product seed sections from `supabase/seed.sql` again if needed.
+5. In Table Editor → `profiles`, confirm each user id exists with the correct role:
+   - `admin`
+   - `manager`
+   - `cashier`
+   - `vendor`
+   - `customer`
 
 ## Vercel Deployment
 
@@ -86,18 +101,19 @@ Use `/login` and then `/dashboard` to verify role-based routing.
 1. Open `/` and confirm the public homepage loads.
 2. Open `/products` and confirm product listing/search/filter UI loads.
 3. Open a product details page from the listing.
-4. Sign in as `customer@computermarket.local`.
-5. Open `/cart`, then `/checkout`.
-6. Fill customer details and upload a receipt image/PDF.
-7. Submit checkout and confirm redirect to `/order-confirmation?order=...`.
-8. Open `/orders` as the customer and confirm the new order appears.
-9. Sign in as `cashier@computermarket.local`.
-10. Open `/cashier`, open the uploaded receipt, then confirm or reject payment.
-11. Sign in as `admin@computermarket.local` and confirm the online order status panel shows the updated status.
-12. Sign in as `manager@computermarket.local` and confirm the order status is visible.
-13. Sign in as `vendor@computermarket.local` and confirm vendor-visible order status and online product upload.
-14. From `/vendor`, create a product with an uploaded image and confirm the image lands in the `product-images` bucket.
-15. Open `/repairs` and submit a repair request.
+4. Add a product to cart and open `/cart` as a guest.
+5. Click checkout and confirm it redirects to `/login?next=/checkout`.
+6. Sign in as `customer@computermarket.local` and confirm it returns to `/checkout`.
+7. Fill customer details and upload a receipt image/PDF.
+8. Submit checkout and confirm redirect to `/order-confirmation?order=...`.
+9. Open `/orders` as the customer and confirm the new order appears.
+10. Sign in as `cashier@computermarket.local`.
+11. Open `/cashier`, open the uploaded receipt, then confirm or reject payment.
+12. Sign in as `admin@computermarket.local` and confirm the online order status panel shows the updated status.
+13. Sign in as `manager@computermarket.local` and confirm the order status is visible.
+14. Sign in as `vendor@computermarket.local` and confirm vendor-visible order status and online product upload.
+15. From `/vendor`, create a product with an uploaded image and confirm the image lands in the `product-images` bucket.
+16. Open `/repair` or `/repairs` and submit a repair request.
 
 ## Current MVP Notes
 

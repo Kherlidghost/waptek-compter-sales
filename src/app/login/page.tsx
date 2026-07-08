@@ -8,7 +8,7 @@ export default async function LoginPage({
   searchParams: Promise<{ error?: string; success?: string; next?: string }>;
 }) {
   const params = await searchParams;
-  const next = params.next ?? "/dashboard";
+  const next = params.next ?? "";
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-10 text-slate-900">
@@ -51,6 +51,7 @@ export default async function LoginPage({
             New users start as customers. A vendor can apply for approval, and admin promotes the account after review.
           </p>
           <form action={signUpAction} className="mt-6 grid gap-4">
+            <input type="hidden" name="next" value={next} />
             <input className="h-11 rounded-md border border-slate-300 px-3" name="full_name" placeholder="Full name" required />
             <input className="h-11 rounded-md border border-slate-300 px-3" name="phone" placeholder="Phone number" />
             <input className="h-11 rounded-md border border-slate-300 px-3" name="email" type="email" placeholder="Email address" required />
