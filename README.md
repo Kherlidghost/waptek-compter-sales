@@ -50,6 +50,8 @@ The schema file creates tables, enums, indexes, triggers, storage buckets, grant
 
 ## Demo Accounts
 
+The app signs in through Supabase Auth. These users must exist in **Authentication -> Users** as well as in `public.profiles`. See `AUTH_SETUP.md` for the full setup and repair steps.
+
 All seeded demo accounts use:
 
 ```text

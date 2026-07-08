@@ -5,7 +5,7 @@ export const roleHome: Record<UserRole, string> = {
   manager: "/manager",
   cashier: "/cashier",
   vendor: "/vendor",
-  customer: "/orders",
+  customer: "/products",
 };
 
 export const protectedRoutes: Array<{ prefix: string; roles: UserRole[] }> = [
