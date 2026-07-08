@@ -12,6 +12,12 @@ function encodedMessage(type: "error" | "success", message: string, next?: strin
   return `/login?${params.toString()}`;
 }
 
+function authErrorMessage(error: { message?: unknown }) {
+  return typeof error.message === "string" && error.message.trim()
+    ? error.message
+    : "Login failed. Please check your email and password.";
+}
+
 export async function loginAction(formData: FormData) {
   if (!isSupabaseConfigured()) {
     redirect(encodedMessage("error", "Add Supabase environment variables before signing in."));
@@ -25,7 +31,7 @@ export async function loginAction(formData: FormData) {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    redirect(encodedMessage("error", error.message, next));
+    redirect(encodedMessage("error", authErrorMessage(error), next));
   }
 
   const {
@@ -64,7 +70,7 @@ export async function signUpAction(formData: FormData) {
   });
 
   if (error) {
-    redirect(encodedMessage("error", error.message, next));
+    redirect(encodedMessage("error", authErrorMessage(error), next));
   }
 
   redirect(encodedMessage("success", "Account created. Sign in to continue. Vendor approval happens from the admin dashboard.", next));

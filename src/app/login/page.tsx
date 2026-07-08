@@ -9,6 +9,12 @@ export default async function LoginPage({
 }) {
   const params = await searchParams;
   const next = params.next ?? "";
+  const errorMessage =
+    typeof params.error === "string" && params.error.trim()
+      ? params.error
+      : params.error
+        ? "Login failed. Please check your email and password."
+        : "";
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-10 text-slate-900">
@@ -19,6 +25,9 @@ export default async function LoginPage({
           <p className="mt-2 text-sm leading-6 text-slate-600">
             Staff and vendors are routed by the `profiles.role` field. Customers return to the storefront.
           </p>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Staff accounts must exist in Supabase Auth and must have a matching profile role.
+          </p>
 
           {!isSupabaseConfigured() ? (
             <div className="mt-5 rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
@@ -27,8 +36,8 @@ export default async function LoginPage({
             </div>
           ) : null}
 
-          {params.error ? (
-            <div className="mt-5 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800">{params.error}</div>
+          {errorMessage ? (
+            <div className="mt-5 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800">{errorMessage}</div>
           ) : null}
           {params.success ? (
             <div className="mt-5 rounded-md border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">{params.success}</div>
