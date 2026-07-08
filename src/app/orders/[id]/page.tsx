@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 import { formatNaira, getBranch, products } from "@/lib/marketplace-data";
 import { getTrackedOrder, orderSteps, trackedOrders } from "@/lib/customer-flow";
@@ -139,6 +140,7 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
           </aside>
         </section>
       </main>
+      <PublicFooter />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 
 export default async function OrderConfirmationPage({
@@ -26,6 +27,7 @@ export default async function OrderConfirmationPage({
         </div>
       </section>
     </main>
+    <PublicFooter />
     </div>
   );
 }

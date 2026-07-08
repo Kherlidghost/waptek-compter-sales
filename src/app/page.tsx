@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { ProductGrid } from "@/components/ProductCard";
 import { ProductExplorer } from "@/components/ProductExplorer";
+import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 import { SignedOutToast } from "@/components/SignedOutToast";
 import { getStorefrontCatalog } from "@/lib/catalog";
-import { branches, categories, formatNaira, products } from "@/lib/marketplace-data";
+import { branches, categories, products } from "@/lib/marketplace-data";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,36 @@ export default async function Home({
   const catalogCategories = catalog.categories.length > 0 ? catalog.categories : categories;
   const catalogBranches = catalog.branches.length > 0 ? catalog.branches : branches;
   const featuredProducts = catalogProducts.filter((product) => product.featured).slice(0, 3);
+  const trustCards = [
+    {
+      title: "Verified Vendors",
+      description: "Approved computer sellers can list products for customers across the region.",
+    },
+    {
+      title: "Secure Payment Confirmation",
+      description: "Orders move forward only after receipt upload and cashier confirmation.",
+    },
+    {
+      title: "Multi-State Branch Support",
+      description: "Branch-backed operations across Adamawa, Yobe, and Borno.",
+    },
+  ];
+  const reasons = [
+    "Verified computer vendors",
+    "Genuine computer products and accessories",
+    "Manual payment confirmation for safer orders",
+    "Repair service support",
+    "Branch-supported operations across Adamawa, Yobe, and Borno",
+    "Vendor marketplace opportunity",
+  ];
+  const steps = [
+    "Browse products",
+    "Add to cart",
+    "Pay to company account",
+    "Upload receipt",
+    "Cashier confirms payment",
+    "Order is processed",
+  ];
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -31,32 +62,79 @@ export default async function Home({
             <div className="flex flex-col justify-center">
               <p className="text-sm font-semibold uppercase tracking-wide text-emerald-300">Nigeria Computer Marketplace</p>
               <h1 className="mt-4 max-w-3xl text-4xl font-black leading-tight sm:text-5xl">
-                Multi-vendor computer sales, accessories, repair requests, and manual bank transfer orders.
+                Nigeria’s Trusted Marketplace for Computers, Accessories, and Professional Repair Services.
               </h1>
               <p className="mt-5 max-w-2xl text-base leading-7 text-slate-300">
-                Approved vendors upload products, buyers order locally, cashiers confirm uploaded receipts, and managers track branch performance across Adamawa, Yobe, and Borno.
+                Buy quality laptops, desktops, accessories, and repair services from verified vendors across Adamawa, Yobe, and Borno. Place orders securely with receipt-confirmed payments.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <Link className="rounded-md bg-emerald-500 px-5 py-3 text-sm font-bold text-slate-950 hover:bg-emerald-400" href="/products">
-                  Browse products
+                  Browse Products
                 </Link>
-                <Link className="rounded-md border border-white/20 px-5 py-3 text-sm font-bold hover:bg-white/10" href="/categories">
-                  Browse categories
+                <Link className="rounded-md border border-white/20 px-5 py-3 text-sm font-bold hover:bg-white/10" href="/repairs">
+                  Request Repair
+                </Link>
+                <Link className="rounded-md border border-white/20 px-5 py-3 text-sm font-bold hover:bg-white/10" href="/login?next=/vendor">
+                  Become a Vendor
                 </Link>
               </div>
             </div>
-            <div className="grid gap-3 rounded-lg bg-white/10 p-4">
-              {[
-                ["Branches", catalogBranches.length.toString()],
-                ["Live stock units", catalogProducts.reduce((sum, product) => sum + product.stock, 0).toString()],
-                ["Marketplace value", formatNaira(catalogProducts.reduce((sum, product) => sum + product.price * product.stock, 0))],
-              ].map(([label, value]) => (
-                <div key={label} className="rounded-md bg-white p-4 text-slate-950">
-                  <p className="text-sm text-slate-500">{label}</p>
-                  <p className="mt-1 text-2xl font-black">{value}</p>
+            <div className="grid content-center gap-3 rounded-lg bg-white/10 p-4">
+              {trustCards.map((card) => (
+                <div key={card.title} className="rounded-md bg-white p-5 text-slate-950">
+                  <p className="text-lg font-black">{card.title}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{card.description}</p>
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className="bg-white">
+          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+            <div className="max-w-3xl">
+              <p className="text-sm font-bold uppercase text-emerald-700">Why choose us</p>
+              <h2 className="mt-1 text-2xl font-black text-slate-950">Why Choose CompuMarket NG?</h2>
+            </div>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {reasons.map((reason) => (
+                <div key={reason} className="rounded-lg border border-slate-200 bg-slate-50 p-5">
+                  <p className="font-bold text-slate-950">{reason}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+          <div className="mb-6 max-w-3xl">
+            <p className="text-sm font-bold uppercase text-emerald-700">Simple ordering</p>
+            <h2 className="mt-1 text-2xl font-black text-slate-950">How It Works</h2>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {steps.map((step, index) => (
+              <div key={step} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="flex h-9 w-9 items-center justify-center rounded-md bg-emerald-100 text-sm font-black text-emerald-800">
+                  {index + 1}
+                </div>
+                <p className="mt-4 font-bold text-slate-950">{step}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="bg-slate-900 text-white">
+          <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-10 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+            <div className="max-w-3xl">
+              <p className="text-sm font-bold uppercase text-emerald-300">For vendors</p>
+              <h2 className="mt-1 text-2xl font-black">Sell Your Computer Products on CompuMarket NG</h2>
+              <p className="mt-3 text-sm leading-6 text-slate-300">
+                Join our verified vendor network and reach customers looking for computers, accessories, and repair-related products.
+              </p>
+            </div>
+            <Link className="w-fit rounded-md bg-emerald-500 px-5 py-3 text-sm font-bold text-slate-950 hover:bg-emerald-400" href="/login?next=/vendor">
+              Become a Vendor
+            </Link>
           </div>
         </section>
 
@@ -101,6 +179,7 @@ export default async function Home({
           <ProductExplorer branches={catalogBranches} categories={catalogCategories} products={catalogProducts} />
         </div>
       </main>
+      <PublicFooter />
     </div>
   );
 }

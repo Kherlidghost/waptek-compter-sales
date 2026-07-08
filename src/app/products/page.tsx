@@ -1,4 +1,5 @@
 import { ProductExplorer } from "@/components/ProductExplorer";
+import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 import { getStorefrontCatalog } from "@/lib/catalog";
 
@@ -36,6 +37,7 @@ export default async function ProductsPage({
           products={products}
         />
       </main>
+      <PublicFooter />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ProductGrid } from "@/components/ProductCard";
+import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 import { getStorefrontCatalog } from "@/lib/catalog";
 
@@ -68,6 +69,7 @@ export default async function CategoriesPage() {
           <ProductGrid products={products.slice(0, 3)} />
         </section>
       </main>
+      <PublicFooter />
     </div>
   );
 }

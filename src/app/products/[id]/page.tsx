@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductCustomerActions } from "@/components/CustomerActions";
 import { ProductGrid } from "@/components/ProductCard";
+import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 import { ReviewSection } from "@/components/ReviewSection";
 import { getStorefrontProduct } from "@/lib/catalog";
@@ -92,6 +93,7 @@ export default async function ProductDetailsPage({ params }: { params: Promise<{
         <ProductGrid products={relatedProducts} />
       </section>
     </main>
+    <PublicFooter />
     </div>
   );
 }

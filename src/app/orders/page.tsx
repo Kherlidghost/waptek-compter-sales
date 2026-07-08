@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 import { formatNaira, getBranch } from "@/lib/marketplace-data";
 import { createClient } from "@/lib/supabase/server";
@@ -91,6 +92,7 @@ export default async function OrdersPage() {
           )}
         </div>
       </main>
+      <PublicFooter />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 import { WishlistManager } from "@/components/WishlistManager";
 
@@ -19,6 +20,7 @@ export default function WishlistPage() {
         </div>
         <WishlistManager />
       </main>
+      <PublicFooter />
     </div>
   );
 }

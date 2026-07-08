@@ -1,4 +1,5 @@
 import { CheckoutForm } from "@/components/CheckoutForm";
+import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 import { createCheckoutOrder } from "@/app/checkout/actions";
 import { formatNaira, products } from "@/lib/marketplace-data";
@@ -39,6 +40,7 @@ export default async function CheckoutPage({
         </aside>
       </div>
     </main>
+    <PublicFooter />
     </div>
   );
 }

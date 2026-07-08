@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { loginAction, signUpAction } from "@/app/auth/actions";
+import { PublicFooter } from "@/components/PublicFooter";
 import { isSupabaseConfigured } from "@/lib/supabase-config";
 
 export default async function LoginPage({
@@ -17,7 +18,8 @@ export default async function LoginPage({
         : "";
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-10 text-slate-900">
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      <main className="px-4 py-10">
       <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-2">
         <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
           <p className="text-sm font-bold uppercase text-emerald-700">Supabase auth</p>
@@ -74,6 +76,8 @@ export default async function LoginPage({
       <div className="mx-auto mt-6 max-w-6xl">
         <Link className="text-sm font-bold text-emerald-800" href="/">Back to marketplace</Link>
       </div>
-    </main>
+      </main>
+      <PublicFooter />
+    </div>
   );
 }

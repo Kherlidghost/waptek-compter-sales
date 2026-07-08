@@ -1,4 +1,5 @@
 import { CartManager } from "@/components/CartManager";
+import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 import { getStorefrontCatalog } from "@/lib/catalog";
 
@@ -19,6 +20,7 @@ export default async function CartPage() {
           </div>
         </div>
       </main>
+      <PublicFooter />
     </div>
   );
 }
