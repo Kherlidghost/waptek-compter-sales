@@ -23,15 +23,19 @@ export default async function Home({
   const trustCards = [
     {
       title: "Verified Vendors",
-      description: "Approved computer sellers can list products for customers across the region.",
+      description: "Products are listed by approved sellers.",
     },
     {
-      title: "Secure Payment Confirmation",
-      description: "Orders move forward only after receipt upload and cashier confirmation.",
+      title: "Receipt-Confirmed Payments",
+      description: "Orders are processed after payment proof is reviewed.",
     },
     {
-      title: "Multi-State Branch Support",
-      description: "Branch-backed operations across Adamawa, Yobe, and Borno.",
+      title: "Branch-Supported Service",
+      description: "Support across Adamawa, Yobe, and Borno.",
+    },
+    {
+      title: "Repair Support Available",
+      description: "Customers can request computer diagnosis and repair.",
     },
   ];
   const reasons = [
@@ -79,11 +83,45 @@ export default async function Home({
                 </Link>
               </div>
             </div>
-            <div className="grid content-center gap-3 rounded-lg bg-white/10 p-4">
+            <div className="grid content-center gap-3 rounded-lg bg-white/10 p-4 sm:grid-cols-2">
               {trustCards.map((card) => (
                 <div key={card.title} className="rounded-md bg-white p-5 text-slate-950">
                   <p className="text-lg font-black">{card.title}</p>
                   <p className="mt-2 text-sm leading-6 text-slate-600">{card.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b border-slate-200 bg-white">
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            <div className="mb-5 max-w-3xl">
+              <p className="text-sm font-bold uppercase text-emerald-700">Find computer products</p>
+              <h2 className="mt-1 text-2xl font-black text-slate-950">Search the marketplace</h2>
+            </div>
+            <ProductExplorer branches={catalogBranches} categories={catalogCategories} compact products={catalogProducts} />
+          </div>
+        </section>
+
+        <section className="bg-slate-100">
+          <div className="mx-auto grid max-w-7xl gap-6 px-4 py-10 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
+            <div>
+              <p className="text-sm font-bold uppercase text-emerald-700">Trust & Safety</p>
+              <h2 className="mt-1 text-2xl font-black text-slate-950">Built for Safer Computer Buying</h2>
+              <p className="mt-4 leading-7 text-slate-600">
+                CompuMarket NG is designed to reduce fake listings and payment confusion by adding review steps before orders move forward.
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[
+                "Customers pay to the company account.",
+                "Customers upload payment receipts.",
+                "Cashiers confirm payment before order processing.",
+                "Vendors are verified before selling.",
+              ].map((item) => (
+                <div key={item} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+                  <p className="font-bold leading-6 text-slate-950">{item}</p>
                 </div>
               ))}
             </div>
@@ -175,9 +213,6 @@ export default async function Home({
           <ProductGrid products={featuredProducts} />
         </section>
 
-        <div id="marketplace">
-          <ProductExplorer branches={catalogBranches} categories={catalogCategories} products={catalogProducts} />
-        </div>
       </main>
       <PublicFooter />
     </div>

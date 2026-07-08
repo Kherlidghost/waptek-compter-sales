@@ -6,6 +6,7 @@ import { branches as seedBranches, categories as seedCategories, products as see
 import type { Branch, Category, Product } from "@/lib/types";
 
 const conditions = ["New", "UK Used", "Refurbished"] as const;
+const categoryChips = ["Laptops", "Desktops", "Accessories", "Printers", "Repair Tools", "Components"];
 
 type SortOption = "featured" | "price-low" | "price-high" | "stock-high";
 
@@ -26,6 +27,7 @@ export function ProductExplorer({
 }: ProductExplorerProps) {
   const [query, setQuery] = useState("");
   const [categoryId, setCategoryId] = useState(initialCategoryId);
+  const [categoryChip, setCategoryChip] = useState("");
   const [branchId, setBranchId] = useState("all");
   const [condition, setCondition] = useState("all");
   const [maxPrice, setMaxPrice] = useState("");
@@ -35,17 +37,25 @@ export function ProductExplorer({
   const filteredProducts = useMemo(() => {
     const parsedMaxPrice = Number(maxPrice);
     const hasMaxPrice = Number.isFinite(parsedMaxPrice) && parsedMaxPrice > 0;
+    const normalizedQuery = query.trim().toLowerCase();
+    const normalizedChip = categoryChip.toLowerCase();
 
     const matches = products.filter((product) => {
-      const matchesQuery = `${product.name} ${product.description} ${product.condition}`
-        .toLowerCase()
-        .includes(query.toLowerCase());
+      const category = categories.find((item) => item.id === product.categoryId || item.name === product.categoryName);
+      const categoryName = product.categoryName ?? category?.name ?? "";
+      const vendorName = product.vendorName ?? "";
+      const searchableText = `${product.name} ${categoryName} ${vendorName} ${product.description ?? ""}`.toLowerCase();
+      const matchesQuery = !normalizedQuery || searchableText.includes(normalizedQuery);
       const matchesCategory = categoryId === "all" || product.categoryId === categoryId;
+      const matchesChip =
+        !normalizedChip ||
+        categoryName.toLowerCase().includes(normalizedChip) ||
+        (normalizedChip === "repair tools" && categoryName.toLowerCase().includes("repair"));
       const matchesBranch = branchId === "all" || product.branchId === branchId;
       const matchesCondition = condition === "all" || product.condition === condition;
       const matchesPrice = !hasMaxPrice || product.price <= parsedMaxPrice;
       const matchesStock = !inStockOnly || product.stock > 0;
-      return matchesQuery && matchesCategory && matchesBranch && matchesCondition && matchesPrice && matchesStock;
+      return matchesQuery && matchesCategory && matchesChip && matchesBranch && matchesCondition && matchesPrice && matchesStock;
     });
 
     return [...matches].sort((first, second) => {
@@ -54,7 +64,17 @@ export function ProductExplorer({
       if (sort === "stock-high") return second.stock - first.stock;
       return Number(second.featured ?? false) - Number(first.featured ?? false);
     });
-  }, [branchId, categoryId, condition, inStockOnly, maxPrice, products, query, sort]);
+  }, [branchId, categories, categoryChip, categoryId, condition, inStockOnly, maxPrice, products, query, sort]);
+
+  const activeCategoryName =
+    (categoryId !== "all" ? categories.find((category) => category.id === categoryId)?.name : categoryChip) ?? "";
+  const categoryHasNoProducts =
+    Boolean(activeCategoryName) &&
+    products.every((product) => {
+      const category = categories.find((item) => item.id === product.categoryId || item.name === product.categoryName);
+      const categoryName = product.categoryName ?? category?.name ?? "";
+      return !categoryName.toLowerCase().includes(activeCategoryName.toLowerCase());
+    });
 
   return (
     <section className={compact ? "w-full" : "mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8"}>
@@ -63,12 +83,15 @@ export function ProductExplorer({
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search laptops, accessories, repairs"
+          placeholder="Search laptops, desktops, accessories, repair tools…"
           className="h-11 rounded-md border border-slate-300 px-3 text-sm outline-none focus:border-emerald-600"
         />
         <select
           value={categoryId}
-          onChange={(event) => setCategoryId(event.target.value)}
+          onChange={(event) => {
+            setCategoryId(event.target.value);
+            setCategoryChip("");
+          }}
           className="h-11 rounded-md border border-slate-300 px-3 text-sm"
         >
           <option value="all">All categories</option>
@@ -131,6 +154,25 @@ export function ProductExplorer({
             In stock only
           </label>
         </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {categoryChips.map((chip) => (
+            <button
+              key={chip}
+              className={`rounded-full border px-3 py-2 text-sm font-semibold ${
+                categoryChip === chip
+                  ? "border-emerald-700 bg-emerald-50 text-emerald-800"
+                  : "border-slate-300 text-slate-700 hover:border-emerald-500 hover:text-emerald-700"
+              }`}
+              onClick={() => {
+                setCategoryChip(categoryChip === chip ? "" : chip);
+                setCategoryId("all");
+              }}
+              type="button"
+            >
+              {chip}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-600">
@@ -141,6 +183,7 @@ export function ProductExplorer({
           onClick={() => {
             setQuery("");
             setCategoryId("all");
+            setCategoryChip("");
             setBranchId("all");
             setCondition("all");
             setMaxPrice("");
@@ -155,7 +198,10 @@ export function ProductExplorer({
       </div>
 
       <div className="mt-6">
-        <ProductGrid products={filteredProducts} />
+        <ProductGrid
+          emptyMessage={categoryHasNoProducts ? "This category has no products yet." : "No products found. Try another search or category."}
+          products={filteredProducts}
+        />
       </div>
     </section>
   );
