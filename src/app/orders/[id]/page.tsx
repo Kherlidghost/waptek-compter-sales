@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
+import { getAuthProfile, isAdmin, isCashier, isCustomer, isManager, isVendor, type AuthProfile } from "@/lib/auth";
 import { formatNaira, getBranch, products } from "@/lib/marketplace-data";
 import { getTrackedOrder, orderSteps, trackedOrders } from "@/lib/customer-flow";
 import { createClient } from "@/lib/supabase/server";
@@ -14,27 +15,39 @@ type OnlineOrderDetail = {
   branch_id: string;
   status: (typeof trackedOrders)[number]["status"];
   total: number | string;
+  profile_id: string | null;
   created_at: string;
   payment_receipts: Array<{ status: "pending" | "confirmed" | "rejected" }>;
   order_items: Array<{
     product_id: string;
+    vendor_id: string;
     quantity: number;
     unit_price: number | string;
     products: { name: string; slug: string } | Array<{ name: string; slug: string }> | null;
   }>;
 };
 
-async function getOnlineOrder(id: string) {
+async function getOnlineOrder(id: string, profile: AuthProfile) {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("orders")
-      .select("order_number, customer_name, branch_id, status, total, created_at, payment_receipts(status), order_items(product_id, quantity, unit_price, products(name, slug))")
+      .select("order_number, customer_name, profile_id, branch_id, status, total, created_at, payment_receipts(status), order_items(product_id, vendor_id, quantity, unit_price, products(name, slug))")
       .eq("order_number", id)
       .maybeSingle();
 
     if (error || !data) return null;
     const order = data as unknown as OnlineOrderDetail;
+    const { data: vendor } = isVendor(profile)
+      ? await supabase.from("vendors").select("id").eq("profile_id", profile.id).eq("status", "approved").maybeSingle()
+      : { data: null };
+    const canView =
+      isAdmin(profile) ||
+      (isCustomer(profile) && order.profile_id === profile.id) ||
+      ((isManager(profile) || isCashier(profile)) && profile.branch_id === order.branch_id) ||
+      (isVendor(profile) && Boolean(vendor?.id) && order.order_items.some((item) => item.vendor_id === vendor?.id));
+
+    if (!canView) return null;
 
     return {
       id: order.order_number,
@@ -63,7 +76,19 @@ async function getOnlineOrder(id: string) {
 
 export default async function OrderTrackingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const order = (await getOnlineOrder(id)) ?? getTrackedOrder(id);
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    notFound();
+  }
+  const profile = await getAuthProfile(supabase, user.id);
+  if (!profile) {
+    notFound();
+  }
+
+  const order = (await getOnlineOrder(id, profile)) ?? (isCustomer(profile) ? getTrackedOrder(id) : null);
 
   if (!order) {
     notFound();

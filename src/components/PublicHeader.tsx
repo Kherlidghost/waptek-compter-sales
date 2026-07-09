@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { isUserRole, roleHome } from "@/lib/auth";
+import { getAuthProfile, roleHome } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/supabase-config";
 import { createClient } from "@/lib/supabase/server";
 import { SessionNavigation } from "./SessionNavigation";
@@ -20,13 +20,14 @@ export async function PublicHeader() {
     } = await supabase.auth.getUser();
 
     if (user) {
-      const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
-      const role = isUserRole(profile?.role) ? profile.role : "customer";
-      userSummary = {
-        email: user.email ?? "Signed in",
-        role,
-        home: roleHome[role],
-      };
+      const profile = await getAuthProfile(supabase, user.id);
+      if (profile) {
+        userSummary = {
+          email: user.email ?? "Signed in",
+          role: profile.role,
+          home: roleHome[profile.role],
+        };
+      }
     }
   }
 

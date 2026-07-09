@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { isSafeRedirect, isUserRole, roleHome } from "@/lib/auth";
+import { getAuthProfile, incompleteProfileMessage, isCashier, isCustomer, isManager, isSafeRedirect, roleHome } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/supabase-config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -37,11 +37,19 @@ export async function loginAction(formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const { data: profile } = user
-    ? await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle()
-    : { data: null };
-  const role = isUserRole(profile?.role) ? profile.role : "customer";
-  const destination = role === "customer" && isSafeRedirect(next) ? next : roleHome[role];
+  const profile = user ? await getAuthProfile(supabase, user.id) : null;
+
+  if (!profile) {
+    await supabase.auth.signOut();
+    redirect(encodedMessage("error", incompleteProfileMessage, next));
+  }
+
+  if ((isManager(profile) || isCashier(profile)) && !profile.branch_id) {
+    await supabase.auth.signOut();
+    redirect(encodedMessage("error", incompleteProfileMessage, next));
+  }
+
+  const destination = isCustomer(profile) && isSafeRedirect(next) ? next : roleHome[profile.role];
 
   revalidatePath("/", "layout");
   redirect(destination);

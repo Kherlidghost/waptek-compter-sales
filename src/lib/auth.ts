@@ -1,4 +1,13 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { UserRole } from "./types";
+
+export const incompleteProfileMessage = "Your account profile is incomplete. Please contact support.";
+
+export type AuthProfile = {
+  id: string;
+  role: UserRole;
+  branch_id: string | null;
+};
 
 export const roleHome: Record<UserRole, string> = {
   admin: "/admin",
@@ -13,9 +22,9 @@ export const protectedRoutes: Array<{ prefix: string; roles: UserRole[] }> = [
   { prefix: "/manager", roles: ["manager"] },
   { prefix: "/cashier", roles: ["cashier"] },
   { prefix: "/vendor", roles: ["vendor"] },
-  { prefix: "/checkout", roles: ["admin", "manager", "cashier", "vendor", "customer"] },
+  { prefix: "/checkout", roles: ["customer"] },
   { prefix: "/orders", roles: ["admin", "manager", "cashier", "vendor", "customer"] },
-  { prefix: "/wishlist", roles: ["admin", "manager", "cashier", "vendor", "customer"] },
+  { prefix: "/wishlist", roles: ["customer"] },
   { prefix: "/dashboard", roles: ["admin", "manager", "cashier", "vendor", "customer"] },
 ];
 
@@ -25,6 +34,66 @@ export function routeAccess(pathname: string) {
 
 export function isUserRole(value: unknown): value is UserRole {
   return value === "admin" || value === "manager" || value === "cashier" || value === "vendor" || value === "customer";
+}
+
+export function isAdmin(profileOrRole: AuthProfile | UserRole | null | undefined) {
+  return getRoleValue(profileOrRole) === "admin";
+}
+
+export function isManager(profileOrRole: AuthProfile | UserRole | null | undefined) {
+  return getRoleValue(profileOrRole) === "manager";
+}
+
+export function isCashier(profileOrRole: AuthProfile | UserRole | null | undefined) {
+  return getRoleValue(profileOrRole) === "cashier";
+}
+
+export function isVendor(profileOrRole: AuthProfile | UserRole | null | undefined) {
+  return getRoleValue(profileOrRole) === "vendor";
+}
+
+export function isCustomer(profileOrRole: AuthProfile | UserRole | null | undefined) {
+  return getRoleValue(profileOrRole) === "customer";
+}
+
+export function canViewBranch(profile: AuthProfile | null | undefined, branchId: string | null | undefined) {
+  if (!profile || !branchId) return false;
+  if (isAdmin(profile)) return true;
+  if (isManager(profile) || isCashier(profile)) return profile.branch_id === branchId;
+  return false;
+}
+
+export function canConfirmPayment(profile: AuthProfile | null | undefined, branchId: string | null | undefined) {
+  if (!profile || !branchId) return false;
+  return isAdmin(profile) || (isCashier(profile) && profile.branch_id === branchId);
+}
+
+export function canManageVendor(profile: AuthProfile | null | undefined) {
+  return isAdmin(profile);
+}
+
+export function canManageProduct(profile: AuthProfile | null | undefined, ownerVendorProfileId?: string | null) {
+  if (!profile) return false;
+  if (isAdmin(profile)) return true;
+  if (isManager(profile)) return Boolean(profile.branch_id);
+  if (isVendor(profile)) return ownerVendorProfileId === profile.id;
+  return false;
+}
+
+export async function getAuthProfile(supabase: SupabaseClient, userId: string): Promise<AuthProfile | null> {
+  const { data } = await supabase.from("profiles").select("id, role, branch_id").eq("id", userId).maybeSingle();
+  if (!data || !isUserRole(data.role)) return null;
+
+  return {
+    id: data.id,
+    role: data.role,
+    branch_id: data.branch_id ?? null,
+  };
+}
+
+function getRoleValue(profileOrRole: AuthProfile | UserRole | null | undefined) {
+  if (!profileOrRole) return null;
+  return typeof profileOrRole === "string" ? profileOrRole : profileOrRole.role;
 }
 
 const allowedRedirectPrefixes = [

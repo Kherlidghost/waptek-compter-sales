@@ -5,6 +5,7 @@ import type { Branch, Category, Order, OrderStatus, Product, Vendor, VendorStatu
 import { branches, categories, formatNaira, getBranch, getCategory, orders, products, vendors } from "@/lib/marketplace-data";
 import { NotificationLog } from "@/components/NotificationLog";
 import { RepairRequestsPanel } from "@/components/RepairRequestsPanel";
+import { StatusBadge } from "@/components/StatusBadge";
 
 type DashboardRole = "admin" | "manager";
 
@@ -36,23 +37,29 @@ const sections: Array<{ id: Section; label: string }> = [
 const orderStatuses: OrderStatus[] = ["awaiting_receipt", "receipt_uploaded", "paid_approved", "payment_rejected", "fulfilled"];
 
 function inventoryStatus(stock: number) {
-  if (stock === 0) return { label: "Out of stock", className: "border-red-200 bg-red-50 text-red-700" };
-  if (stock <= 3) return { label: "Low stock", className: "border-amber-200 bg-amber-50 text-amber-800" };
-  return { label: "Healthy", className: "border-emerald-200 bg-emerald-50 text-emerald-700" };
+  if (stock === 0) return { label: "Out of stock", status: "out_of_stock" };
+  if (stock <= 3) return { label: "Low stock", status: "low_stock" };
+  return { label: "In Stock", status: "in_stock" };
 }
 
 function slugify(value: string) {
   return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
-export function AdminManagerDashboard({ role }: { role: DashboardRole }) {
+export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { role: DashboardRole; branchScopeId?: string; branchLabel?: string }) {
   const canApprove = role === "admin";
+  const isBranchScoped = role === "manager" && Boolean(branchScopeId);
+  const visibleSections = role === "admin" ? sections : sections.filter((section) => ["analytics", "products", "orders", "repairs", "inventory", "reports"].includes(section.id));
+  const scopedVendors = isBranchScoped ? vendors.filter((vendor) => vendor.branchId === branchScopeId) : vendors;
+  const scopedProducts = isBranchScoped ? products.filter((product) => product.branchId === branchScopeId) : products;
+  const scopedBranches = isBranchScoped ? branches.filter((branch) => branch.id === branchScopeId) : branches;
+  const scopedOrders = isBranchScoped ? orders.filter((order) => order.branchId === branchScopeId) : orders;
   const [activeSection, setActiveSection] = useState<Section>("analytics");
-  const [vendorRows, setVendorRows] = useState<Vendor[]>(vendors);
-  const [productRows, setProductRows] = useState<Product[]>(products);
+  const [vendorRows, setVendorRows] = useState<Vendor[]>(scopedVendors);
+  const [productRows, setProductRows] = useState<Product[]>(scopedProducts);
   const [categoryRows, setCategoryRows] = useState<Category[]>(categories);
-  const [branchRows, setBranchRows] = useState<Branch[]>(branches);
-  const [orderRows, setOrderRows] = useState<Order[]>(orders);
+  const [branchRows, setBranchRows] = useState<Branch[]>(scopedBranches);
+  const [orderRows, setOrderRows] = useState<Order[]>(scopedOrders);
   const [categoryName, setCategoryName] = useState("");
   const [branchName, setBranchName] = useState("");
   const [notice, setNotice] = useState("");
@@ -61,11 +68,40 @@ export function AdminManagerDashboard({ role }: { role: DashboardRole }) {
     const revenue = orderRows.reduce((sum, order) => sum + order.total, 0);
     const paidRevenue = orderRows.filter((order) => order.status === "paid_approved" || order.status === "fulfilled").reduce((sum, order) => sum + order.total, 0);
     const pendingOrders = orderRows.filter((order) => order.status === "receipt_uploaded").length;
+    const confirmedPayments = orderRows.filter((order) => order.status === "paid_approved" || order.status === "fulfilled").length;
     const lowStock = productRows.filter((product) => product.stock <= 3).length;
+    const outOfStock = productRows.filter((product) => product.stock === 0).length;
     const approvedVendors = vendorRows.filter((vendor) => vendor.status === "approved").length;
+    const pendingVendors = vendorRows.filter((vendor) => vendor.status === "pending").length;
 
-    return { revenue, paidRevenue, pendingOrders, lowStock, approvedVendors };
+    return { revenue, paidRevenue, pendingOrders, confirmedPayments, lowStock, outOfStock, approvedVendors, pendingVendors };
   }, [orderRows, productRows, vendorRows]);
+
+  const recentOrders = orderRows.slice(0, 5);
+  const recentReceipts = orderRows.filter((order) => order.receiptStatus === "pending").slice(0, 5);
+  const pendingVendorRows = vendorRows.filter((vendor) => vendor.status === "pending");
+  const dashboardCards =
+    role === "admin"
+      ? [
+          ["Total orders", orderRows.length.toString()],
+          ["Pending payments", stats.pendingOrders.toString()],
+          ["Confirmed payments", stats.confirmedPayments.toString()],
+          ["Total vendors", vendorRows.length.toString()],
+          ["Pending vendor approvals", stats.pendingVendors.toString()],
+          ["Total products", productRows.length.toString()],
+          ["Total branches", branchRows.length.toString()],
+          ["Total repair requests", "Open repairs panel"],
+        ]
+      : [
+          ["Branch name", branchLabel ?? "Assigned branch"],
+          ["Branch orders", orderRows.length.toString()],
+          ["Pending payments for branch", stats.pendingOrders.toString()],
+          ["Confirmed payments for branch", stats.confirmedPayments.toString()],
+          ["Branch products", productRows.length.toString()],
+          ["Low-stock products", stats.lowStock.toString()],
+          ["Out-of-stock products", stats.outOfStock.toString()],
+          ["Branch sales overview", formatNaira(stats.paidRevenue)],
+        ];
 
   const branchSales = branchRows.map((branch) => ({
     branch,
@@ -154,16 +190,18 @@ export function AdminManagerDashboard({ role }: { role: DashboardRole }) {
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm font-bold uppercase text-emerald-700">Role: {role}</p>
-          <h1 className="text-3xl font-black text-slate-950">{role === "admin" ? "Admin operations dashboard" : "Manager dashboard"}</h1>
+          <h1 className="text-3xl font-black text-slate-950">{role === "admin" ? "Admin operations dashboard" : `${branchLabel ?? "Branch"} manager dashboard`}</h1>
           <p className="mt-2 text-sm text-slate-600">
-            Manage marketplace operations, inventory, orders, analytics, and branch sales reports.
+            {role === "admin"
+              ? "Full marketplace control across branches, vendors, products, orders, payments, repairs, inventory, analytics, and sales reports."
+              : "Daily branch operations for products, orders, payment visibility, repair requests, inventory, and branch sales reports."}
           </p>
         </div>
         {notice ? <p className="rounded-md bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-800">{notice}</p> : null}
       </header>
 
       <nav className="flex gap-2 overflow-x-auto rounded-lg border border-slate-200 bg-white p-2 shadow-sm">
-        {sections.map((section) => (
+        {visibleSections.map((section) => (
           <button
             key={section.id}
             onClick={() => setActiveSection(section.id)}
@@ -179,14 +217,8 @@ export function AdminManagerDashboard({ role }: { role: DashboardRole }) {
 
       {activeSection === "analytics" ? (
         <section className="space-y-6">
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-            {[
-              ["Gross revenue", formatNaira(stats.revenue)],
-              ["Paid revenue", formatNaira(stats.paidRevenue)],
-              ["Pending orders", stats.pendingOrders.toString()],
-              ["Approved vendors", stats.approvedVendors.toString()],
-              ["Low-stock items", stats.lowStock.toString()],
-            ].map(([label, value]) => (
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {dashboardCards.map(([label, value]) => (
               <div key={label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
                 <p className="text-sm text-slate-500">{label}</p>
                 <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
@@ -194,20 +226,47 @@ export function AdminManagerDashboard({ role }: { role: DashboardRole }) {
             ))}
           </div>
           <div className="grid gap-4 lg:grid-cols-2">
-            <ReportPanel title="Branch sales" rows={branchSales.map(({ branch, sales }) => [branch.state, formatNaira(sales)])} />
-            <ReportPanel title="Category sales" rows={categorySales.map(({ category, sales }) => [category.name, formatNaira(sales)])} />
+            <ActivityPanel title="Recent orders" emptyMessage="No orders yet." rows={recentOrders.map((order) => [order.id, order.customerName, formatNaira(order.total), <StatusBadge key={order.id} status={order.status} />])} />
+            <ActivityPanel
+              title={role === "admin" ? "Recent payment receipts" : "Branch payment receipts"}
+              emptyMessage="No pending receipts."
+              rows={recentReceipts.map((order) => [order.id, order.customerName, getBranch(order.branchId)?.state ?? "Unknown", <StatusBadge key={order.id} status={order.receiptStatus} />])}
+            />
+          </div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <ReportPanel title={role === "admin" ? "Branch overview" : "Assigned branch overview"} rows={branchSales.map(({ branch, sales, orders: count }) => [`${branch.state} (${count} orders)`, formatNaira(sales)])} />
+            <ReportPanel title="Sales overview by category" rows={categorySales.map(({ category, sales }) => [category.name, formatNaira(sales)])} />
           </div>
         </section>
       ) : null}
 
       {activeSection === "vendors" ? (
-        <section className="grid gap-4 md:grid-cols-3">
+        <section className="space-y-6">
+          <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <h2 className="text-xl font-black text-slate-950">Vendor approval queue</h2>
+            <p className="mt-1 text-sm text-slate-600">Admin reviews vendor applications before products are listed publicly.</p>
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              {pendingVendorRows.length === 0 ? (
+                <p className="rounded-md border border-dashed border-slate-300 p-4 text-sm text-slate-600">No pending vendor approvals.</p>
+              ) : pendingVendorRows.map((vendor) => (
+                <div key={vendor.id} className="rounded-md bg-slate-50 p-4">
+                  <p className="font-black text-slate-950">{vendor.businessName}</p>
+                  <p className="mt-1 text-sm text-slate-600">{vendor.ownerName} · {getBranch(vendor.branchId)?.state}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button className="rounded-md bg-emerald-700 px-3 py-2 text-sm font-bold text-white" onClick={() => updateVendorStatus(vendor.id, "approved")}>Approve</button>
+                    <button className="rounded-md border border-red-300 px-3 py-2 text-sm font-bold text-red-700" onClick={() => updateVendorStatus(vendor.id, "rejected")}>Reject</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
           {vendorRows.map((vendor) => (
             <article key={vendor.id} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
               <p className="text-lg font-black text-slate-950">{vendor.businessName}</p>
               <p className="mt-1 text-sm text-slate-600">Owner: {vendor.ownerName}</p>
               <p className="mt-1 text-sm text-slate-600">Branch: {getBranch(vendor.branchId)?.state}</p>
-              <p className="mt-3 inline-flex rounded-md bg-slate-100 px-2 py-1 text-xs font-bold capitalize text-slate-700">{vendor.status}</p>
+              <p className="mt-3"><StatusBadge status={vendor.status} /></p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <button className="rounded-md bg-emerald-700 px-3 py-2 text-sm font-bold text-white disabled:bg-slate-300" disabled={!canApprove} onClick={() => updateVendorStatus(vendor.id, "approved")}>
                   Approve
@@ -218,6 +277,7 @@ export function AdminManagerDashboard({ role }: { role: DashboardRole }) {
               </div>
             </article>
           ))}
+          </div>
         </section>
       ) : null}
 
@@ -272,8 +332,8 @@ export function AdminManagerDashboard({ role }: { role: DashboardRole }) {
             order.id,
             order.customerName,
             getBranch(order.branchId)?.state ?? "Unknown",
-            order.receiptStatus,
-            order.status.replaceAll("_", " "),
+            <StatusBadge key={`${order.id}-receipt`} status={order.receiptStatus} />,
+            <StatusBadge key={`${order.id}-status-badge`} status={order.status} />,
             formatNaira(order.total),
             <select key={`${order.id}-status`} className="h-9 rounded-md border border-slate-300 px-2" onChange={(event) => updateOrderStatus(order.id, event.target.value as OrderStatus)} value={order.status}>
               {orderStatuses.map((status) => (
@@ -295,7 +355,7 @@ export function AdminManagerDashboard({ role }: { role: DashboardRole }) {
               product.name,
               getBranch(product.branchId)?.state ?? "Unknown",
               <input key={`${product.id}-stock`} className="h-9 w-24 rounded-md border border-slate-300 px-2" inputMode="numeric" onChange={(event) => updateProductStock(product.id, Number(event.target.value))} value={product.stock} />,
-              <span key={`${product.id}-status`} className={`rounded-md border px-2 py-1 text-xs font-bold ${status.className}`}>{status.label}</span>,
+              <StatusBadge key={`${product.id}-status`} status={status.status} label={status.label} />,
               product.stock <= 3 ? "Restock recommended" : "No action",
             ];
           })}
@@ -335,7 +395,14 @@ function DataTable({ headers, rows }: { headers: string[]; rows: Array<Array<Rea
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">
-          {rows.map((row, index) => (
+          {rows.length === 0 ? (
+            <tr>
+              <td colSpan={headers.length} className="px-4 py-8 text-center">
+                <p className="font-bold text-slate-950">No records found.</p>
+                <p className="mt-1 text-sm text-slate-600">Relevant marketplace activity will appear here when available.</p>
+              </td>
+            </tr>
+          ) : rows.map((row, index) => (
             <tr key={index}>
               {row.map((cell, cellIndex) => (
                 <td key={cellIndex} className="px-4 py-3">{cell}</td>
@@ -348,12 +415,35 @@ function DataTable({ headers, rows }: { headers: string[]; rows: Array<Array<Rea
   );
 }
 
+function ActivityPanel({ title, emptyMessage, rows }: { title: string; emptyMessage: string; rows: Array<Array<React.ReactNode>> }) {
+  return (
+    <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <h2 className="text-xl font-black text-slate-950">{title}</h2>
+      <div className="mt-4 grid gap-3">
+        {rows.length === 0 ? (
+          <p className="rounded-md border border-dashed border-slate-300 p-4 text-sm text-slate-600">{emptyMessage}</p>
+        ) : rows.map((row, index) => (
+          <div key={index} className="grid gap-2 rounded-md bg-slate-50 px-3 py-3 text-sm sm:grid-cols-4 sm:items-center">
+            {row.map((cell, cellIndex) => (
+              <div key={cellIndex} className={cellIndex === 0 ? "font-black text-slate-950" : "text-slate-700"}>
+                {cell}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ReportPanel({ title, rows }: { title: string; rows: Array<[string, string]> }) {
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
       <h2 className="text-xl font-black text-slate-950">{title}</h2>
       <div className="mt-4 grid gap-3">
-        {rows.map(([label, value]) => (
+        {rows.length === 0 ? (
+          <p className="rounded-md border border-dashed border-slate-300 p-4 text-sm text-slate-600">No report data yet.</p>
+        ) : rows.map(([label, value]) => (
           <div key={label} className="flex items-center justify-between gap-4 rounded-md bg-slate-50 px-3 py-2 text-sm">
             <span className="font-semibold text-slate-700 capitalize">{label}</span>
             <span className="font-black text-slate-950">{value}</span>

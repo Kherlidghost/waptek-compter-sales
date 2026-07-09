@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { canConfirmPayment, getAuthProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 export async function reviewPayment(orderId: string, receiptId: string, decision: "confirmed" | "rejected") {
@@ -11,6 +12,16 @@ export async function reviewPayment(orderId: string, receiptId: string, decision
 
   if (!user) {
     throw new Error("Sign in before reviewing payments.");
+  }
+
+  const profile = await getAuthProfile(supabase, user.id);
+  if (!profile) {
+    throw new Error("Your account profile is incomplete. Please contact support.");
+  }
+
+  const { data: order } = await supabase.from("orders").select("branch_id").eq("id", orderId).maybeSingle();
+  if (!canConfirmPayment(profile, order?.branch_id ?? null)) {
+    throw new Error("You can only review payment receipts for your assigned branch.");
   }
 
   const orderStatus = decision === "confirmed" ? "paid_approved" : "payment_rejected";

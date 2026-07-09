@@ -1,4 +1,5 @@
 import { formatNaira } from "@/lib/marketplace-data";
+import { getAuthProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 type Role = "admin" | "manager" | "vendor";
@@ -9,6 +10,7 @@ type StaffOrder = {
   status: string;
   total: number | string;
   created_at: string;
+  branch_id?: string;
 };
 
 type VendorOrderItem = {
@@ -18,11 +20,20 @@ type VendorOrderItem = {
 async function getRows(role: Role) {
   try {
     const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const profile = user ? await getAuthProfile(supabase, user.id) : null;
+    if (!profile) return [];
 
     if (role === "vendor") {
+      const { data: vendor } = await supabase.from("vendors").select("id").eq("profile_id", profile.id).eq("status", "approved").maybeSingle();
+      if (!vendor) return [];
+
       const { data, error } = await supabase
         .from("order_items")
         .select("orders(order_number, customer_name, status, total, created_at)")
+        .eq("vendor_id", vendor.id)
         .order("created_at", { ascending: false })
         .limit(8);
 
@@ -33,11 +44,18 @@ async function getRows(role: Role) {
         .filter((order): order is StaffOrder => Boolean(order));
     }
 
-    const { data, error } = await supabase
+    let query = supabase
       .from("orders")
-      .select("order_number, customer_name, status, total, created_at")
+      .select("order_number, customer_name, status, total, created_at, branch_id")
       .order("created_at", { ascending: false })
       .limit(8);
+
+    if (role === "manager") {
+      if (!profile.branch_id) return [];
+      query = query.eq("branch_id", profile.branch_id);
+    }
+
+    const { data, error } = await query;
 
     if (error || !data) return [];
     return data as StaffOrder[];

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { isUserRole, roleHome } from "@/lib/auth";
+import { getAuthProfile, roleHome } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/supabase-config";
 import { createClient } from "@/lib/supabase/server";
 import type { UserRole } from "@/lib/types";
@@ -15,8 +15,8 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
     } = await supabase.auth.getUser();
 
     if (user) {
-      const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
-      const resolvedRole = isUserRole(profile?.role) ? profile.role : role;
+      const profile = await getAuthProfile(supabase, user.id);
+      const resolvedRole = profile?.role ?? role;
       userSummary = {
         email: user.email ?? "Signed in",
         role: resolvedRole,

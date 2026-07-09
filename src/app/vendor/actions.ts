@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getAuthProfile, isVendor } from "@/lib/auth";
 import { supabaseConfig } from "@/lib/supabase-config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -20,6 +21,11 @@ export async function createOnlineVendorProduct(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (!user) redirect("/login?next=/vendor");
+
+  const profile = await getAuthProfile(supabase, user.id);
+  if (!profile || !isVendor(profile)) {
+    redirect("/vendor?error=Only%20approved%20vendor%20accounts%20can%20upload%20products.");
+  }
 
   const name = String(formData.get("name") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();

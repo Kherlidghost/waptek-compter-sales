@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { Product } from "@/lib/types";
 import { branches, categories, formatNaira, getBranch, getCategory, orders, products } from "@/lib/marketplace-data";
+import { StatusBadge } from "@/components/StatusBadge";
 
 const vendorProductsStorageKey = "computermarket-vendor-products";
 const activeVendorId = "vendor-1";
@@ -42,9 +43,9 @@ function slugify(value: string) {
 }
 
 function inventoryLabel(stock: number) {
-  if (stock === 0) return { label: "Out of stock", className: "bg-red-50 text-red-700 border-red-200" };
-  if (stock <= 3) return { label: "Low stock", className: "bg-amber-50 text-amber-800 border-amber-200" };
-  return { label: "Healthy", className: "bg-emerald-50 text-emerald-700 border-emerald-200" };
+  if (stock === 0) return { label: "Out of stock", status: "out_of_stock" };
+  if (stock <= 3) return { label: "Low stock", status: "low_stock" };
+  return { label: "In Stock", status: "in_stock" };
 }
 
 export function VendorDashboard() {
@@ -70,6 +71,10 @@ export function VendorDashboard() {
 
   const stockTotal = vendorProducts.reduce((sum, product) => sum + product.stock, 0);
   const lowStockCount = vendorProducts.filter((product) => product.stock <= 3).length;
+  const outOfStockCount = vendorProducts.filter((product) => product.stock === 0).length;
+  const activeProductsCount = vendorProducts.filter((product) => product.stock > 0).length;
+  const pendingOrderCount = vendorOrders.filter((order) => order.status === "awaiting_receipt" || order.status === "receipt_uploaded").length;
+  const paidOrderCount = vendorOrders.filter((order) => order.status === "paid_approved" || order.status === "fulfilled").length;
   const revenue = vendorOrders.reduce((sum, order) => {
     const orderVendorTotal = order.items.reduce((itemSum, item) => {
       const belongsToVendor = vendorProducts.some((product) => product.id === item.productId);
@@ -143,7 +148,7 @@ export function VendorDashboard() {
         <div>
           <p className="text-sm font-bold uppercase text-emerald-700">Role: Vendor</p>
           <h1 className="mt-1 text-3xl font-black text-slate-950">Vendor dashboard</h1>
-          <p className="mt-2 text-sm text-slate-600">Manage approved vendor stock, edits, and order visibility for NorthTech Gadgets.</p>
+          <p className="mt-2 text-sm text-slate-600">Manage your own product listings, inventory, and order visibility. Vendors cannot confirm payments or view other vendors’ orders.</p>
         </div>
         <Link className="rounded-md border border-slate-300 px-4 py-2 text-sm font-bold" href="/products">
           View public listing
@@ -152,10 +157,14 @@ export function VendorDashboard() {
 
       <section className="grid gap-4 md:grid-cols-4">
         {[
-          ["Own products", vendorProducts.length.toString()],
-          ["Inventory units", stockTotal.toString()],
-          ["Low stock", lowStockCount.toString()],
-          ["Vendor revenue", formatNaira(revenue)],
+          ["Total products listed", vendorProducts.length.toString()],
+          ["Active products", activeProductsCount.toString()],
+          ["Low stock products", lowStockCount.toString()],
+          ["Out of stock products", outOfStockCount.toString()],
+          ["Orders containing your products", vendorOrders.length.toString()],
+          ["Pending orders", pendingOrderCount.toString()],
+          ["Paid / confirmed orders", paidOrderCount.toString()],
+          ["Product performance", formatNaira(revenue)],
         ].map(([label, value]) => (
           <div key={label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
             <p className="text-sm text-slate-500">{label}</p>
@@ -282,7 +291,14 @@ export function VendorDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {vendorProducts.map((product) => {
+                {vendorProducts.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="px-4 py-8 text-center">
+                      <p className="font-bold text-slate-950">No products listed yet.</p>
+                      <p className="mt-1 text-sm text-slate-600">Add your first product so customers can discover it on the marketplace.</p>
+                    </td>
+                  </tr>
+                ) : vendorProducts.map((product) => {
                   const status = inventoryLabel(product.stock);
                   return (
                     <tr key={product.id}>
@@ -291,7 +307,7 @@ export function VendorDashboard() {
                       <td className="px-4 py-3">{getBranch(product.branchId)?.state}</td>
                       <td className="px-4 py-3">{product.stock}</td>
                       <td className="px-4 py-3">
-                        <span className={`rounded-md border px-2 py-1 text-xs font-bold ${status.className}`}>{status.label}</span>
+                        <StatusBadge status={status.status} label={status.label} />
                       </td>
                       <td className="px-4 py-3 font-semibold">{formatNaira(product.price)}</td>
                       <td className="px-4 py-3">
@@ -306,6 +322,47 @@ export function VendorDashboard() {
             </table>
           </div>
         </section>
+      </section>
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="text-xl font-black text-slate-950">Recent product activity</h2>
+          <p className="mt-1 text-sm text-slate-600">Latest listings and stock condition for your own catalogue.</p>
+          <div className="mt-4 grid gap-3">
+            {vendorProducts.length === 0 ? (
+              <p className="rounded-md border border-dashed border-slate-300 p-4 text-sm text-slate-600">No products listed yet.</p>
+            ) : vendorProducts.slice(0, 4).map((product) => {
+              const status = inventoryLabel(product.stock);
+              return (
+                <div key={product.id} className="flex items-center justify-between gap-4 rounded-md bg-slate-50 px-3 py-3 text-sm">
+                  <div>
+                    <p className="font-bold text-slate-950">{product.name}</p>
+                    <p className="text-slate-600">{getCategory(product.categoryId)?.name} · {getBranch(product.branchId)?.state}</p>
+                  </div>
+                  <StatusBadge status={status.status} label={status.label} />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="text-xl font-black text-slate-950">Product performance summary</h2>
+          <p className="mt-1 text-sm text-slate-600">A simple view of order value tied to your own items.</p>
+          <div className="mt-4 grid gap-3 text-sm">
+            <div className="flex justify-between rounded-md bg-slate-50 px-3 py-3">
+              <span className="font-semibold text-slate-700">Vendor order value</span>
+              <span className="font-black text-slate-950">{formatNaira(revenue)}</span>
+            </div>
+            <div className="flex justify-between rounded-md bg-slate-50 px-3 py-3">
+              <span className="font-semibold text-slate-700">Inventory units</span>
+              <span className="font-black text-slate-950">{stockTotal}</span>
+            </div>
+            <div className="flex justify-between rounded-md bg-slate-50 px-3 py-3">
+              <span className="font-semibold text-slate-700">Orders awaiting payment review</span>
+              <span className="font-black text-slate-950">{pendingOrderCount}</span>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section className="space-y-4">
@@ -326,7 +383,14 @@ export function VendorDashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {vendorOrders.map((order) => {
+              {vendorOrders.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-4 py-8 text-center">
+                    <p className="font-bold text-slate-950">No orders yet.</p>
+                    <p className="mt-1 text-sm text-slate-600">Orders that contain your products will appear here after customers checkout.</p>
+                  </td>
+                </tr>
+              ) : vendorOrders.map((order) => {
                 const ownedItems = order.items.filter((item) => vendorProducts.some((product) => product.id === item.productId));
                 const vendorTotal = ownedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
                 return (
@@ -334,8 +398,8 @@ export function VendorDashboard() {
                     <td className="px-4 py-3 font-semibold text-slate-950">{order.id}</td>
                     <td className="px-4 py-3">{order.customerName}</td>
                     <td className="px-4 py-3">{ownedItems.length}</td>
-                    <td className="px-4 py-3 capitalize">{order.receiptStatus}</td>
-                    <td className="px-4 py-3 capitalize">{order.status.replaceAll("_", " ")}</td>
+                    <td className="px-4 py-3"><StatusBadge status={order.receiptStatus} /></td>
+                    <td className="px-4 py-3"><StatusBadge status={order.status} /></td>
                     <td className="px-4 py-3 font-semibold">{formatNaira(vendorTotal)}</td>
                   </tr>
                 );

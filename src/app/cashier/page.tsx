@@ -1,7 +1,7 @@
 import { reviewPayment } from "@/app/cashier/actions";
 import { CashierDashboard, type CashierOrder } from "@/components/CashierDashboard";
 import { DashboardSessionBar } from "@/components/DashboardSessionBar";
-import { orders } from "@/lib/marketplace-data";
+import { getAuthProfile } from "@/lib/auth";
 import { supabaseConfig } from "@/lib/supabase-config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -26,13 +26,21 @@ type OnlineOrderRow = {
 async function getOnlineReceiptOrders(): Promise<CashierOrder[]> {
   try {
     const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const profile = user ? await getAuthProfile(supabase, user.id) : null;
+    if (!profile?.branch_id) return [];
+
     const { data, error } = await supabase
       .from("orders")
       .select("id, order_number, customer_name, branch_id, status, total, created_at, payment_receipts(id, storage_path, status, review_note)")
+      .eq("branch_id", profile.branch_id)
+      .eq("status", "receipt_uploaded")
       .order("created_at", { ascending: false })
       .limit(30);
 
-    if (error || !data) return orders;
+    if (error || !data) return [];
 
     return Promise.all(
       (data as OnlineOrderRow[]).map(async (order) => {
@@ -63,7 +71,7 @@ async function getOnlineReceiptOrders(): Promise<CashierOrder[]> {
       }),
     );
   } catch {
-    return orders;
+    return [];
   }
 }
 

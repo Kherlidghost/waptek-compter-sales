@@ -310,26 +310,62 @@ create policy "public reads inventory" on public.inventory for select to anon, a
 create policy "public reads approved reviews" on public.reviews for select to anon, authenticated using (is_approved);
 
 create policy "users read own profile" on public.profiles for select to authenticated using ((select auth.uid()) = id);
-create policy "admins and managers read profiles" on public.profiles for select to authenticated using (public.current_user_role() in ('admin', 'manager'));
+create policy "admins and managers read profiles" on public.profiles for select to authenticated using (
+  public.current_user_role() = 'admin'
+  or (public.current_user_role() = 'manager' and branch_id = public.current_user_branch_id())
+);
 create policy "users update own profile" on public.profiles for update to authenticated using ((select auth.uid()) = id) with check ((select auth.uid()) = id);
 create policy "admins update profiles" on public.profiles for update to authenticated using (public.current_user_role() = 'admin') with check (public.current_user_role() = 'admin');
 
 create policy "users create vendor application" on public.vendors for insert to authenticated with check ((select auth.uid()) = profile_id);
 create policy "public reads approved vendors" on public.vendors for select to anon, authenticated using (status = 'approved');
 create policy "vendors read own vendor row" on public.vendors for select to authenticated using ((select auth.uid()) = profile_id);
-create policy "staff read vendors" on public.vendors for select to authenticated using (public.current_user_role() in ('admin', 'manager', 'cashier'));
+create policy "staff read vendors" on public.vendors for select to authenticated using (
+  public.current_user_role() = 'admin'
+  or (public.current_user_role() = 'manager' and branch_id = public.current_user_branch_id())
+);
 create policy "admins approve vendors" on public.vendors for update to authenticated using (public.current_user_role() = 'admin') with check (public.current_user_role() = 'admin');
 
 create policy "approved vendors insert products" on public.products for insert to authenticated with check (vendor_id = public.current_vendor_id());
 create policy "approved vendors update own products" on public.products for update to authenticated using (vendor_id = public.current_vendor_id()) with check (vendor_id = public.current_vendor_id());
-create policy "staff manage products" on public.products for all to authenticated using (public.current_user_role() in ('admin', 'manager')) with check (public.current_user_role() in ('admin', 'manager'));
+create policy "staff manage products" on public.products for all to authenticated
+using (
+  public.current_user_role() = 'admin'
+  or (public.current_user_role() = 'manager' and branch_id = public.current_user_branch_id())
+)
+with check (
+  public.current_user_role() = 'admin'
+  or (public.current_user_role() = 'manager' and branch_id = public.current_user_branch_id())
+);
 
 create policy "vendors manage own product images" on public.product_images for all to authenticated
 using (product_id in (select id from public.products where vendor_id = public.current_vendor_id()))
 with check (product_id in (select id from public.products where vendor_id = public.current_vendor_id()));
-create policy "staff manage product images" on public.product_images for all to authenticated using (public.current_user_role() in ('admin', 'manager')) with check (public.current_user_role() in ('admin', 'manager'));
+create policy "staff manage product images" on public.product_images for all to authenticated
+using (
+  public.current_user_role() = 'admin'
+  or (
+    public.current_user_role() = 'manager'
+    and product_id in (select id from public.products where branch_id = public.current_user_branch_id())
+  )
+)
+with check (
+  public.current_user_role() = 'admin'
+  or (
+    public.current_user_role() = 'manager'
+    and product_id in (select id from public.products where branch_id = public.current_user_branch_id())
+  )
+);
 
-create policy "staff manage inventory" on public.inventory for all to authenticated using (public.current_user_role() in ('admin', 'manager')) with check (public.current_user_role() in ('admin', 'manager'));
+create policy "staff manage inventory" on public.inventory for all to authenticated
+using (
+  public.current_user_role() = 'admin'
+  or (public.current_user_role() = 'manager' and branch_id = public.current_user_branch_id())
+)
+with check (
+  public.current_user_role() = 'admin'
+  or (public.current_user_role() = 'manager' and branch_id = public.current_user_branch_id())
+);
 create policy "vendors read own inventory" on public.inventory for select to authenticated using (product_id in (select id from public.products where vendor_id = public.current_vendor_id()));
 create policy "vendors manage own inventory" on public.inventory for insert to authenticated
 with check (product_id in (select id from public.products where vendor_id = public.current_vendor_id()));
@@ -345,12 +381,12 @@ create policy "vendors read orders containing own products" on public.orders for
   id in (select order_id from public.order_items where vendor_id = public.current_vendor_id())
 );
 create policy "staff read branch orders" on public.orders for select to authenticated using (
-  public.current_user_role() in ('admin', 'manager')
-  or (public.current_user_role() = 'cashier' and branch_id = public.current_user_branch_id())
+  public.current_user_role() = 'admin'
+  or (public.current_user_role() in ('manager', 'cashier') and branch_id = public.current_user_branch_id())
 );
 create policy "cashiers confirm branch orders" on public.orders for update to authenticated
-using (public.current_user_role() in ('admin', 'manager') or (public.current_user_role() = 'cashier' and branch_id = public.current_user_branch_id()))
-with check (public.current_user_role() in ('admin', 'manager') or (public.current_user_role() = 'cashier' and branch_id = public.current_user_branch_id()));
+using (public.current_user_role() = 'admin' or (public.current_user_role() = 'cashier' and branch_id = public.current_user_branch_id()))
+with check (public.current_user_role() = 'admin' or (public.current_user_role() = 'cashier' and branch_id = public.current_user_branch_id()));
 
 create policy "customers create order items" on public.order_items for insert to authenticated with check (
   order_id in (select id from public.orders where profile_id = (select auth.uid()))
@@ -359,7 +395,10 @@ create policy "customers read own order items" on public.order_items for select 
   order_id in (select id from public.orders where profile_id = (select auth.uid()))
 );
 create policy "vendors read own order items" on public.order_items for select to authenticated using (vendor_id = public.current_vendor_id());
-create policy "staff read order items" on public.order_items for select to authenticated using (public.current_user_role() in ('admin', 'manager', 'cashier'));
+create policy "staff read order items" on public.order_items for select to authenticated using (
+  public.current_user_role() = 'admin'
+  or order_id in (select id from public.orders where branch_id = public.current_user_branch_id())
+);
 
 create policy "customers upload own receipts" on public.payment_receipts for insert to authenticated with check (
   uploaded_by = (select auth.uid())
@@ -370,13 +409,39 @@ create policy "customers read own receipts" on public.payment_receipts for selec
   or order_id in (select id from public.orders where profile_id = (select auth.uid()))
 );
 create policy "cashiers review receipts" on public.payment_receipts for update to authenticated
-using (public.current_user_role() in ('admin', 'manager', 'cashier'))
-with check (public.current_user_role() in ('admin', 'manager', 'cashier'));
-create policy "staff read receipts" on public.payment_receipts for select to authenticated using (public.current_user_role() in ('admin', 'manager', 'cashier'));
+using (
+  public.current_user_role() = 'admin'
+  or (
+    public.current_user_role() = 'cashier'
+    and order_id in (select id from public.orders where branch_id = public.current_user_branch_id())
+  )
+)
+with check (
+  public.current_user_role() = 'admin'
+  or (
+    public.current_user_role() = 'cashier'
+    and order_id in (select id from public.orders where branch_id = public.current_user_branch_id())
+  )
+);
+create policy "staff read receipts" on public.payment_receipts for select to authenticated using (
+  public.current_user_role() = 'admin'
+  or (
+    public.current_user_role() in ('manager', 'cashier')
+    and order_id in (select id from public.orders where branch_id = public.current_user_branch_id())
+  )
+);
 
 create policy "customers create repair requests" on public.repair_requests for insert to authenticated with check ((select auth.uid()) = profile_id);
 create policy "customers read own repair requests" on public.repair_requests for select to authenticated using ((select auth.uid()) = profile_id);
-create policy "staff manage repair requests" on public.repair_requests for all to authenticated using (public.current_user_role() in ('admin', 'manager', 'cashier')) with check (public.current_user_role() in ('admin', 'manager', 'cashier'));
+create policy "staff manage repair requests" on public.repair_requests for all to authenticated
+using (
+  public.current_user_role() = 'admin'
+  or (public.current_user_role() in ('manager', 'cashier') and branch_id = public.current_user_branch_id())
+)
+with check (
+  public.current_user_role() = 'admin'
+  or (public.current_user_role() in ('manager', 'cashier') and branch_id = public.current_user_branch_id())
+);
 
 create policy "customers manage own wishlists" on public.wishlists for all to authenticated using ((select auth.uid()) = profile_id) with check ((select auth.uid()) = profile_id);
 create policy "customers manage own reviews" on public.reviews for insert to authenticated with check ((select auth.uid()) = profile_id);
@@ -398,5 +463,16 @@ create policy "users read own receipt objects" on storage.objects for select to 
 );
 create policy "staff read receipt objects" on storage.objects for select to authenticated using (
   bucket_id = 'payment-receipts'
-  and public.current_user_role() in ('admin', 'manager', 'cashier')
+  and (
+    public.current_user_role() = 'admin'
+    or (
+      public.current_user_role() in ('manager', 'cashier')
+      and name in (
+        select receipts.storage_path
+        from public.payment_receipts as receipts
+        join public.orders as orders on orders.id = receipts.order_id
+        where orders.branch_id = public.current_user_branch_id()
+      )
+    )
+  )
 );

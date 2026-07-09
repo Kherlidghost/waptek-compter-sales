@@ -1,11 +1,13 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
+import Link from "next/link";
 import type { Order, OrderStatus, ReceiptStatus } from "@/lib/types";
 import { formatNaira, getBranch, orders } from "@/lib/marketplace-data";
 import { InAppNotice } from "@/components/InAppNotice";
 import { NotificationLog } from "@/components/NotificationLog";
 import { RepairRequestsPanel } from "@/components/RepairRequestsPanel";
+import { StatusBadge } from "@/components/StatusBadge";
 import { appendNotifications } from "@/lib/notification-flow";
 
 type ReviewState = {
@@ -36,12 +38,6 @@ function initialReviewState(order: Order): ReviewState {
   };
 }
 
-function statusBadge(status: ReceiptStatus) {
-  if (status === "confirmed") return "border-emerald-200 bg-emerald-50 text-emerald-700";
-  if (status === "rejected") return "border-red-200 bg-red-50 text-red-700";
-  return "border-amber-200 bg-amber-50 text-amber-800";
-}
-
 export function CashierDashboard({
   initialOrders = orders,
   reviewAction,
@@ -54,6 +50,7 @@ export function CashierDashboard({
   );
   const [openReceiptId, setOpenReceiptId] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
+  const [query, setQuery] = useState("");
   const [notice, setNotice] = useState("");
   const [isPending, startTransition] = useTransition();
 
@@ -68,10 +65,17 @@ export function CashierDashboard({
     [initialOrders, reviewState],
   );
 
-  const visibleOrders = showAll ? reviewedOrders : reviewedOrders.filter((order) => order.receiptStatus === "pending");
+  const normalizedQuery = query.trim().toLowerCase();
+  const visibleOrders = (showAll ? reviewedOrders : reviewedOrders.filter((order) => order.receiptStatus === "pending")).filter((order) => {
+    if (!normalizedQuery) return true;
+    return [order.id, order.customerName, getBranch(order.branchId)?.name, getBranch(order.branchId)?.state]
+      .filter(Boolean)
+      .some((value) => value?.toLowerCase().includes(normalizedQuery));
+  });
   const pendingCount = reviewedOrders.filter((order) => order.receiptStatus === "pending").length;
   const confirmedCount = reviewedOrders.filter((order) => order.receiptStatus === "confirmed").length;
   const rejectedCount = reviewedOrders.filter((order) => order.receiptStatus === "rejected").length;
+  const awaitingConfirmationCount = reviewedOrders.filter((order) => order.status === "receipt_uploaded").length;
   const openOrder = openReceiptId ? reviewedOrders.find((order) => order.id === openReceiptId) : undefined;
 
   function confirmPayment(orderId: string) {
@@ -145,7 +149,7 @@ export function CashierDashboard({
           <p className="text-sm font-bold uppercase text-emerald-700">Role: Cashier</p>
           <h1 className="text-3xl font-black text-slate-950">Payment receipt confirmation</h1>
           <p className="mt-2 text-sm text-slate-600">
-            Review uploaded bank transfer receipts, then confirm or reject payment.
+            Confirm or reject uploaded bank transfer receipts for your assigned branch. Cashiers do not manage products, vendors, or global reports.
           </p>
         </div>
         <button
@@ -158,11 +162,12 @@ export function CashierDashboard({
       </header>
       {isPending ? <p className="rounded-md bg-amber-50 p-3 text-sm font-semibold text-amber-800">Saving payment review online...</p> : null}
 
-      <section className="grid gap-4 md:grid-cols-3">
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
           ["Pending receipts", pendingCount.toString()],
           ["Confirmed payments", confirmedCount.toString()],
           ["Rejected receipts", rejectedCount.toString()],
+          ["Awaiting confirmation", awaitingConfirmationCount.toString()],
         ].map(([label, value]) => (
           <div key={label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
             <p className="text-sm text-slate-500">{label}</p>
@@ -171,10 +176,25 @@ export function CashierDashboard({
         ))}
       </section>
 
+      <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-xl font-black text-slate-950">Recent payment receipts</h2>
+            <p className="mt-1 text-sm text-slate-600">Search by order number, customer, or branch before opening a receipt image.</p>
+          </div>
+          <input
+            className="h-11 w-full rounded-md border border-slate-300 px-3 text-sm sm:w-80"
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search order number or customer"
+            value={query}
+          />
+        </div>
+      </section>
+
       <section className="grid gap-4">
         {visibleOrders.length === 0 ? (
           <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center">
-            <p className="text-lg font-bold text-slate-950">No pending receipts</p>
+            <p className="text-lg font-bold text-slate-950">{query ? "No receipts match your search." : "No pending receipts."}</p>
             <p className="mt-2 text-sm text-slate-600">Confirmed and rejected receipts can be viewed with the all receipts toggle.</p>
           </div>
         ) : (
@@ -190,9 +210,7 @@ export function CashierDashboard({
                     {getBranch(order.branchId)?.name ?? order.branchId} · {order.createdAt}
                   </p>
                 </div>
-                <span className={`rounded-md border px-3 py-2 text-sm font-bold capitalize ${statusBadge(order.receiptStatus)}`}>
-                  {order.receiptStatus}
-                </span>
+                <StatusBadge status={order.receiptStatus} />
               </div>
 
               <div className="mt-5 grid gap-4 lg:grid-cols-[220px_1fr]">
@@ -207,7 +225,9 @@ export function CashierDashboard({
                   <dl className="grid gap-3 sm:grid-cols-3">
                     <div>
                       <dt className="text-slate-500">Order status</dt>
-                      <dd className="mt-1 font-bold capitalize text-slate-950">{order.status.replaceAll("_", " ")}</dd>
+                      <dd className="mt-1">
+                        <StatusBadge status={order.status} />
+                      </dd>
                     </div>
                     <div>
                       <dt className="text-slate-500">Receipt file</dt>
@@ -242,6 +262,9 @@ export function CashierDashboard({
                     >
                       Open receipt image
                     </button>
+                    <Link className="rounded-md border border-slate-300 px-4 py-2 text-sm font-bold" href={`/orders/${order.id}`}>
+                      View order details
+                    </Link>
                   </div>
                 </div>
               </div>

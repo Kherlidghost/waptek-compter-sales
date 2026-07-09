@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import { isSafeRedirect, isUserRole, roleHome, routeAccess } from "@/lib/auth";
+import { getAuthProfile, incompleteProfileMessage, isCashier, isCustomer, isManager, isSafeRedirect, roleHome, routeAccess } from "@/lib/auth";
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
@@ -17,12 +16,19 @@ export async function middleware(request: NextRequest) {
   if (!access) {
     if (pathname === "/login" && user) {
       const next = request.nextUrl.searchParams.get("next");
-      if (isSafeRedirect(next)) {
+      const profile = await getAuthProfile(supabase, user.id);
+      if (!profile) {
+        return response;
+      }
+      if ((isManager(profile) || isCashier(profile)) && !profile.branch_id) {
+        return response;
+      }
+
+      if (isCustomer(profile) && isSafeRedirect(next)) {
         return NextResponse.redirect(new URL(next, request.url));
       }
 
-      const role = await getRole(supabase, user.id);
-      return NextResponse.redirect(new URL(roleHome[role], request.url));
+      return NextResponse.redirect(new URL(roleHome[profile.role], request.url));
     }
 
     return response;
@@ -34,18 +40,25 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  const role = await getRole(supabase, user.id);
+  const profile = await getAuthProfile(supabase, user.id);
 
-  if (!access.roles.includes(role)) {
-    return NextResponse.redirect(new URL(roleHome[role], request.url));
+  if (!profile) {
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("error", incompleteProfileMessage);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  if ((isManager(profile) || isCashier(profile)) && !profile.branch_id) {
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("error", incompleteProfileMessage);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  if (!access.roles.includes(profile.role)) {
+    return NextResponse.redirect(new URL(roleHome[profile.role], request.url));
   }
 
   return response;
-}
-
-async function getRole(supabase: SupabaseClient, userId: string) {
-  const { data } = await supabase.from("profiles").select("role").eq("id", userId).maybeSingle();
-  return isUserRole(data?.role) ? data.role : "customer";
 }
 
 export const config = {
