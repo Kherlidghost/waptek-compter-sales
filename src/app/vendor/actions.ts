@@ -34,23 +34,33 @@ export async function createOnlineVendorProduct(formData: FormData) {
   const authProfile = profile!;
 
   const name = String(formData.get("name") ?? "").trim();
+  const sku = String(formData.get("sku") ?? "").trim() || `SKU-${slugify(name).slice(0, 18).toUpperCase()}-${Date.now().toString().slice(-5)}`;
+  const brand = String(formData.get("brand") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
+  const specifications = String(formData.get("specifications") ?? "").trim();
+  const warranty = String(formData.get("warranty") ?? "").trim();
   const categorySlug = String(formData.get("category_slug") ?? "laptops");
   const branchState = String(formData.get("branch_state") ?? "Adamawa");
   const condition = String(formData.get("condition") ?? "New");
+  const status = String(formData.get("status") ?? "active");
   const selectedVendorId = String(formData.get("vendor_id") ?? "");
   const price = Number(formData.get("price") ?? 0);
+  const discountPriceRaw = String(formData.get("discount_price") ?? "").trim();
+  const discountPrice = discountPriceRaw ? Number(discountPriceRaw) : null;
   const quantity = Number(formData.get("quantity") ?? 0);
-  const image = formData.get("image");
+  const reorderLevel = Number(formData.get("low_stock_threshold") ?? 3);
+  const featured = formData.get("featured") === "on";
+  const imageFiles = formData.getAll("images").filter((image): image is File => image instanceof File && image.size > 0);
 
-  if (!name || !description || !Number.isFinite(price) || price <= 0 || !Number.isFinite(quantity) || quantity < 0) {
+  if (!name || !brand || !description || !Number.isFinite(price) || price <= 0 || !Number.isFinite(quantity) || quantity < 0 || !Number.isFinite(reorderLevel)) {
     errorRedirect("Enter valid product details.");
   }
 
-  if (!(image instanceof File) || image.size === 0) {
-    errorRedirect("Upload a product image.");
+  if (discountPrice !== null && (!Number.isFinite(discountPrice) || discountPrice < 0)) {
+    errorRedirect("Enter a valid discount price.");
   }
-  const imageFile = image as File;
+
+  if (imageFiles.length === 0) errorRedirect("Upload at least one product image.");
 
   const vendorQuery = isVendor(authProfile)
     ? supabase.from("vendors").select("id, branch_id").eq("profile_id", user.id).eq("status", "approved").maybeSingle()
@@ -88,10 +98,16 @@ export async function createOnlineVendorProduct(formData: FormData) {
       branch_id: productBranch.id,
       name,
       slug: productSlug,
+      sku,
+      brand,
       description,
+      specifications,
       price,
+      discount_price: discountPrice,
+      warranty,
       condition,
-      status: "active",
+      status,
+      featured,
     })
     .select("id")
     .single();
@@ -101,29 +117,37 @@ export async function createOnlineVendorProduct(formData: FormData) {
   }
   const createdProduct = product!;
 
-  const imagePath = `${productVendor.id}/${createdProduct.id}/${Date.now()}-${cleanFileName(imageFile.name || "product-image")}`;
-  const { error: uploadError } = await supabase.storage
-    .from(supabaseConfig.storageBuckets.productImages)
-    .upload(imagePath, imageFile, {
-      contentType: imageFile.type || "image/jpeg",
-      upsert: false,
-    });
+  const uploadedImages: Array<{ product_id: string; storage_path: string; alt_text: string; is_primary: boolean }> = [];
+  for (const [index, imageFile] of imageFiles.entries()) {
+    const imagePath = `${productVendor.id}/${createdProduct.id}/${Date.now()}-${index}-${cleanFileName(imageFile.name || "product-image")}`;
+    const { error: uploadError } = await supabase.storage
+      .from(supabaseConfig.storageBuckets.productImages)
+      .upload(imagePath, imageFile, {
+        contentType: imageFile.type || "image/jpeg",
+        upsert: false,
+      });
 
-  if (uploadError) {
-    errorRedirect("Product created but image upload failed.");
+    if (uploadError) {
+      errorRedirect("Product created but image upload failed.");
+    }
+
+    uploadedImages.push({
+      product_id: createdProduct.id,
+      storage_path: imagePath,
+      alt_text: name,
+      is_primary: index === 0,
+    });
   }
 
-  await supabase.from("product_images").insert({
-    product_id: createdProduct.id,
-    storage_path: imagePath,
-    alt_text: name,
-    is_primary: true,
-  });
+  if (uploadedImages.length > 0) {
+    await supabase.from("product_images").insert(uploadedImages);
+  }
 
   await supabase.from("inventory").insert({
     product_id: createdProduct.id,
     branch_id: productBranch.id,
     quantity,
+    reorder_level: Math.max(0, reorderLevel),
   });
 
   revalidatePath("/products");

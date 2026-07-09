@@ -61,6 +61,18 @@ export default async function ProductDetailsPage({ params }: { params: Promise<{
                 <dt className="text-slate-500">Available stock</dt>
                 <dd className="mt-1 font-bold text-slate-950">{product.stock} units</dd>
               </div>
+              <div>
+                <dt className="text-slate-500">Brand</dt>
+                <dd className="mt-1 font-bold text-slate-950">{product.brand ?? "Not specified"}</dd>
+              </div>
+              <div>
+                <dt className="text-slate-500">SKU</dt>
+                <dd className="mt-1 font-bold text-slate-950">{product.sku ?? "Not set"}</dd>
+              </div>
+              <div>
+                <dt className="text-slate-500">Warranty</dt>
+                <dd className="mt-1 font-bold text-slate-950">{product.warranty ?? "Ask vendor"}</dd>
+              </div>
             </dl>
             <div className="mt-5 flex flex-wrap gap-2">
               {product.specs.map((spec) => (

@@ -1,4 +1,5 @@
 import { createOnlineVendorProduct } from "@/app/vendor/actions";
+import { ProductImageUploadField } from "@/components/ProductImageUploadField";
 import { branches, categories } from "@/lib/marketplace-data";
 import type { BranchState, UserRole } from "@/lib/types";
 
@@ -38,7 +39,10 @@ export function OnlineVendorProductForm({
       <form action={createOnlineVendorProduct} className="mt-5 grid gap-3 lg:grid-cols-2">
         <input type="hidden" name="return_to" value={returnTo} />
         <input className="h-11 rounded-md border border-slate-300 px-3" name="name" placeholder="Product name" required />
+        <input className="h-11 rounded-md border border-slate-300 px-3" name="brand" placeholder="Brand" required />
+        <input className="h-11 rounded-md border border-slate-300 px-3" name="sku" placeholder="SKU (auto-generated if empty)" />
         <input className="h-11 rounded-md border border-slate-300 px-3" name="price" placeholder="Price in NGN" inputMode="numeric" required />
+        <input className="h-11 rounded-md border border-slate-300 px-3" name="discount_price" placeholder="Discount price (optional)" inputMode="numeric" />
         {isStaffUpload ? (
           <select className="h-11 rounded-md border border-slate-300 px-3" name="vendor_id" required defaultValue="">
             <option value="" disabled>
@@ -66,9 +70,21 @@ export function OnlineVendorProductForm({
           <option>UK Used</option>
           <option>Refurbished</option>
         </select>
+        <select className="h-11 rounded-md border border-slate-300 px-3" name="status" defaultValue="active">
+          <option value="draft">Draft</option>
+          <option value="active">Published</option>
+          <option value="inactive">Hidden</option>
+        </select>
         <input className="h-11 rounded-md border border-slate-300 px-3" name="quantity" placeholder="Stock quantity" inputMode="numeric" required />
-        <input className="rounded-md border border-slate-300 p-3 text-sm lg:col-span-2" name="image" type="file" accept="image/png,image/jpeg,image/webp" required />
+        <input className="h-11 rounded-md border border-slate-300 px-3" name="low_stock_threshold" placeholder="Low stock threshold" inputMode="numeric" defaultValue="3" />
+        <input className="h-11 rounded-md border border-slate-300 px-3 lg:col-span-2" name="warranty" placeholder="Warranty e.g. 6 months" />
+        <textarea className="min-h-24 rounded-md border border-slate-300 p-3 lg:col-span-2" name="specifications" placeholder="Specifications" />
         <textarea className="min-h-24 rounded-md border border-slate-300 p-3 lg:col-span-2" name="description" placeholder="Description" required />
+        <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+          <input name="featured" type="checkbox" />
+          Featured Product
+        </label>
+        <ProductImageUploadField />
         <button className="rounded-md bg-emerald-700 px-5 py-3 text-sm font-bold text-white lg:w-fit" type="submit">
           {isStaffUpload ? "Add product" : "Create online product"}
         </button>

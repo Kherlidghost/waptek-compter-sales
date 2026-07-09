@@ -48,9 +48,15 @@ export type Product = {
   branchId: string;
   name: string;
   slug: string;
+  sku?: string;
+  brand?: string;
   description: string;
+  specifications?: string;
   price: number;
+  discountPrice?: number | null;
+  warranty?: string | null;
   condition: "New" | "UK Used" | "Refurbished";
+  status?: "draft" | "active" | "inactive" | "archived" | "rejected";
   stock: number;
   image: string;
   specs: string[];

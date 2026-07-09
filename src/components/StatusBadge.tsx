@@ -11,7 +11,7 @@ const toneClasses: Record<StatusBadgeTone, string> = {
 function getTone(status: string): StatusBadgeTone {
   const normalized = status.toLowerCase();
 
-  if (["paid", "paid_approved", "confirmed", "completed", "fulfilled", "approved", "in_stock", "healthy", "active"].includes(normalized)) {
+  if (["paid", "paid_approved", "confirmed", "completed", "fulfilled", "approved", "in_stock", "healthy", "active", "published", "featured"].includes(normalized)) {
     return "success";
   }
 
@@ -19,7 +19,7 @@ function getTone(status: string): StatusBadgeTone {
     return "warning";
   }
 
-  if (["rejected", "payment_rejected", "out_of_stock", "cancelled"].includes(normalized)) {
+  if (["rejected", "payment_rejected", "out_of_stock", "cancelled", "archived"].includes(normalized)) {
     return "danger";
   }
 
@@ -46,6 +46,11 @@ function getDisplayLabel(status: string) {
     low_stock: "Low Stock",
     out_of_stock: "Out of Stock",
     in_stock: "In Stock",
+    active: "Published",
+    published: "Published",
+    inactive: "Hidden",
+    archived: "Archived",
+    featured: "Featured",
   };
 
   return labels[status.toLowerCase()] ?? status.replaceAll("_", " ");

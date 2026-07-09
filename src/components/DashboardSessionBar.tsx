@@ -33,7 +33,22 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
         </Link>
         <p className="mt-1 text-sm capitalize text-slate-500">{role} workspace</p>
       </div>
-      <SessionNavigation mode="dashboard" user={userSummary} />
+      <div className="flex flex-wrap items-center gap-3">
+        <nav className="flex flex-wrap gap-2 text-sm font-bold">
+          <Link className="rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" href={roleHome[role]}>
+            Dashboard
+          </Link>
+          {role === "admin" || role === "manager" || role === "vendor" ? (
+            <Link className="rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" href={`/${role}/products`}>
+              Products
+            </Link>
+          ) : null}
+          <Link className="rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" href="/orders">
+            Orders
+          </Link>
+        </nav>
+        <SessionNavigation mode="dashboard" user={userSummary} />
+      </div>
     </header>
   );
 }

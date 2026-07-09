@@ -12,9 +12,15 @@ type CatalogProductRow = {
   branch_id: string;
   name: string;
   slug: string;
+  sku: string | null;
+  brand: string | null;
   description: string;
+  specifications: string | null;
   price: string | number;
+  discount_price: string | number | null;
+  warranty: string | null;
   condition: Product["condition"];
+  featured: boolean | null;
   categories: JoinedOne<{ name: string; slug: string }>;
   branches: JoinedOne<{ name: string; state: BranchState; city: string }>;
   vendors: JoinedOne<{ business_name: string }>;
@@ -67,13 +73,19 @@ function mapProduct(row: CatalogProductRow): Product {
     branchId: branch?.state ? stateToId(branch.state) : row.branch_id,
     name: row.name,
     slug: row.slug,
+    sku: row.sku ?? undefined,
+    brand: row.brand ?? undefined,
     description: row.description,
-    price: Number(row.price),
+    specifications: row.specifications ?? undefined,
+    price: Number(row.discount_price ?? row.price),
+    discountPrice: row.discount_price === null ? null : Number(row.discount_price),
+    warranty: row.warranty,
     condition: row.condition,
+    status: "active",
     stock,
     image: publicProductImageUrl(primaryImage?.storage_path),
-    specs: [],
-    featured: stock > 0,
+    specs: row.specifications?.split("\n").map((item) => item.trim()).filter(Boolean) ?? [],
+    featured: Boolean(row.featured),
     categoryName: category?.name,
     branchName: branch?.name,
     branchState: branch?.state,
@@ -107,7 +119,7 @@ export async function getStorefrontCatalog() {
       supabase
         .from("products")
         .select(
-          "id, vendor_id, category_id, branch_id, name, slug, description, price, condition, categories(name, slug), branches(name, state, city), vendors(business_name), product_images(storage_path, is_primary), inventory(quantity)",
+          "id, vendor_id, category_id, branch_id, name, slug, sku, brand, description, specifications, price, discount_price, warranty, condition, featured, categories(name, slug), branches(name, state, city), vendors(business_name), product_images(storage_path, is_primary), inventory(quantity)",
         )
         .eq("status", "active")
         .order("created_at", { ascending: false }),

@@ -2,7 +2,7 @@ create extension if not exists "pgcrypto";
 
 create type public.user_role as enum ('admin', 'manager', 'cashier', 'vendor', 'customer');
 create type public.vendor_status as enum ('pending', 'approved', 'rejected');
-create type public.product_status as enum ('draft', 'active', 'inactive', 'rejected');
+create type public.product_status as enum ('draft', 'active', 'inactive', 'rejected', 'archived');
 create type public.cart_status as enum ('active', 'converted', 'abandoned');
 create type public.order_status as enum ('awaiting_receipt', 'receipt_uploaded', 'paid_approved', 'payment_rejected', 'processing', 'fulfilled', 'cancelled');
 create type public.receipt_status as enum ('pending', 'confirmed', 'rejected');
@@ -59,10 +59,16 @@ create table public.products (
   branch_id uuid not null references public.branches(id),
   name text not null,
   slug text not null unique,
+  sku text,
+  brand text,
   description text not null,
+  specifications text,
   price numeric(12, 2) not null check (price >= 0),
+  discount_price numeric(12, 2) check (discount_price is null or discount_price >= 0),
+  warranty text,
   condition text not null check (condition in ('New', 'UK Used', 'Refurbished')),
   status public.product_status not null default 'draft',
+  featured boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -192,6 +198,9 @@ create index products_vendor_id_idx on public.products(vendor_id);
 create index products_category_id_idx on public.products(category_id);
 create index products_branch_id_idx on public.products(branch_id);
 create index products_status_idx on public.products(status);
+create unique index products_sku_unique_idx on public.products(sku) where sku is not null;
+create index products_brand_idx on public.products(brand);
+create index products_featured_idx on public.products(featured);
 create index orders_profile_id_idx on public.orders(profile_id);
 create index orders_branch_id_idx on public.orders(branch_id);
 create index orders_status_idx on public.orders(status);
@@ -453,6 +462,19 @@ create policy "staff create notifications" on public.notifications for insert to
 
 create policy "public reads product image objects" on storage.objects for select to anon, authenticated using (bucket_id = 'product-images');
 create policy "vendors upload product image objects" on storage.objects for insert to authenticated with check (bucket_id = 'product-images');
+create policy "staff and vendors delete product image objects" on storage.objects for delete to authenticated using (
+  bucket_id = 'product-images'
+  and (
+    public.current_user_role() = 'admin'
+    or name in (
+      select pi.storage_path
+      from public.product_images pi
+      join public.products p on p.id = pi.product_id
+      where p.vendor_id = public.current_vendor_id()
+        or (public.current_user_role() = 'manager' and p.branch_id = public.current_user_branch_id())
+    )
+  )
+);
 create policy "users upload own receipt objects" on storage.objects for insert to authenticated with check (
   bucket_id = 'payment-receipts'
   and owner = (select auth.uid())
