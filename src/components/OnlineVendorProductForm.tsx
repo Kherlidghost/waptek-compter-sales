@@ -3,11 +3,11 @@ import { branches, categories } from "@/lib/marketplace-data";
 
 export function OnlineVendorProductForm({ error, success }: { error?: string; success?: string }) {
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <section id="add-product" className="scroll-mt-24 rounded-lg border border-emerald-200 bg-white p-5 shadow-sm">
       <p className="text-sm font-bold uppercase text-emerald-700">Online product upload</p>
       <h2 className="mt-1 text-xl font-black text-slate-950">Create product with Supabase Storage image</h2>
       <p className="mt-2 text-sm leading-6 text-slate-600">
-        Approved vendors can use this form after deployment. The image is uploaded to the `product-images` bucket.
+        Use this live form to publish products to the marketplace. The image is uploaded to the `product-images` bucket.
       </p>
       {error ? <p className="mt-4 rounded-md bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p> : null}
       {success ? <p className="mt-4 rounded-md bg-emerald-50 p-3 text-sm font-semibold text-emerald-800">{success}</p> : null}

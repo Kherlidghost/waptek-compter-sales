@@ -171,21 +171,21 @@ export function VendorDashboard() {
             <h2 className="text-xl font-black text-slate-950">Quick actions</h2>
             <p className="mt-1 text-sm text-slate-600">Manage listings, inventory, and vendor order visibility.</p>
           </div>
-          <button className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-bold text-white" onClick={() => setForm(emptyForm)} type="button">
+          <Link className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-bold text-white" href="#add-product">
             Add Product
-          </button>
+          </Link>
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            ["Manage Products", "Own products and inventory"],
-            ["View Orders", "Orders for own products"],
-            ["Update Inventory", `${lowStockCount} low-stock items`],
-            ["Add Product", "Create a new listing"],
-          ].map(([label, description]) => (
-            <div key={label} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+            ["Manage Products", "Own products and inventory", "#vendor-products"],
+            ["View Orders", "Orders for own products", "#vendor-orders"],
+            ["Update Inventory", `${lowStockCount} low-stock items`, "#vendor-inventory"],
+            ["Add Product", "Create a live marketplace listing", "#add-product"],
+          ].map(([label, description, href]) => (
+            <Link key={label} className="rounded-md border border-slate-200 bg-slate-50 p-4 hover:border-emerald-300 hover:bg-emerald-50" href={href}>
               <p className="font-black text-slate-950">{label}</p>
               <p className="mt-1 text-sm text-slate-600">{description}</p>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
@@ -247,10 +247,16 @@ export function VendorDashboard() {
         </div>
       </section>
 
-      <section className="grid gap-8 lg:grid-cols-[420px_1fr]">
+      <section id="vendor-products" className="grid scroll-mt-24 gap-8 lg:grid-cols-[420px_1fr]">
         <form onSubmit={submitProduct} className="h-fit rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm font-bold uppercase text-emerald-700">{form.id ? "Edit product" : "Add product"}</p>
-          <h2 className="mt-1 text-2xl font-black text-slate-950">{form.id ? "Update listing" : "Create listing"}</h2>
+          <p className="text-sm font-bold uppercase text-emerald-700">{form.id ? "Edit local planner item" : "Local inventory planner"}</p>
+          <h2 className="mt-1 text-2xl font-black text-slate-950">{form.id ? "Update planner item" : "Plan stock locally"}</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            This local planner helps preview inventory data on the dashboard. Use the live online upload form above to publish products to Supabase.
+          </p>
+          <Link className="mt-4 inline-flex rounded-md bg-emerald-700 px-4 py-2 text-sm font-bold text-white" href="#add-product">
+            Go to live product upload
+          </Link>
           <div className="mt-6 grid gap-4">
             <input
               className="h-11 rounded-md border border-slate-300 px-3"
@@ -327,7 +333,7 @@ export function VendorDashboard() {
             />
             <div className="flex flex-wrap gap-3">
               <button className="rounded-md bg-emerald-700 px-5 py-3 text-sm font-bold text-white" type="submit">
-                {form.id ? "Save changes" : "Add product"}
+                {form.id ? "Save planner changes" : "Add planner item"}
               </button>
               {form.id ? (
                 <button
@@ -346,7 +352,7 @@ export function VendorDashboard() {
           </div>
         </form>
 
-        <section className="space-y-6">
+        <section id="vendor-inventory" className="scroll-mt-24 space-y-6">
           <div>
             <h2 className="text-xl font-black text-slate-950">Own products and inventory</h2>
             <p className="mt-1 text-sm text-slate-600">Only products for the active approved vendor are shown here.</p>
@@ -462,7 +468,7 @@ export function VendorDashboard() {
         </div>
       </section>
 
-      <section className="space-y-4">
+      <section id="vendor-orders" className="scroll-mt-24 space-y-4">
         <div>
           <h2 className="text-xl font-black text-slate-950">Orders for own products</h2>
           <p className="mt-1 text-sm text-slate-600">Filtered to orders that include products owned by this vendor.</p>
