@@ -1,7 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
 import type { UserRole } from "./types";
 
 export const incompleteProfileMessage = "Your account profile is incomplete. Please contact support.";
+export const emailNotConfirmedMessage = "Please confirm your email before accessing your account.";
 
 export type AuthProfile = {
   id: string;
@@ -89,6 +91,10 @@ export async function getAuthProfile(supabase: SupabaseClient, userId: string): 
     role: data.role,
     branch_id: data.branch_id ?? null,
   };
+}
+
+export function isEmailConfirmed(user: User | null | undefined) {
+  return Boolean(user?.email_confirmed_at || user?.confirmed_at);
 }
 
 function getRoleValue(profileOrRole: AuthProfile | UserRole | null | undefined) {

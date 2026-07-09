@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getAuthProfile, incompleteProfileMessage, isCashier, isCustomer, isManager, isSafeRedirect, roleHome, routeAccess } from "@/lib/auth";
+import { emailNotConfirmedMessage, getAuthProfile, incompleteProfileMessage, isCashier, isCustomer, isEmailConfirmed, isManager, isSafeRedirect, roleHome, routeAccess } from "@/lib/auth";
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
@@ -15,6 +15,11 @@ export async function middleware(request: NextRequest) {
 
   if (!access) {
     if (pathname === "/login" && user) {
+      if (!isEmailConfirmed(user)) {
+        await supabase.auth.signOut();
+        return response;
+      }
+
       const next = request.nextUrl.searchParams.get("next");
       const profile = await getAuthProfile(supabase, user.id);
       if (!profile) {
@@ -36,6 +41,13 @@ export async function middleware(request: NextRequest) {
 
   if (!user) {
     const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("next", pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  if (!isEmailConfirmed(user)) {
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("error", emailNotConfirmedMessage);
     loginUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(loginUrl);
   }

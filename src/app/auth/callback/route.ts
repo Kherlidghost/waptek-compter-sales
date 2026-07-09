@@ -7,12 +7,21 @@ export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
   const rawNext = requestUrl.searchParams.get("next");
-  const next = isSafeRedirect(rawNext) ? rawNext : "/orders";
+  const next = isSafeRedirect(rawNext) ? rawNext : "/products";
 
   if (code && isSupabaseConfigured()) {
     const supabase = await createClient();
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("error", "Email confirmation failed. Please request a new confirmation email.");
+      return NextResponse.redirect(loginUrl);
+    }
   }
 
-  return NextResponse.redirect(new URL(next, request.url));
+  const destination = new URL(next, request.url);
+  if (destination.pathname === "/login") {
+    destination.searchParams.set("success", "Email confirmed. You can now sign in.");
+  }
+  return NextResponse.redirect(destination);
 }
