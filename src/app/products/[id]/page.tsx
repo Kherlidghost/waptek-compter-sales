@@ -84,7 +84,12 @@ export default async function ProductDetailsPage({ params }: { params: Promise<{
         <aside className="h-fit rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
           <p className="text-3xl font-black text-slate-950">{formatNaira(product.price)}</p>
           <p className="mt-2 text-sm text-slate-600">{product.condition} · {product.stock} in stock</p>
-          <p className="mt-4 text-sm text-slate-600">Vendor: {product.vendorName ?? "Approved vendor"}</p>
+          <p className="mt-4 text-sm text-slate-600">
+            Vendor:{" "}
+            <Link className="font-bold text-slate-900 hover:text-emerald-700" href={`/vendors/${product.vendorId}`}>
+              {product.vendorName ?? "Approved vendor"}
+            </Link>
+          </p>
           <p className="mt-1 text-sm text-slate-600">Branch: {branch?.city ?? product.branchCity}, {branch?.state ?? product.branchState}</p>
           <ProductCustomerActions product={product} />
         </aside>

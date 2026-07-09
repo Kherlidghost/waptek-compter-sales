@@ -1,7 +1,7 @@
 create extension if not exists "pgcrypto";
 
 create type public.user_role as enum ('admin', 'manager', 'cashier', 'vendor', 'customer');
-create type public.vendor_status as enum ('pending', 'approved', 'rejected');
+create type public.vendor_status as enum ('pending', 'approved', 'rejected', 'suspended', 'inactive');
 create type public.product_status as enum ('draft', 'active', 'inactive', 'rejected', 'archived');
 create type public.cart_status as enum ('active', 'converted', 'abandoned');
 create type public.order_status as enum ('awaiting_receipt', 'receipt_uploaded', 'paid_approved', 'payment_rejected', 'processing', 'ready_for_pickup', 'fulfilled', 'cancelled');
@@ -38,9 +38,23 @@ create table public.vendors (
   branch_id uuid not null references public.branches(id),
   business_name text not null,
   business_phone text,
+  owner_name text,
+  business_email text,
+  business_address text,
+  state text,
+  city text,
+  business_type text,
+  national_id_or_cac text,
+  profile_photo_path text,
+  business_logo_path text,
   status public.vendor_status not null default 'pending',
   approved_by uuid references public.profiles(id),
   approved_at timestamptz,
+  rejection_reason text,
+  suspension_reason text,
+  suspended_at timestamptz,
+  reactivated_at timestamptz,
+  updated_at timestamptz not null default now(),
   created_at timestamptz not null default now()
 );
 
@@ -237,6 +251,8 @@ create index profiles_role_idx on public.profiles(role);
 create index profiles_branch_id_idx on public.profiles(branch_id);
 create index vendors_status_idx on public.vendors(status);
 create index vendors_profile_id_idx on public.vendors(profile_id);
+create index vendors_business_name_idx on public.vendors(business_name);
+create index vendors_state_city_idx on public.vendors(state, city);
 create index products_vendor_id_idx on public.products(vendor_id);
 create index products_category_id_idx on public.products(category_id);
 create index products_branch_id_idx on public.products(branch_id);
@@ -338,7 +354,8 @@ revoke execute on function public.handle_new_user() from public, anon, authentic
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values
   ('product-images', 'product-images', true, 5242880, array['image/jpeg', 'image/png', 'image/webp']),
-  ('payment-receipts', 'payment-receipts', false, 5242880, array['image/jpeg', 'image/png', 'image/webp', 'application/pdf'])
+  ('payment-receipts', 'payment-receipts', false, 5242880, array['image/jpeg', 'image/png', 'image/webp', 'application/pdf']),
+  ('vendor-assets', 'vendor-assets', true, 5242880, array['image/jpeg', 'image/png', 'image/webp'])
 on conflict (id) do nothing;
 
 alter table public.profiles enable row level security;
@@ -587,6 +604,18 @@ create policy "staff and vendors delete product image objects" on storage.object
         or (public.current_user_role() = 'manager' and p.branch_id = public.current_user_branch_id())
     )
   )
+);
+
+create policy "public reads vendor assets" on storage.objects for select to anon, authenticated using (bucket_id = 'vendor-assets');
+create policy "vendors upload own vendor assets" on storage.objects for insert to authenticated with check (
+  bucket_id = 'vendor-assets' and (storage.foldername(name))[1] = (select auth.uid())::text
+);
+create policy "vendors update own vendor assets" on storage.objects for update to authenticated
+using (bucket_id = 'vendor-assets' and (storage.foldername(name))[1] = (select auth.uid())::text)
+with check (bucket_id = 'vendor-assets' and (storage.foldername(name))[1] = (select auth.uid())::text);
+create policy "vendors delete own vendor assets" on storage.objects for delete to authenticated using (
+  bucket_id = 'vendor-assets'
+  and ((storage.foldername(name))[1] = (select auth.uid())::text or public.current_user_role() = 'admin')
 );
 create policy "users upload own receipt objects" on storage.objects for insert to authenticated with check (
   bucket_id = 'payment-receipts'

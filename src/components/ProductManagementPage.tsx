@@ -321,6 +321,7 @@ function DashboardSideNav({ role }: { role: ProductManagementRole }) {
   const links = [
     ["Dashboard", base],
     ["Products", `${base}/products`],
+    ...(role === "admin" ? [["Vendors", "/admin/vendors"]] : []),
     ["Categories", `${base}#categories`],
     ["Inventory", `${base}/inventory`],
     ["Orders", `${base}/orders`],

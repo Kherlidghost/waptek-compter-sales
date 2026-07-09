@@ -2,7 +2,7 @@ export type UserRole = "admin" | "manager" | "cashier" | "vendor" | "customer";
 
 export type BranchState = "Adamawa" | "Yobe" | "Borno";
 
-export type VendorStatus = "pending" | "approved" | "rejected";
+export type VendorStatus = "pending" | "approved" | "rejected" | "suspended" | "inactive";
 
 export type OrderStatus =
   | "awaiting_receipt"

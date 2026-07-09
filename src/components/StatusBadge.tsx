@@ -15,11 +15,11 @@ function getTone(status: string): StatusBadgeTone {
     return "success";
   }
 
-  if (["pending", "awaiting_receipt", "receipt_uploaded", "processing", "low_stock"].includes(normalized)) {
+  if (["pending", "awaiting_receipt", "receipt_uploaded", "processing", "low_stock", "inactive"].includes(normalized)) {
     return "warning";
   }
 
-  if (["rejected", "payment_rejected", "out_of_stock", "cancelled", "archived", "damaged"].includes(normalized)) {
+  if (["rejected", "payment_rejected", "out_of_stock", "cancelled", "archived", "damaged", "suspended"].includes(normalized)) {
     return "danger";
   }
 
@@ -42,6 +42,8 @@ function getDisplayLabel(status: string) {
     completed: "Completed",
     confirmed: "Payment Confirmed",
     pending: "Pending Payment",
+    suspended: "Suspended",
+    inactive: "Inactive",
     rejected: "Payment Rejected",
     low_stock: "Low Stock",
     out_of_stock: "Out of Stock",
@@ -49,7 +51,6 @@ function getDisplayLabel(status: string) {
     in_stock: "In Stock",
     active: "Published",
     published: "Published",
-    inactive: "Hidden",
     archived: "Archived",
     featured: "Featured",
   };

@@ -401,6 +401,7 @@ function InventoryNav({ role }: { role: InventoryRole }) {
   const links = [
     ["Dashboard", base],
     ["Products", `${base}/products`],
+    ...(role === "admin" ? [["Vendors", "/admin/vendors"]] : []),
     ["Inventory", `${base}/inventory`],
     ["Orders", `${base}/orders`],
     ["Reports", `${base}/inventory`],

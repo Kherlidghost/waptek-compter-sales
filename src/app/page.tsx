@@ -78,7 +78,7 @@ export default async function Home({
                 <Link className="rounded-md border border-white/20 px-5 py-3 text-sm font-bold hover:bg-white/10" href="/repairs">
                   Request Repair
                 </Link>
-                <Link className="rounded-md border border-white/20 px-5 py-3 text-sm font-bold hover:bg-white/10" href="/login?next=/vendor">
+                <Link className="rounded-md border border-white/20 px-5 py-3 text-sm font-bold hover:bg-white/10" href="/become-a-vendor">
                   Become a Vendor
                 </Link>
               </div>
@@ -170,7 +170,7 @@ export default async function Home({
                 Join our verified vendor network and reach customers looking for computers, accessories, and repair-related products.
               </p>
             </div>
-            <Link className="w-fit rounded-md bg-emerald-500 px-5 py-3 text-sm font-bold text-slate-950 hover:bg-emerald-400" href="/login?next=/vendor">
+            <Link className="w-fit rounded-md bg-emerald-500 px-5 py-3 text-sm font-bold text-slate-950 hover:bg-emerald-400" href="/become-a-vendor">
               Become a Vendor
             </Link>
           </div>

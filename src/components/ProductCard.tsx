@@ -36,7 +36,12 @@ export function ProductCard({ product }: { product: Product }) {
           <p className="mt-1 line-clamp-2 text-sm text-slate-600">{product.description}</p>
         </div>
         <div className="grid gap-2 text-sm text-slate-600">
-          <p>Vendor: <span className="font-semibold text-slate-800">{vendorName}</span></p>
+          <p>
+            Vendor:{" "}
+            <Link className="font-semibold text-slate-800 hover:text-emerald-700" href={`/vendors/${product.vendorId}`}>
+              {vendorName}
+            </Link>
+          </p>
           <p>Location: <span className="font-semibold text-slate-800">{branchName ?? branchState ?? "Online"}</span></p>
           <span className={`w-fit rounded-md px-2 py-1 text-xs font-bold ${stockClasses}`}>{stockStatus}</span>
         </div>

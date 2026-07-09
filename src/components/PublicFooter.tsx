@@ -4,7 +4,7 @@ const quickLinks = [
   { href: "/products", label: "Products" },
   { href: "/categories", label: "Categories" },
   { href: "/repairs", label: "Repairs" },
-  { href: "/login?next=/vendor", label: "Become a Vendor" },
+  { href: "/become-a-vendor", label: "Become a Vendor" },
   { href: "/cart", label: "Cart" },
 ];
 
