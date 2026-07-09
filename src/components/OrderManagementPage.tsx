@@ -240,7 +240,7 @@ function DashboardOrderNav({ role }: { role: OrderManagementRole }) {
         ...(role === "admin" ? [["Vendors", "/admin/vendors"]] : []),
         ["Inventory", `${base}/inventory`],
         ["Orders", `${base}/orders`],
-        ["Reports", `${base}/orders`],
+        ["Reports", `${base}/reports`],
         ["Logout", "/"],
       ].map(([label, href]) => <Link key={label} className="whitespace-nowrap rounded-md px-3 py-2 font-bold text-slate-700 hover:bg-slate-100" href={href}>{label}</Link>)}
     </nav>

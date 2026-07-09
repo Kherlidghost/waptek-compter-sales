@@ -404,7 +404,7 @@ function InventoryNav({ role }: { role: InventoryRole }) {
     ...(role === "admin" ? [["Vendors", "/admin/vendors"]] : []),
     ["Inventory", `${base}/inventory`],
     ["Orders", `${base}/orders`],
-    ["Reports", `${base}/inventory`],
+    ["Reports", `${base}/reports`],
   ];
   return (
     <nav className="flex gap-2 overflow-x-auto rounded-lg border border-slate-200 bg-white p-2 text-sm shadow-sm">
