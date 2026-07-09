@@ -16,6 +16,9 @@ create table public.branches (
   state text not null check (state in ('Adamawa', 'Yobe', 'Borno')),
   city text not null,
   address text,
+  phone text,
+  support_contact text,
+  updated_at timestamptz not null default now(),
   created_at timestamptz not null default now()
 );
 
@@ -25,6 +28,7 @@ create table public.profiles (
   phone text,
   role public.user_role not null default 'customer',
   branch_id uuid references public.branches(id),
+  is_active boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -44,6 +48,7 @@ create table public.vendors (
   state text,
   city text,
   business_type text,
+  business_description text,
   national_id_or_cac text,
   profile_photo_path text,
   business_logo_path text,
@@ -247,6 +252,34 @@ create table public.notifications (
   created_at timestamptz not null default now()
 );
 
+create table public.company_settings (
+  id integer primary key default 1 check (id = 1),
+  company_name text not null default 'CompuMarket NG',
+  logo_path text,
+  support_email text,
+  support_phone text,
+  whatsapp_number text,
+  business_address text,
+  about_text text,
+  bank_name text,
+  account_name text,
+  account_number text,
+  payment_instructions text,
+  updated_by uuid references public.profiles(id),
+  updated_at timestamptz not null default now()
+);
+
+create table public.marketplace_settings (
+  id integer primary key default 1 check (id = 1),
+  allow_vendor_registration boolean not null default true,
+  require_vendor_approval boolean not null default true,
+  require_email_confirmation boolean not null default true,
+  allow_guest_cart boolean not null default true,
+  default_product_status text not null default 'draft' check (default_product_status in ('draft', 'active', 'inactive')),
+  updated_by uuid references public.profiles(id),
+  updated_at timestamptz not null default now()
+);
+
 create index profiles_role_idx on public.profiles(role);
 create index profiles_branch_id_idx on public.profiles(branch_id);
 create index vendors_status_idx on public.vendors(status);
@@ -290,11 +323,14 @@ end;
 $$;
 
 create trigger set_profiles_updated_at before update on public.profiles for each row execute function public.set_updated_at();
+create trigger set_branches_updated_at before update on public.branches for each row execute function public.set_updated_at();
 create trigger set_products_updated_at before update on public.products for each row execute function public.set_updated_at();
 create trigger set_inventory_updated_at before update on public.inventory for each row execute function public.set_updated_at();
 create trigger set_carts_updated_at before update on public.carts for each row execute function public.set_updated_at();
 create trigger set_orders_updated_at before update on public.orders for each row execute function public.set_updated_at();
 create trigger set_repair_requests_updated_at before update on public.repair_requests for each row execute function public.set_updated_at();
+create trigger set_company_settings_updated_at before update on public.company_settings for each row execute function public.set_updated_at();
+create trigger set_marketplace_settings_updated_at before update on public.marketplace_settings for each row execute function public.set_updated_at();
 
 create or replace function public.current_user_role()
 returns public.user_role
@@ -355,7 +391,25 @@ insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_typ
 values
   ('product-images', 'product-images', true, 5242880, array['image/jpeg', 'image/png', 'image/webp']),
   ('payment-receipts', 'payment-receipts', false, 5242880, array['image/jpeg', 'image/png', 'image/webp', 'application/pdf']),
-  ('vendor-assets', 'vendor-assets', true, 5242880, array['image/jpeg', 'image/png', 'image/webp'])
+  ('vendor-assets', 'vendor-assets', true, 5242880, array['image/jpeg', 'image/png', 'image/webp']),
+  ('settings-assets', 'settings-assets', true, 5242880, array['image/jpeg', 'image/png', 'image/webp'])
+on conflict (id) do nothing;
+
+insert into public.company_settings (id, company_name, support_email, support_phone, whatsapp_number, business_address, about_text, payment_instructions)
+values (
+  1,
+  'CompuMarket NG',
+  'support@compumarket.ng',
+  '+234 800 000 0001',
+  '+234 800 000 0000',
+  'Adamawa, Yobe, and Borno',
+  'Computer marketplace for laptops, desktops, accessories, and professional repair services.',
+  'Bank account details will be provided by support.'
+)
+on conflict (id) do nothing;
+
+insert into public.marketplace_settings (id)
+values (1)
 on conflict (id) do nothing;
 
 alter table public.profiles enable row level security;
@@ -377,11 +431,14 @@ alter table public.repair_requests enable row level security;
 alter table public.wishlists enable row level security;
 alter table public.reviews enable row level security;
 alter table public.notifications enable row level security;
+alter table public.company_settings enable row level security;
+alter table public.marketplace_settings enable row level security;
 
 grant usage on schema public to anon, authenticated;
-grant select on public.branches, public.categories, public.products, public.product_images, public.inventory, public.reviews to anon, authenticated;
+grant select on public.branches, public.categories, public.products, public.product_images, public.inventory, public.reviews, public.company_settings, public.marketplace_settings to anon, authenticated;
 grant select on public.vendors to anon;
-grant select, insert, update, delete on public.profiles, public.vendors, public.carts, public.cart_items, public.orders, public.order_items, public.payment_receipts, public.repair_requests, public.wishlists, public.notifications to authenticated;
+grant select, insert, update, delete on public.profiles, public.vendors, public.branches, public.carts, public.cart_items, public.orders, public.order_items, public.payment_receipts, public.repair_requests, public.wishlists, public.notifications to authenticated;
+grant select, insert, update on public.company_settings, public.marketplace_settings to authenticated;
 grant select, insert, update, delete on public.inventory to authenticated;
 grant select, insert on public.inventory_movements to authenticated;
 grant select, insert, update on public.stock_transfers to authenticated;
@@ -389,6 +446,10 @@ grant select, insert on public.order_events to authenticated;
 grant usage, select on all sequences in schema public to authenticated;
 
 create policy "public reads branches" on public.branches for select to anon, authenticated using (true);
+create policy "admin manages branches" on public.branches for all to authenticated using (public.current_user_role() = 'admin') with check (public.current_user_role() = 'admin');
+create policy "manager updates assigned branch" on public.branches for update to authenticated
+using (public.current_user_role() = 'manager' and id = public.current_user_branch_id())
+with check (public.current_user_role() = 'manager' and id = public.current_user_branch_id());
 create policy "public reads categories" on public.categories for select to anon, authenticated using (true);
 create policy "public reads active products" on public.products for select to anon, authenticated using (status = 'active');
 create policy "public reads product images" on public.product_images for select to anon, authenticated using (true);
@@ -411,6 +472,12 @@ create policy "staff read vendors" on public.vendors for select to authenticated
   or (public.current_user_role() = 'manager' and branch_id = public.current_user_branch_id())
 );
 create policy "admins approve vendors" on public.vendors for update to authenticated using (public.current_user_role() = 'admin') with check (public.current_user_role() = 'admin');
+create policy "vendors update own vendor profile" on public.vendors for update to authenticated using ((select auth.uid()) = profile_id) with check ((select auth.uid()) = profile_id);
+
+create policy "public reads company settings" on public.company_settings for select to anon, authenticated using (true);
+create policy "admin manages company settings" on public.company_settings for all to authenticated using (public.current_user_role() = 'admin') with check (public.current_user_role() = 'admin');
+create policy "public reads marketplace settings" on public.marketplace_settings for select to anon, authenticated using (true);
+create policy "admin manages marketplace settings" on public.marketplace_settings for all to authenticated using (public.current_user_role() = 'admin') with check (public.current_user_role() = 'admin');
 
 create policy "approved vendors insert products" on public.products for insert to authenticated with check (vendor_id = public.current_vendor_id());
 create policy "approved vendors update own products" on public.products for update to authenticated using (vendor_id = public.current_vendor_id()) with check (vendor_id = public.current_vendor_id());
@@ -617,6 +684,10 @@ create policy "vendors delete own vendor assets" on storage.objects for delete t
   bucket_id = 'vendor-assets'
   and ((storage.foldername(name))[1] = (select auth.uid())::text or public.current_user_role() = 'admin')
 );
+create policy "public reads settings assets" on storage.objects for select to anon, authenticated using (bucket_id = 'settings-assets');
+create policy "admin uploads settings assets" on storage.objects for insert to authenticated with check (bucket_id = 'settings-assets' and public.current_user_role() = 'admin');
+create policy "admin updates settings assets" on storage.objects for update to authenticated using (bucket_id = 'settings-assets' and public.current_user_role() = 'admin') with check (bucket_id = 'settings-assets' and public.current_user_role() = 'admin');
+create policy "admin deletes settings assets" on storage.objects for delete to authenticated using (bucket_id = 'settings-assets' and public.current_user_role() = 'admin');
 create policy "users upload own receipt objects" on storage.objects for insert to authenticated with check (
   bucket_id = 'payment-receipts'
   and owner = (select auth.uid())

@@ -405,6 +405,7 @@ function InventoryNav({ role }: { role: InventoryRole }) {
     ["Inventory", `${base}/inventory`],
     ["Orders", `${base}/orders`],
     ["Reports", `${base}/reports`],
+    ["Settings", `${base}/settings`],
   ];
   return (
     <nav className="flex gap-2 overflow-x-auto rounded-lg border border-slate-200 bg-white p-2 text-sm shadow-sm">

@@ -65,6 +65,11 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
               Reports
             </Link>
           ) : null}
+          {role === "admin" || role === "manager" || role === "cashier" || role === "vendor" ? (
+            <Link className="rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" href={`/${role}/settings`}>
+              Settings
+            </Link>
+          ) : null}
         </nav>
         <SessionNavigation mode="dashboard" user={userSummary} />
       </div>
