@@ -11,7 +11,7 @@ const toneClasses: Record<StatusBadgeTone, string> = {
 function getTone(status: string): StatusBadgeTone {
   const normalized = status.toLowerCase();
 
-  if (["paid", "paid_approved", "confirmed", "completed", "fulfilled", "approved", "in_stock", "healthy", "active", "published", "featured"].includes(normalized)) {
+  if (["paid", "paid_approved", "confirmed", "completed", "fulfilled", "ready_for_pickup", "approved", "in_stock", "healthy", "active", "published", "featured"].includes(normalized)) {
     return "success";
   }
 
@@ -36,7 +36,7 @@ function getDisplayLabel(status: string) {
     receipt_uploaded: "Receipt Uploaded",
     paid_approved: "Payment Confirmed",
     payment_rejected: "Payment Rejected",
-    processing: "Processing",
+    processing: "Preparing",
     ready_for_pickup: "Ready for Pickup",
     fulfilled: "Completed",
     completed: "Completed",

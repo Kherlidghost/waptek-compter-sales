@@ -1,23 +1,35 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { reuploadOrderReceipt, cancelManagedOrder } from "@/app/orders/manage/actions";
 import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
+import { PrintInvoiceButton } from "@/components/PrintInvoiceButton";
+import { StatusBadge } from "@/components/StatusBadge";
 import { getAuthProfile, isAdmin, isCashier, isCustomer, isManager, isVendor, type AuthProfile } from "@/lib/auth";
 import { formatNaira, getBranch, products } from "@/lib/marketplace-data";
-import { getTrackedOrder, orderSteps, trackedOrders } from "@/lib/customer-flow";
+import { getTrackedOrder, orderSteps } from "@/lib/customer-flow";
 import { createClient } from "@/lib/supabase/server";
+import type { OrderStatus } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 type OnlineOrderDetail = {
+  id: string;
   order_number: string;
   customer_name: string;
+  customer_phone: string;
+  customer_email: string | null;
   branch_id: string;
-  status: (typeof trackedOrders)[number]["status"];
+  status: OrderStatus;
   total: number | string;
   profile_id: string | null;
+  delivery_method: string | null;
+  payment_method: string | null;
+  cashier_note: string | null;
+  support_note: string | null;
   created_at: string;
-  payment_receipts: Array<{ status: "pending" | "confirmed" | "rejected" }>;
+  payment_receipts: Array<{ status: "pending" | "confirmed" | "rejected"; review_note: string | null; created_at: string }>;
+  order_events: Array<{ event_type: string; note: string | null; created_at: string }>;
   order_items: Array<{
     product_id: string;
     vendor_id: string;
@@ -27,12 +39,28 @@ type OnlineOrderDetail = {
   }>;
 };
 
+type OrderView = {
+  id: string;
+  dbId?: string;
+  customerName: string;
+  customerPhone?: string;
+  branchId: string;
+  status: OrderStatus;
+  total: number;
+  receiptStatus: "pending" | "confirmed" | "rejected";
+  cashierNote?: string | null;
+  deliveryMethod: string;
+  paymentMethod: string;
+  createdAt: string;
+  items: Array<{ productId: string; productName?: string; productSlug?: string; quantity: number; price: number }>;
+};
+
 async function getOnlineOrder(id: string, profile: AuthProfile) {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("orders")
-      .select("order_number, customer_name, profile_id, branch_id, status, total, created_at, payment_receipts(status), order_items(product_id, vendor_id, quantity, unit_price, products(name, slug))")
+      .select("id, order_number, customer_name, customer_phone, customer_email, profile_id, branch_id, status, total, delivery_method, payment_method, cashier_note, support_note, created_at, payment_receipts(status, review_note, created_at), order_events(event_type, note, created_at), order_items(product_id, vendor_id, quantity, unit_price, products(name, slug))")
       .eq("order_number", id)
       .maybeSingle();
 
@@ -51,11 +79,18 @@ async function getOnlineOrder(id: string, profile: AuthProfile) {
 
     return {
       id: order.order_number,
+      dbId: order.id,
       customerName: order.customer_name,
+      customerPhone: order.customer_phone,
+      customerEmail: order.customer_email,
       branchId: order.branch_id,
       status: order.status,
       total: Number(order.total),
       receiptStatus: order.payment_receipts?.[0]?.status ?? "pending",
+      cashierNote: order.cashier_note ?? order.payment_receipts?.[0]?.review_note ?? null,
+      supportNote: order.support_note,
+      deliveryMethod: order.delivery_method ?? "Pickup",
+      paymentMethod: order.payment_method ?? "Manual bank transfer",
       createdAt: new Date(order.created_at).toLocaleDateString("en-NG"),
       items: order.order_items.map((item) => {
         const joinedProduct = Array.isArray(item.products) ? item.products[0] : item.products;
@@ -74,6 +109,22 @@ async function getOnlineOrder(id: string, profile: AuthProfile) {
   }
 }
 
+function normalizeFallbackOrder(order: ReturnType<typeof getTrackedOrder>): OrderView | null {
+  if (!order) return null;
+  return {
+    id: order.id,
+    customerName: order.customerName,
+    branchId: order.branchId,
+    status: order.status as OrderStatus,
+    total: order.total,
+    receiptStatus: order.receiptStatus,
+    deliveryMethod: "Pickup",
+    paymentMethod: "Manual bank transfer",
+    createdAt: order.createdAt,
+    items: order.items,
+  };
+}
+
 export default async function OrderTrackingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
@@ -88,7 +139,8 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
     notFound();
   }
 
-  const order = (await getOnlineOrder(id, profile)) ?? (isCustomer(profile) ? getTrackedOrder(id) : null);
+  const onlineOrder = await getOnlineOrder(id, profile);
+  const order: OrderView | null = onlineOrder ?? (isCustomer(profile) ? normalizeFallbackOrder(getTrackedOrder(id)) : null);
 
   if (!order) {
     notFound();
@@ -96,6 +148,8 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
 
   const currentIndex = Math.max(0, orderSteps.findIndex((step) => step.key === order.status));
   const branch = getBranch(order.branchId);
+  const canReuploadReceipt = isCustomer(profile) && order.status === "payment_rejected" && Boolean(order.dbId);
+  const canCancel = isCustomer(profile) && Boolean(order.dbId) && ["awaiting_receipt", "receipt_uploaded", "payment_rejected"].includes(order.status);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -109,9 +163,12 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
               {branch?.name} · Receipt {order.receiptStatus} · {order.createdAt}
             </p>
           </div>
-          <Link className="rounded-md border border-slate-300 px-4 py-2 text-sm font-bold" href="/orders">
-            All orders
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <PrintInvoiceButton />
+            <Link className="rounded-md border border-slate-300 px-4 py-2 text-sm font-bold" href="/orders">
+              All orders
+            </Link>
+          </div>
         </div>
 
         <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
@@ -159,9 +216,30 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
             <h2 className="text-lg font-black text-slate-950">Payment summary</h2>
             <dl className="mt-4 space-y-3 text-sm">
               <div><dt className="text-slate-500">Order total</dt><dd className="font-bold">{formatNaira(order.total)}</dd></div>
+              <div><dt className="text-slate-500">Order status</dt><dd className="mt-1"><StatusBadge status={order.status} /></dd></div>
               <div><dt className="text-slate-500">Receipt status</dt><dd className="font-bold capitalize">{order.receiptStatus}</dd></div>
-              <div><dt className="text-slate-500">Support</dt><dd className="font-bold">Simulated WhatsApp + dashboard alerts</dd></div>
+              <div><dt className="text-slate-500">Delivery method</dt><dd className="font-bold">{order.deliveryMethod}</dd></div>
+              <div><dt className="text-slate-500">Payment method</dt><dd className="font-bold">{order.paymentMethod}</dd></div>
+              <div><dt className="text-slate-500">Customer</dt><dd className="font-bold">{order.customerName}</dd><dd className="text-slate-600">{order.customerPhone ?? "Phone not provided"}</dd></div>
+              <div><dt className="text-slate-500">Cashier note</dt><dd className="font-bold">{order.cashierNote ?? "No cashier note yet."}</dd></div>
+              <div><dt className="text-slate-500">Support</dt><dd className="font-bold">In-app order notifications</dd></div>
             </dl>
+            {canReuploadReceipt ? (
+              <form action={reuploadOrderReceipt} className="mt-5 grid gap-3 rounded-md border border-amber-200 bg-amber-50 p-4">
+                <input type="hidden" name="return_to" value={`/orders/${order.id}`} />
+                <input type="hidden" name="order_id" value={order.dbId ?? ""} />
+                <label className="text-sm font-bold text-slate-950" htmlFor="receipt">Upload another receipt</label>
+                <input id="receipt" name="receipt" type="file" accept="image/*,.pdf" className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm" required />
+                <button className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-bold text-white">Submit receipt</button>
+              </form>
+            ) : null}
+            {canCancel ? (
+              <form action={cancelManagedOrder} className="mt-3">
+                <input type="hidden" name="return_to" value="/orders" />
+                <input type="hidden" name="order_id" value={order.dbId ?? ""} />
+                <button className="rounded-md border border-red-300 px-4 py-2 text-sm font-bold text-red-700">Cancel order</button>
+              </form>
+            ) : null}
           </aside>
         </section>
       </main>

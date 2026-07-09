@@ -4,7 +4,7 @@ create type public.user_role as enum ('admin', 'manager', 'cashier', 'vendor', '
 create type public.vendor_status as enum ('pending', 'approved', 'rejected');
 create type public.product_status as enum ('draft', 'active', 'inactive', 'rejected', 'archived');
 create type public.cart_status as enum ('active', 'converted', 'abandoned');
-create type public.order_status as enum ('awaiting_receipt', 'receipt_uploaded', 'paid_approved', 'payment_rejected', 'processing', 'fulfilled', 'cancelled');
+create type public.order_status as enum ('awaiting_receipt', 'receipt_uploaded', 'paid_approved', 'payment_rejected', 'processing', 'ready_for_pickup', 'fulfilled', 'cancelled');
 create type public.receipt_status as enum ('pending', 'confirmed', 'rejected');
 create type public.repair_status as enum ('new', 'diagnosing', 'quoted', 'in_repair', 'ready', 'closed', 'cancelled');
 create type public.notification_channel as enum ('email', 'whatsapp', 'dashboard');
@@ -119,6 +119,10 @@ create table public.orders (
   customer_email text,
   status public.order_status not null default 'awaiting_receipt',
   total numeric(12, 2) not null check (total >= 0),
+  delivery_method text not null default 'Pickup',
+  payment_method text not null default 'Manual bank transfer',
+  cashier_note text,
+  assigned_manager_id uuid references public.profiles(id),
   support_note text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -145,6 +149,15 @@ create table public.payment_receipts (
   review_note text,
   created_at timestamptz not null default now(),
   reviewed_at timestamptz
+);
+
+create table public.order_events (
+  id uuid primary key default gen_random_uuid(),
+  order_id uuid not null references public.orders(id) on delete cascade,
+  profile_id uuid references public.profiles(id),
+  event_type text not null,
+  note text,
+  created_at timestamptz not null default now()
 );
 
 create table public.repair_requests (
@@ -206,6 +219,8 @@ create index orders_branch_id_idx on public.orders(branch_id);
 create index orders_status_idx on public.orders(status);
 create index order_items_order_id_idx on public.order_items(order_id);
 create index order_items_vendor_id_idx on public.order_items(vendor_id);
+create index order_events_order_id_idx on public.order_events(order_id);
+create index order_events_created_at_idx on public.order_events(created_at);
 create index payment_receipts_status_idx on public.payment_receipts(status);
 create index repair_requests_branch_id_idx on public.repair_requests(branch_id);
 create index notifications_profile_id_idx on public.notifications(profile_id);
@@ -299,6 +314,7 @@ alter table public.carts enable row level security;
 alter table public.cart_items enable row level security;
 alter table public.orders enable row level security;
 alter table public.order_items enable row level security;
+alter table public.order_events enable row level security;
 alter table public.payment_receipts enable row level security;
 alter table public.repair_requests enable row level security;
 alter table public.wishlists enable row level security;
@@ -309,6 +325,7 @@ grant usage on schema public to anon, authenticated;
 grant select on public.branches, public.categories, public.products, public.product_images, public.inventory, public.reviews to anon, authenticated;
 grant select on public.vendors to anon;
 grant select, insert, update, delete on public.profiles, public.vendors, public.carts, public.cart_items, public.orders, public.order_items, public.payment_receipts, public.repair_requests, public.wishlists, public.notifications to authenticated;
+grant select, insert on public.order_events to authenticated;
 grant usage, select on all sequences in schema public to authenticated;
 
 create policy "public reads branches" on public.branches for select to anon, authenticated using (true);
@@ -407,6 +424,34 @@ create policy "vendors read own order items" on public.order_items for select to
 create policy "staff read order items" on public.order_items for select to authenticated using (
   public.current_user_role() = 'admin'
   or order_id in (select id from public.orders where branch_id = public.current_user_branch_id())
+);
+
+create policy "order event visibility" on public.order_events for select to authenticated using (
+  order_id in (
+    select o.id
+    from public.orders o
+    where o.profile_id = (select auth.uid())
+      or public.current_user_role() = 'admin'
+      or (public.current_user_role() in ('manager', 'cashier') and o.branch_id = public.current_user_branch_id())
+      or o.id in (select oi.order_id from public.order_items oi where oi.vendor_id = public.current_vendor_id())
+  )
+);
+create policy "create permitted order events" on public.order_events for insert to authenticated with check (
+  profile_id = (select auth.uid())
+  and (
+    order_id in (
+      select o.id
+      from public.orders o
+      where o.profile_id = (select auth.uid())
+    )
+    or public.current_user_role() = 'admin'
+    or order_id in (
+      select o.id
+      from public.orders o
+      where public.current_user_role() in ('manager', 'cashier')
+        and o.branch_id = public.current_user_branch_id()
+    )
+  )
 );
 
 create policy "customers upload own receipts" on public.payment_receipts for insert to authenticated with check (

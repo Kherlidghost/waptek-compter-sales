@@ -11,6 +11,17 @@ function cleanFileName(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9.]+/g, "-").replace(/^-|-$/g, "");
 }
 
+async function notifyProfiles(supabase: Awaited<ReturnType<typeof createClient>>, profileIds: Array<string | null | undefined>, message: string) {
+  const rows = [...new Set(profileIds.filter(Boolean) as string[])].map((profileId) => ({
+    profile_id: profileId,
+    channel: "dashboard",
+    recipient: profileId,
+    message,
+    status: "queued",
+  }));
+  if (rows.length > 0) await supabase.from("notifications").insert(rows);
+}
+
 export async function createCheckoutOrder(formData: FormData) {
   const supabase = await createClient();
   const {
@@ -66,6 +77,8 @@ export async function createCheckoutOrder(formData: FormData) {
       customer_email: customerEmail || user.email,
       status: "receipt_uploaded",
       total,
+      delivery_method: "Pickup",
+      payment_method: "Manual bank transfer",
       support_note: supportNote || null,
     })
     .select("id, order_number")
@@ -111,6 +124,42 @@ export async function createCheckoutOrder(formData: FormData) {
   if (receiptError) {
     redirect("/checkout?error=Receipt%20uploaded%20but%20could%20not%20be%20linked%20to%20the%20order.");
   }
+
+  await supabase.from("order_events").insert([
+    {
+      order_id: order.id,
+      profile_id: user.id,
+      event_type: "order_created",
+      note: "Customer placed the order.",
+    },
+    {
+      order_id: order.id,
+      profile_id: user.id,
+      event_type: "receipt_uploaded",
+      note: "Customer uploaded payment receipt.",
+    },
+  ]);
+
+  const { data: adminProfiles } = await supabase.from("profiles").select("id").eq("role", "admin");
+  const { data: branchStaffProfiles } = await supabase
+    .from("profiles")
+    .select("id")
+    .in("role", ["manager", "cashier"])
+    .eq("branch_id", branch.id);
+  const { data: vendorProfiles } = await supabase
+    .from("vendors")
+    .select("profile_id")
+    .in("id", dbProducts.map((product) => product.vendor_id));
+  await notifyProfiles(
+    supabase,
+    [
+      user.id,
+      ...(adminProfiles ?? []).map((profile) => profile.id),
+      ...(branchStaffProfiles ?? []).map((profile) => profile.id),
+      ...(vendorProfiles ?? []).map((vendor) => vendor.profile_id),
+    ],
+    `New order ${order.order_number} was placed with receipt uploaded.`,
+  );
 
   revalidatePath("/orders");
   revalidatePath("/cashier");

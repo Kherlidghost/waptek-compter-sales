@@ -7,6 +7,10 @@ import { SessionNavigation } from "./SessionNavigation";
 
 export async function DashboardSessionBar({ role }: { role: UserRole }) {
   let userSummary = null;
+  const roleOrderHref =
+    role === "admin" || role === "manager" || role === "cashier" || role === "vendor"
+      ? `/${role}/orders`
+      : "/orders";
 
   if (isSupabaseConfigured()) {
     const supabase = await createClient();
@@ -43,7 +47,7 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
               Products
             </Link>
           ) : null}
-          <Link className="rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" href="/orders">
+          <Link className="rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" href={roleOrderHref}>
             Orders
           </Link>
         </nav>

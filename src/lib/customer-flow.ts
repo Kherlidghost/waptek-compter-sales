@@ -55,9 +55,10 @@ export const trackedOrders = [
 export const orderSteps = [
   { key: "awaiting_receipt", label: "Order placed" },
   { key: "receipt_uploaded", label: "Receipt uploaded" },
-  { key: "paid_approved", label: "Payment approved" },
-  { key: "processing", label: "Vendor processing" },
-  { key: "fulfilled", label: "Ready / fulfilled" },
+  { key: "paid_approved", label: "Payment confirmed" },
+  { key: "processing", label: "Preparing order" },
+  { key: "ready_for_pickup", label: "Ready" },
+  { key: "fulfilled", label: "Completed" },
 ];
 
 export function getTrackedOrder(id: string) {

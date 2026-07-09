@@ -9,6 +9,7 @@ export type OrderStatus =
   | "receipt_uploaded"
   | "paid_approved"
   | "processing"
+  | "ready_for_pickup"
   | "payment_rejected"
   | "fulfilled"
   | "cancelled";
