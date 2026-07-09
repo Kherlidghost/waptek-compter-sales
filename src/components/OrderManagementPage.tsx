@@ -237,6 +237,7 @@ function DashboardOrderNav({ role }: { role: OrderManagementRole }) {
       {[
         ["Dashboard", base],
         ["Products", `${base}/products`],
+        ["Inventory", `${base}/inventory`],
         ["Orders", `${base}/orders`],
         ["Reports", `${base}/orders`],
         ["Logout", "/"],

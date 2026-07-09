@@ -25,7 +25,7 @@ type CatalogProductRow = {
   branches: JoinedOne<{ name: string; state: BranchState; city: string }>;
   vendors: JoinedOne<{ business_name: string }>;
   product_images: Array<{ storage_path: string; is_primary: boolean }> | null;
-  inventory: Array<{ quantity: number }> | null;
+  inventory: Array<{ quantity: number; status?: "active" | "damaged" | "archived" }> | null;
 };
 
 type CatalogCategoryRow = {
@@ -64,7 +64,7 @@ function mapProduct(row: CatalogProductRow): Product {
   const branch = first(row.branches);
   const vendor = first(row.vendors);
   const primaryImage = row.product_images?.find((image) => image.is_primary) ?? row.product_images?.[0];
-  const stock = row.inventory?.reduce((sum, item) => sum + Number(item.quantity ?? 0), 0) ?? 0;
+  const stock = row.inventory?.filter((item) => item.status !== "archived").reduce((sum, item) => sum + Number(item.quantity ?? 0), 0) ?? 0;
 
   return {
     id: row.id,
@@ -119,7 +119,7 @@ export async function getStorefrontCatalog() {
       supabase
         .from("products")
         .select(
-          "id, vendor_id, category_id, branch_id, name, slug, sku, brand, description, specifications, price, discount_price, warranty, condition, featured, categories(name, slug), branches(name, state, city), vendors(business_name), product_images(storage_path, is_primary), inventory(quantity)",
+          "id, vendor_id, category_id, branch_id, name, slug, sku, brand, description, specifications, price, discount_price, warranty, condition, featured, categories(name, slug), branches(name, state, city), vendors(business_name), product_images(storage_path, is_primary), inventory(quantity, status)",
         )
         .eq("status", "active")
         .order("created_at", { ascending: false }),

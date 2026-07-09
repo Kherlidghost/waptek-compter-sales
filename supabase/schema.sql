@@ -88,8 +88,38 @@ create table public.inventory (
   branch_id uuid not null references public.branches(id),
   quantity integer not null default 0 check (quantity >= 0),
   reorder_level integer not null default 3 check (reorder_level >= 0),
+  status text not null default 'active' check (status in ('active', 'damaged', 'archived')),
+  damaged_quantity integer not null default 0 check (damaged_quantity >= 0),
+  archived_at timestamptz,
+  updated_by uuid references public.profiles(id),
   updated_at timestamptz not null default now(),
   unique (product_id, branch_id)
+);
+
+create table public.inventory_movements (
+  id uuid primary key default gen_random_uuid(),
+  inventory_id uuid references public.inventory(id) on delete set null,
+  product_id uuid not null references public.products(id) on delete cascade,
+  branch_id uuid not null references public.branches(id),
+  profile_id uuid references public.profiles(id),
+  role public.user_role,
+  movement_type text not null check (movement_type in ('stock_added', 'stock_removed', 'sale', 'transfer_out', 'transfer_in', 'damaged', 'adjustment')),
+  quantity integer not null check (quantity > 0),
+  reason text,
+  created_at timestamptz not null default now()
+);
+
+create table public.stock_transfers (
+  id uuid primary key default gen_random_uuid(),
+  product_id uuid not null references public.products(id) on delete cascade,
+  source_branch_id uuid not null references public.branches(id),
+  destination_branch_id uuid not null references public.branches(id),
+  quantity integer not null check (quantity > 0),
+  reason text,
+  status text not null default 'completed' check (status in ('pending', 'completed', 'cancelled')),
+  created_by uuid references public.profiles(id),
+  created_at timestamptz not null default now(),
+  completed_at timestamptz
 );
 
 create table public.carts (
@@ -214,6 +244,14 @@ create index products_status_idx on public.products(status);
 create unique index products_sku_unique_idx on public.products(sku) where sku is not null;
 create index products_brand_idx on public.products(brand);
 create index products_featured_idx on public.products(featured);
+create index inventory_status_idx on public.inventory(status);
+create index inventory_updated_at_idx on public.inventory(updated_at);
+create index inventory_movements_product_id_idx on public.inventory_movements(product_id);
+create index inventory_movements_branch_id_idx on public.inventory_movements(branch_id);
+create index inventory_movements_created_at_idx on public.inventory_movements(created_at);
+create index stock_transfers_product_id_idx on public.stock_transfers(product_id);
+create index stock_transfers_source_branch_id_idx on public.stock_transfers(source_branch_id);
+create index stock_transfers_destination_branch_id_idx on public.stock_transfers(destination_branch_id);
 create index orders_profile_id_idx on public.orders(profile_id);
 create index orders_branch_id_idx on public.orders(branch_id);
 create index orders_status_idx on public.orders(status);
@@ -310,6 +348,8 @@ alter table public.categories enable row level security;
 alter table public.products enable row level security;
 alter table public.product_images enable row level security;
 alter table public.inventory enable row level security;
+alter table public.inventory_movements enable row level security;
+alter table public.stock_transfers enable row level security;
 alter table public.carts enable row level security;
 alter table public.cart_items enable row level security;
 alter table public.orders enable row level security;
@@ -325,6 +365,9 @@ grant usage on schema public to anon, authenticated;
 grant select on public.branches, public.categories, public.products, public.product_images, public.inventory, public.reviews to anon, authenticated;
 grant select on public.vendors to anon;
 grant select, insert, update, delete on public.profiles, public.vendors, public.carts, public.cart_items, public.orders, public.order_items, public.payment_receipts, public.repair_requests, public.wishlists, public.notifications to authenticated;
+grant select, insert, update, delete on public.inventory to authenticated;
+grant select, insert on public.inventory_movements to authenticated;
+grant select, insert, update on public.stock_transfers to authenticated;
 grant select, insert on public.order_events to authenticated;
 grant usage, select on all sequences in schema public to authenticated;
 
@@ -393,8 +436,33 @@ with check (
   or (public.current_user_role() = 'manager' and branch_id = public.current_user_branch_id())
 );
 create policy "vendors read own inventory" on public.inventory for select to authenticated using (product_id in (select id from public.products where vendor_id = public.current_vendor_id()));
-create policy "vendors manage own inventory" on public.inventory for insert to authenticated
+create policy "vendors manage own inventory" on public.inventory for all to authenticated
+using (product_id in (select id from public.products where vendor_id = public.current_vendor_id()))
 with check (product_id in (select id from public.products where vendor_id = public.current_vendor_id()));
+
+create policy "inventory movement visibility" on public.inventory_movements for select to authenticated using (
+  public.current_user_role() = 'admin'
+  or (public.current_user_role() = 'manager' and branch_id = public.current_user_branch_id())
+  or product_id in (select id from public.products where vendor_id = public.current_vendor_id())
+);
+create policy "create inventory movement" on public.inventory_movements for insert to authenticated with check (
+  profile_id = (select auth.uid())
+  and (
+    public.current_user_role() = 'admin'
+    or (public.current_user_role() = 'manager' and branch_id = public.current_user_branch_id())
+    or product_id in (select id from public.products where vendor_id = public.current_vendor_id())
+  )
+);
+create policy "stock transfer visibility" on public.stock_transfers for select to authenticated using (
+  public.current_user_role() = 'admin'
+  or (
+    public.current_user_role() = 'manager'
+    and (source_branch_id = public.current_user_branch_id() or destination_branch_id = public.current_user_branch_id())
+  )
+);
+create policy "admin creates stock transfers" on public.stock_transfers for insert to authenticated with check (
+  public.current_user_role() = 'admin' and created_by = (select auth.uid())
+);
 
 create policy "customers manage own carts" on public.carts for all to authenticated using ((select auth.uid()) = profile_id) with check ((select auth.uid()) = profile_id);
 create policy "customers manage own cart items" on public.cart_items for all to authenticated

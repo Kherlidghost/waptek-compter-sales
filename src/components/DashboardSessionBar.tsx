@@ -47,6 +47,11 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
               Products
             </Link>
           ) : null}
+          {role === "admin" || role === "manager" || role === "vendor" ? (
+            <Link className="rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" href={`/${role}/inventory`}>
+              Inventory
+            </Link>
+          ) : null}
           <Link className="rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" href={roleOrderHref}>
             Orders
           </Link>

@@ -55,12 +55,23 @@ export async function createCheckoutOrder(formData: FormData) {
 
   const { data: dbProducts, error: productsError } = await supabase
     .from("products")
-    .select("id, vendor_id, slug, price")
+    .select("id, vendor_id, slug, price, inventory(quantity, status)")
     .in("slug", checkoutProductSlugs)
     .eq("status", "active");
 
   if (productsError || !dbProducts || dbProducts.length === 0) {
     redirect("/checkout?error=Checkout%20products%20are%20not%20available.");
+  }
+
+  const unavailableProduct = dbProducts.find((product) => {
+    const inventoryRows = (product.inventory ?? []) as Array<{ quantity: number; status?: string }>;
+    const available = inventoryRows
+      .filter((item) => item.status !== "archived")
+      .reduce((sum, item) => sum + Number(item.quantity ?? 0), 0);
+    return available <= 0;
+  });
+  if (unavailableProduct) {
+    redirect("/checkout?error=One%20or%20more%20products%20are%20out%20of%20stock.");
   }
 
   const total = dbProducts.reduce((sum, item) => sum + Number(item.price), 0);

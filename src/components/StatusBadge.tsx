@@ -19,7 +19,7 @@ function getTone(status: string): StatusBadgeTone {
     return "warning";
   }
 
-  if (["rejected", "payment_rejected", "out_of_stock", "cancelled", "archived"].includes(normalized)) {
+  if (["rejected", "payment_rejected", "out_of_stock", "cancelled", "archived", "damaged"].includes(normalized)) {
     return "danger";
   }
 
@@ -45,6 +45,7 @@ function getDisplayLabel(status: string) {
     rejected: "Payment Rejected",
     low_stock: "Low Stock",
     out_of_stock: "Out of Stock",
+    damaged: "Damaged",
     in_stock: "In Stock",
     active: "Published",
     published: "Published",

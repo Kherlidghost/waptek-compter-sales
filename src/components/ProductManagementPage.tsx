@@ -322,8 +322,8 @@ function DashboardSideNav({ role }: { role: ProductManagementRole }) {
     ["Dashboard", base],
     ["Products", `${base}/products`],
     ["Categories", `${base}#categories`],
-    ["Inventory", `${base}/products?stock=low`],
-    ["Orders", `${base === "/vendor" ? "/orders" : base}`],
+    ["Inventory", `${base}/inventory`],
+    ["Orders", `${base}/orders`],
     ["Reports", `${base}#reports`],
     ["Settings", `${base}`],
   ];
