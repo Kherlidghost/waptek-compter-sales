@@ -22,16 +22,20 @@ function clearAuthCache() {
   const authKeyParts = ["supabase.auth.token", "auth-token", "auth.user", "auth.profile", "auth.role"];
 
   [window.localStorage, window.sessionStorage].forEach((storage) => {
-    for (let index = storage.length - 1; index >= 0; index -= 1) {
-      const key = storage.key(index);
-      if (!key) continue;
+    try {
+      for (let index = storage.length - 1; index >= 0; index -= 1) {
+        const key = storage.key(index);
+        if (!key) continue;
 
-      const isSupabaseSessionKey = key.startsWith("sb-") && key.endsWith("-auth-token");
-      const isAppAuthKey = authKeyParts.some((part) => key.includes(part));
+        const isSupabaseSessionKey = key.startsWith("sb-") && key.endsWith("-auth-token");
+        const isAppAuthKey = authKeyParts.some((part) => key.includes(part));
 
-      if (isSupabaseSessionKey || isAppAuthKey) {
-        storage.removeItem(key);
+        if (isSupabaseSessionKey || isAppAuthKey) {
+          storage.removeItem(key);
+        }
       }
+    } catch {
+      storage.clear();
     }
   });
 }
@@ -45,25 +49,29 @@ export function SessionNavigation({ user, className = "", mode = "desktop" }: Se
     setIsSigningOut(true);
     setError("");
 
-    const supabase = createClient();
-    const { error: signOutError } = await supabase.auth.signOut();
-    clearAuthCache();
-    router.refresh();
+    try {
+      const supabase = createClient();
+      const { error: signOutError } = await supabase.auth.signOut();
+      clearAuthCache();
 
-    if (signOutError) {
-      setError(signOutError.message || "Sign out failed. Please try again.");
-      setIsSigningOut(false);
-      return;
+      if (signOutError) {
+        setError(signOutError.message || "Sign out failed. Please try again.");
+      }
+
+      await fetch("/auth/logout", { method: "POST", credentials: "include" });
+      router.refresh();
+      window.location.assign("/?signed_out=1");
+    } catch {
+      clearAuthCache();
+      router.refresh();
+      window.location.assign("/?signed_out=1");
     }
-
-    router.replace("/?signed_out=1");
-    router.refresh();
   }
 
   if (!user) {
     return (
       <Link className={`rounded-md px-3 py-2 font-semibold hover:bg-slate-100 ${className}`} href="/login">
-        Login
+        Sign In
       </Link>
     );
   }

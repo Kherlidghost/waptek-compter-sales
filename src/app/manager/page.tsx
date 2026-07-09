@@ -5,6 +5,8 @@ import { getAuthProfile } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/supabase-config";
 import { createClient } from "@/lib/supabase/server";
 
+export const dynamic = "force-dynamic";
+
 function stateToId(state?: string | null) {
   return state?.toLowerCase() ?? undefined;
 }
@@ -31,8 +33,8 @@ export default async function ManagerDashboardPage() {
   return (
     <main className="min-h-screen space-y-6 bg-slate-50 px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
       <DashboardSessionBar role="manager" />
-      <OnlineOrderStatusPanel role="manager" />
       <AdminManagerDashboard branchLabel={branch?.name ?? "Assigned branch"} branchScopeId={stateToId(branch?.state)} role="manager" />
+      <OnlineOrderStatusPanel role="manager" />
     </main>
   );
 }

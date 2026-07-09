@@ -5,6 +5,8 @@ import { getAuthProfile } from "@/lib/auth";
 import { supabaseConfig } from "@/lib/supabase-config";
 import { createClient } from "@/lib/supabase/server";
 
+export const dynamic = "force-dynamic";
+
 type ReceiptRow = {
   id: string;
   storage_path: string;
