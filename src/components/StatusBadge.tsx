@@ -30,8 +30,29 @@ function getTone(status: string): StatusBadgeTone {
   return "neutral";
 }
 
+function getDisplayLabel(status: string) {
+  const labels: Record<string, string> = {
+    awaiting_receipt: "Pending Payment",
+    receipt_uploaded: "Receipt Uploaded",
+    paid_approved: "Payment Confirmed",
+    payment_rejected: "Payment Rejected",
+    processing: "Processing",
+    ready_for_pickup: "Ready for Pickup",
+    fulfilled: "Completed",
+    completed: "Completed",
+    confirmed: "Payment Confirmed",
+    pending: "Pending Payment",
+    rejected: "Payment Rejected",
+    low_stock: "Low Stock",
+    out_of_stock: "Out of Stock",
+    in_stock: "In Stock",
+  };
+
+  return labels[status.toLowerCase()] ?? status.replaceAll("_", " ");
+}
+
 export function StatusBadge({ status, label }: { status: string; label?: string }) {
-  const displayLabel = label ?? status.replaceAll("_", " ");
+  const displayLabel = label ?? getDisplayLabel(status);
 
   return (
     <span className={`inline-flex rounded-md border px-2.5 py-1 text-xs font-bold capitalize ${toneClasses[getTone(status)]}`}>

@@ -80,27 +80,46 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
   const recentOrders = orderRows.slice(0, 5);
   const recentReceipts = orderRows.filter((order) => order.receiptStatus === "pending").slice(0, 5);
   const pendingVendorRows = vendorRows.filter((vendor) => vendor.status === "pending");
+  const totalOrders = Math.max(orderRows.length, 1);
+  const paymentCompletionRate = Math.round((stats.confirmedPayments / totalOrders) * 100);
+  const dashboardActions: Array<[string, Section]> =
+    role === "admin"
+      ? [
+          ["Approve Vendors", "vendors" as Section],
+          ["View Pending Payments", "orders" as Section],
+          ["Add Product", "products" as Section],
+          ["View Orders", "orders" as Section],
+          ["View Repair Requests", "repairs" as Section],
+          ["View Sales Reports", "reports" as Section],
+        ]
+      : [
+          ["View Branch Orders", "orders" as Section],
+          ["View Branch Payments", "orders" as Section],
+          ["View Branch Products", "products" as Section],
+          ["View Repair Requests", "repairs" as Section],
+          ["View Branch Report", "reports" as Section],
+        ];
   const dashboardCards =
     role === "admin"
       ? [
-          ["Total orders", orderRows.length.toString()],
-          ["Pending payments", stats.pendingOrders.toString()],
-          ["Confirmed payments", stats.confirmedPayments.toString()],
-          ["Total vendors", vendorRows.length.toString()],
-          ["Pending vendor approvals", stats.pendingVendors.toString()],
-          ["Total products", productRows.length.toString()],
-          ["Total branches", branchRows.length.toString()],
-          ["Total repair requests", "Open repairs panel"],
+          { title: "Total Orders", value: orderRows.length.toString(), description: "Marketplace orders across all branches.", action: "View", section: "orders" as Section },
+          { title: "Pending Payments", value: `${stats.pendingOrders} waiting`, description: "Receipts awaiting payment confirmation.", action: "View", section: "orders" as Section },
+          { title: "Confirmed Payments", value: stats.confirmedPayments.toString(), description: "Orders approved for processing.", action: "View", section: "reports" as Section },
+          { title: "Vendors", value: vendorRows.length.toString(), description: "Approved and pending marketplace sellers.", action: "Manage", section: "vendors" as Section },
+          { title: "Products", value: productRows.length.toString(), description: "Products available in the marketplace.", action: "Manage", section: "products" as Section },
+          { title: "Branches", value: branchRows.length.toString(), description: "Operational branch locations.", action: "View", section: "branches" as Section },
+          { title: "Repair Requests", value: "0", description: "Submitted repair requests appear in the repairs panel.", action: "View", section: "repairs" as Section },
+          { title: "Pending Vendor Approvals", value: stats.pendingVendors.toString(), description: "Vendors waiting for admin review.", action: "Manage", section: "vendors" as Section },
         ]
       : [
-          ["Branch name", branchLabel ?? "Assigned branch"],
-          ["Branch orders", orderRows.length.toString()],
-          ["Pending payments for branch", stats.pendingOrders.toString()],
-          ["Confirmed payments for branch", stats.confirmedPayments.toString()],
-          ["Branch products", productRows.length.toString()],
-          ["Low-stock products", stats.lowStock.toString()],
-          ["Out-of-stock products", stats.outOfStock.toString()],
-          ["Branch sales overview", formatNaira(stats.paidRevenue)],
+          { title: "Assigned Branch", value: branchLabel ?? "Assigned branch", description: "Manager scope for daily operations.", action: "View", section: "reports" as Section },
+          { title: "Branch Orders", value: orderRows.length.toString(), description: "Orders linked to this branch only.", action: "View", section: "orders" as Section },
+          { title: "Branch Pending Payments", value: `${stats.pendingOrders} waiting`, description: "Receipts awaiting branch payment review.", action: "View", section: "orders" as Section },
+          { title: "Branch Confirmed Payments", value: stats.confirmedPayments.toString(), description: "Confirmed branch payment records.", action: "View", section: "reports" as Section },
+          { title: "Branch Products", value: productRows.length.toString(), description: "Products assigned to this branch.", action: "Manage", section: "products" as Section },
+          { title: "Branch Repair Requests", value: "0", description: "Repair requests submitted for this branch.", action: "View", section: "repairs" as Section },
+          { title: "Low Stock Products", value: stats.lowStock.toString(), description: "Products that need restock attention.", action: "Manage", section: "inventory" as Section },
+          { title: "Branch Sales", value: formatNaira(stats.paidRevenue), description: "Confirmed branch order value.", action: "View", section: "reports" as Section },
         ];
 
   const branchSales = branchRows.map((branch) => ({
@@ -121,6 +140,36 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
     );
     return { category, sales };
   });
+  const branchOverview = (role === "admin" ? branches : branchRows).map((branch) => {
+    const branchOrders = orderRows.filter((order) => order.branchId === branch.id);
+    return {
+      branch,
+      orders: branchOrders.length,
+      pendingPayments: branchOrders.filter((order) => order.status === "receipt_uploaded" || order.receiptStatus === "pending").length,
+      products: productRows.filter((product) => product.branchId === branch.id).length,
+      repairRequests: 0,
+    };
+  });
+  const recentActivity = [
+    ...recentOrders.slice(0, 2).map((order) => ({
+      title: "New order placed",
+      detail: `${order.id} from ${order.customerName}`,
+      status: order.status,
+    })),
+    ...recentReceipts.slice(0, 2).map((order) => ({
+      title: "Payment receipt uploaded",
+      detail: `${order.id} is awaiting review`,
+      status: order.receiptStatus,
+    })),
+    ...productRows
+      .filter((product) => product.stock <= 3)
+      .slice(0, 2)
+      .map((product) => ({
+        title: product.stock === 0 ? "Out of stock warning" : "Low stock warning",
+        detail: `${product.name} has ${product.stock} units left`,
+        status: product.stock === 0 ? "out_of_stock" : "low_stock",
+      })),
+  ].slice(0, 5);
 
   function updateVendorStatus(vendorId: string, status: VendorStatus) {
     if (!canApprove) {
@@ -217,14 +266,54 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
 
       {activeSection === "analytics" ? (
         <section className="space-y-6">
+          <QuickActions actions={dashboardActions} onSelect={setActiveSection} />
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {dashboardCards.map(([label, value]) => (
-              <div key={label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-                <p className="text-sm text-slate-500">{label}</p>
-                <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
-              </div>
+            {dashboardCards.map((card) => (
+              <SummaryCard key={card.title} {...card} onSelect={setActiveSection} />
             ))}
           </div>
+          <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+            <RecentActivityPanel rows={recentActivity} />
+            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+              <h2 className="text-xl font-black text-slate-950">Payment status breakdown</h2>
+              <p className="mt-1 text-sm text-slate-600">Simple operational view of confirmed payments.</p>
+              <div className="mt-5">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-semibold text-slate-700">Confirmed</span>
+                  <span className="font-black text-slate-950">{paymentCompletionRate}%</span>
+                </div>
+                <div className="mt-2 h-3 overflow-hidden rounded-full bg-slate-100">
+                  <div className="h-full rounded-full bg-emerald-600" style={{ width: `${paymentCompletionRate}%` }} />
+                </div>
+                <p className="mt-3 text-sm text-slate-600">{stats.pendingOrders} pending payment review · {stats.confirmedPayments} confirmed.</p>
+              </div>
+            </div>
+          </div>
+          {role === "admin" ? (
+            <section className="space-y-3">
+              <div>
+                <h2 className="text-xl font-black text-slate-950">Branch overview</h2>
+                <p className="mt-1 text-sm text-slate-600">Safe branch counts from available marketplace data.</p>
+              </div>
+              <div className="grid gap-4 md:grid-cols-3">
+                {branchOverview.map((item) => (
+                  <BranchOverviewCard key={item.branch.id} {...item} />
+                ))}
+              </div>
+            </section>
+          ) : (
+            <section className="space-y-3">
+              <div>
+                <h2 className="text-xl font-black text-slate-950">Branch summary</h2>
+                <p className="mt-1 text-sm text-slate-600">Assigned branch data only.</p>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                {branchOverview.map((item) => (
+                  <BranchOverviewCard key={item.branch.id} {...item} />
+                ))}
+              </div>
+            </section>
+          )}
           <div className="grid gap-4 lg:grid-cols-2">
             <ActivityPanel title="Recent orders" emptyMessage="No orders yet." rows={recentOrders.map((order) => [order.id, order.customerName, formatNaira(order.total), <StatusBadge key={order.id} status={order.status} />])} />
             <ActivityPanel
@@ -237,6 +326,16 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
             <ReportPanel title={role === "admin" ? "Branch overview" : "Assigned branch overview"} rows={branchSales.map(({ branch, sales, orders: count }) => [`${branch.state} (${count} orders)`, formatNaira(sales)])} />
             <ReportPanel title="Sales overview by category" rows={categorySales.map(({ category, sales }) => [category.name, formatNaira(sales)])} />
           </div>
+          {role === "manager" ? (
+            <ActivityPanel
+              title="Cashier activity"
+              emptyMessage="No cashier confirmations yet."
+              rows={orderRows
+                .filter((order) => order.status === "paid_approved" || order.status === "payment_rejected")
+                .slice(0, 4)
+                .map((order) => [order.id, order.customerName, formatNaira(order.total), <StatusBadge key={order.id} status={order.status} />])}
+            />
+          ) : null}
         </section>
       ) : null}
 
@@ -412,6 +511,117 @@ function DataTable({ headers, rows }: { headers: string[]; rows: Array<Array<Rea
         </tbody>
       </table>
     </div>
+  );
+}
+
+function QuickActions({ actions, onSelect }: { actions: Array<[string, Section]>; onSelect: (section: Section) => void }) {
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="text-xl font-black text-slate-950">Quick actions</h2>
+          <p className="mt-1 text-sm text-slate-600">Jump straight to the operational work that matters most.</p>
+        </div>
+      </div>
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {actions.map(([label, section]) => (
+          <button
+            key={label}
+            className="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm font-bold text-slate-800 hover:border-emerald-300 hover:bg-emerald-50"
+            onClick={() => onSelect(section)}
+            type="button"
+          >
+            <span>{label}</span>
+            <span aria-hidden="true">View</span>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function SummaryCard({
+  title,
+  value,
+  description,
+  action,
+  section,
+  onSelect,
+}: {
+  title: string;
+  value: string;
+  description: string;
+  action: string;
+  section: Section;
+  onSelect: (section: Section) => void;
+}) {
+  return (
+    <article className="flex min-h-44 flex-col justify-between rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <div>
+        <p className="text-sm font-semibold text-slate-500">{title}</p>
+        <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
+        <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
+      </div>
+      <button className="mt-4 w-fit text-sm font-black text-emerald-800 hover:text-emerald-900" onClick={() => onSelect(section)} type="button">
+        {action} →
+      </button>
+    </article>
+  );
+}
+
+function RecentActivityPanel({ rows }: { rows: Array<{ title: string; detail: string; status: string }> }) {
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <h2 className="text-xl font-black text-slate-950">Recent activity</h2>
+      <p className="mt-1 text-sm text-slate-600">Role-specific marketplace signals from available orders, receipts, and inventory.</p>
+      <div className="mt-4 grid gap-3">
+        {rows.length === 0 ? (
+          <p className="rounded-md border border-dashed border-slate-300 p-4 text-sm text-slate-600">No recent activity yet.</p>
+        ) : rows.map((row, index) => (
+          <div key={`${row.title}-${index}`} className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-slate-50 px-3 py-3 text-sm">
+            <div>
+              <p className="font-black text-slate-950">{row.title}</p>
+              <p className="mt-1 text-slate-600">{row.detail}</p>
+            </div>
+            <StatusBadge status={row.status} />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function BranchOverviewCard({
+  branch,
+  orders: orderCount,
+  pendingPayments,
+  products: productCount,
+  repairRequests,
+}: {
+  branch: Branch;
+  orders: number;
+  pendingPayments: number;
+  products: number;
+  repairRequests: number;
+}) {
+  return (
+    <article className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <p className="text-lg font-black text-slate-950">{branch.state} branch</p>
+      <p className="mt-1 text-sm text-slate-600">{branch.city}</p>
+      <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+        {[
+          ["Orders", orderCount],
+          ["Pending payments", pendingPayments],
+          ["Products", productCount],
+          ["Repair requests", repairRequests],
+        ].map(([label, value]) => (
+          <div key={label} className="rounded-md bg-slate-50 p-3">
+            <p className="text-slate-500">{label}</p>
+            <p className="mt-1 text-xl font-black text-slate-950">{value}</p>
+          </div>
+        ))}
+      </div>
+    </article>
   );
 }
 

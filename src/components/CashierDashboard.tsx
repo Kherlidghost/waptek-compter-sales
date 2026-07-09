@@ -68,7 +68,7 @@ export function CashierDashboard({
   const normalizedQuery = query.trim().toLowerCase();
   const visibleOrders = (showAll ? reviewedOrders : reviewedOrders.filter((order) => order.receiptStatus === "pending")).filter((order) => {
     if (!normalizedQuery) return true;
-    return [order.id, order.customerName, getBranch(order.branchId)?.name, getBranch(order.branchId)?.state]
+    return [order.id, order.customerName, order.receiptStatus, order.status, getBranch(order.branchId)?.name, getBranch(order.branchId)?.state]
       .filter(Boolean)
       .some((value) => value?.toLowerCase().includes(normalizedQuery));
   });
@@ -104,15 +104,8 @@ export function CashierDashboard({
         status: "sent_simulated",
         source: "cashier",
       },
-      {
-        channel: "whatsapp",
-        recipient: "+2348000000005",
-        message: `Simulated WhatsApp: Payment confirmed for ${orderId}. Your order has been approved.`,
-        status: "queued",
-        source: "cashier",
-      },
     ]);
-    setNotice("Payment confirmed. Simulated email, WhatsApp, and dashboard notifications were logged.");
+    setNotice("Payment confirmed. Dashboard and email notification logs were updated.");
 
     if (reviewAction && order?.dbId && order.receiptId) {
       startTransition(async () => {
@@ -162,18 +155,60 @@ export function CashierDashboard({
       </header>
       {isPending ? <p className="rounded-md bg-amber-50 p-3 text-sm font-semibold text-amber-800">Saving payment review online...</p> : null}
 
+      <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-xl font-black text-slate-950">Quick actions</h2>
+        <p className="mt-1 text-sm text-slate-600">Focus the receipt queue by payment status or search need.</p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["Review Pending Receipts", () => { setShowAll(false); setQuery(""); }],
+            ["View Confirmed Payments", () => { setShowAll(true); setQuery("confirmed"); }],
+            ["View Rejected Payments", () => { setShowAll(true); setQuery("rejected"); }],
+            ["Search Order", () => { setShowAll(true); }],
+          ].map(([label, action]) => (
+            <button
+              key={String(label)}
+              className="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm font-bold text-slate-800 hover:border-emerald-300 hover:bg-emerald-50"
+              onClick={action as () => void}
+              type="button"
+            >
+              <span>{String(label)}</span>
+              <span aria-hidden="true">View</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          ["Pending receipts", pendingCount.toString()],
-          ["Confirmed payments", confirmedCount.toString()],
-          ["Rejected receipts", rejectedCount.toString()],
-          ["Awaiting confirmation", awaitingConfirmationCount.toString()],
-        ].map(([label, value]) => (
-          <div key={label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <p className="text-sm text-slate-500">{label}</p>
-            <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
+          { title: "Pending receipts", value: pendingCount.toString(), description: "Receipts waiting for branch review.", action: () => { setShowAll(false); setQuery(""); } },
+          { title: "Confirmed payments", value: confirmedCount.toString(), description: "Payments already confirmed by cashier.", action: () => { setShowAll(true); setQuery("confirmed"); } },
+          { title: "Rejected payments", value: rejectedCount.toString(), description: "Receipts rejected after review.", action: () => { setShowAll(true); setQuery("rejected"); } },
+          { title: "Orders awaiting confirmation", value: awaitingConfirmationCount.toString(), description: "Orders in receipt uploaded state.", action: () => { setShowAll(true); setQuery(""); } },
+        ].map((card) => (
+          <div key={card.title} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <p className="text-sm font-semibold text-slate-500">{card.title}</p>
+            <p className="mt-2 text-2xl font-black text-slate-950">{card.value}</p>
+            <p className="mt-2 text-sm text-slate-600">{card.description}</p>
+            <button className="mt-4 text-sm font-black text-emerald-800" onClick={card.action} type="button">View →</button>
           </div>
         ))}
+      </section>
+
+      <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-xl font-black text-slate-950">Recent activity</h2>
+        <div className="mt-4 grid gap-3">
+          {reviewedOrders.length === 0 ? (
+            <p className="rounded-md border border-dashed border-slate-300 p-4 text-sm text-slate-600">No recent activity yet.</p>
+          ) : reviewedOrders.slice(0, 4).map((order) => (
+            <div key={`${order.id}-activity`} className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-slate-50 px-3 py-3 text-sm">
+              <div>
+                <p className="font-black text-slate-950">Payment receipt uploaded</p>
+                <p className="mt-1 text-slate-600">{order.id} · {order.customerName} · {formatNaira(order.total)}</p>
+              </div>
+              <StatusBadge status={order.receiptStatus} />
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
@@ -191,85 +226,56 @@ export function CashierDashboard({
         </div>
       </section>
 
-      <section className="grid gap-4">
+      <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
         {visibleOrders.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center">
+          <div className="p-8 text-center">
             <p className="text-lg font-bold text-slate-950">{query ? "No receipts match your search." : "No pending receipts."}</p>
             <p className="mt-2 text-sm text-slate-600">Confirmed and rejected receipts can be viewed with the all receipts toggle.</p>
           </div>
         ) : (
-          visibleOrders.map((order) => (
-            <article key={order.id} className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <p className="text-lg font-black text-slate-950">{order.id}</p>
-                  <p className="mt-1 text-sm text-slate-600">
-                    {order.customerName} uploaded receipt for {formatNaira(order.total)}
-                  </p>
-                  <p className="mt-1 text-sm text-slate-500">
-                    {getBranch(order.branchId)?.name ?? order.branchId} · {order.createdAt}
-                  </p>
-                </div>
-                <StatusBadge status={order.receiptStatus} />
-              </div>
-
-              <div className="mt-5 grid gap-4 lg:grid-cols-[220px_1fr]">
-                <button
-                  className="h-36 rounded-md border border-slate-200 bg-cover bg-center text-left shadow-sm"
-                  onClick={() => setOpenReceiptId(order.id)}
-                  style={{ backgroundImage: `url(${order.receiptUrl ?? receiptPreviews[order.id] ?? receiptPreviews["ORD-2407-001"]})` }}
-                  type="button"
-                  aria-label={`Open receipt for ${order.id}`}
-                />
-                <div className="rounded-md bg-slate-50 p-4 text-sm">
-                  <dl className="grid gap-3 sm:grid-cols-3">
-                    <div>
-                      <dt className="text-slate-500">Order status</dt>
-                      <dd className="mt-1">
-                        <StatusBadge status={order.status} />
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="text-slate-500">Receipt file</dt>
-                      <dd className="mt-1 font-bold text-slate-950">{order.receiptId ? "Supabase Storage receipt" : `${order.id.toLowerCase()}-receipt.jpg`}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-slate-500">Review note</dt>
-                      <dd className="mt-1 font-bold text-slate-950">{order.reviewNote}</dd>
-                    </div>
-                  </dl>
-                  <div className="mt-4 flex flex-wrap gap-3">
-                    <button
-                      className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
-                      disabled={order.receiptStatus !== "pending"}
-                      onClick={() => confirmPayment(order.id)}
-                      type="button"
-                    >
-                      Confirm payment
-                    </button>
-                    <button
-                      className="rounded-md border border-red-300 px-4 py-2 text-sm font-bold text-red-700 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400"
-                      disabled={order.receiptStatus !== "pending"}
-                      onClick={() => rejectPayment(order.id)}
-                      type="button"
-                    >
-                      Reject receipt
-                    </button>
-                    <button
-                      className="rounded-md border border-slate-300 px-4 py-2 text-sm font-bold"
-                      onClick={() => setOpenReceiptId(order.id)}
-                      type="button"
-                    >
-                      Open receipt image
-                    </button>
-                    <Link className="rounded-md border border-slate-300 px-4 py-2 text-sm font-bold" href={`/orders/${order.id}`}>
-                      View order details
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </article>
-          ))
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[980px] text-left text-sm">
+              <thead className="bg-slate-100 text-xs uppercase text-slate-500">
+                <tr>
+                  <th className="px-4 py-3">Order reference</th>
+                  <th className="px-4 py-3">Customer name</th>
+                  <th className="px-4 py-3">Amount</th>
+                  <th className="px-4 py-3">Branch</th>
+                  <th className="px-4 py-3">Receipt status</th>
+                  <th className="px-4 py-3">Uploaded date</th>
+                  <th className="px-4 py-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {visibleOrders.map((order) => (
+                  <tr key={order.id}>
+                    <td className="px-4 py-3 font-black text-slate-950">{order.id}</td>
+                    <td className="px-4 py-3">{order.customerName}</td>
+                    <td className="px-4 py-3 font-semibold">{formatNaira(order.total)}</td>
+                    <td className="px-4 py-3">{getBranch(order.branchId)?.name ?? order.branchId}</td>
+                    <td className="px-4 py-3"><StatusBadge status={order.receiptStatus} /></td>
+                    <td className="px-4 py-3">{order.createdAt}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex flex-wrap gap-2">
+                        <button className="rounded-md border border-slate-300 px-3 py-2 text-xs font-bold" onClick={() => setOpenReceiptId(order.id)} type="button">
+                          View receipt
+                        </button>
+                        <button className="rounded-md bg-emerald-700 px-3 py-2 text-xs font-bold text-white disabled:bg-slate-300" disabled={order.receiptStatus !== "pending"} onClick={() => confirmPayment(order.id)} type="button">
+                          Confirm
+                        </button>
+                        <button className="rounded-md border border-red-300 px-3 py-2 text-xs font-bold text-red-700 disabled:border-slate-200 disabled:text-slate-400" disabled={order.receiptStatus !== "pending"} onClick={() => rejectPayment(order.id)} type="button">
+                          Reject
+                        </button>
+                        <Link className="rounded-md border border-slate-300 px-3 py-2 text-xs font-bold" href={`/orders/${order.id}`}>
+                          Order
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </section>
 

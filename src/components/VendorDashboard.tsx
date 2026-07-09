@@ -75,6 +75,16 @@ export function VendorDashboard() {
   const activeProductsCount = vendorProducts.filter((product) => product.stock > 0).length;
   const pendingOrderCount = vendorOrders.filter((order) => order.status === "awaiting_receipt" || order.status === "receipt_uploaded").length;
   const paidOrderCount = vendorOrders.filter((order) => order.status === "paid_approved" || order.status === "fulfilled").length;
+  const lowStockProducts = vendorProducts.filter((product) => product.stock <= 3);
+  const topProduct = vendorProducts
+    .map((product) => {
+      const orderedUnits = vendorOrders.reduce(
+        (sum, order) => sum + order.items.filter((item) => item.productId === product.id).reduce((itemSum, item) => itemSum + item.quantity, 0),
+        0,
+      );
+      return { product, orderedUnits };
+    })
+    .sort((a, b) => b.orderedUnits - a.orderedUnits)[0];
   const revenue = vendorOrders.reduce((sum, order) => {
     const orderVendorTotal = order.items.reduce((itemSum, item) => {
       const belongsToVendor = vendorProducts.some((product) => product.id === item.productId);
@@ -155,22 +165,86 @@ export function VendorDashboard() {
         </Link>
       </header>
 
+      <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-xl font-black text-slate-950">Quick actions</h2>
+            <p className="mt-1 text-sm text-slate-600">Manage listings, inventory, and vendor order visibility.</p>
+          </div>
+          <button className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-bold text-white" onClick={() => setForm(emptyForm)} type="button">
+            Add Product
+          </button>
+        </div>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["Manage Products", "Own products and inventory"],
+            ["View Orders", "Orders for own products"],
+            ["Update Inventory", `${lowStockCount} low-stock items`],
+            ["Add Product", "Create a new listing"],
+          ].map(([label, description]) => (
+            <div key={label} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+              <p className="font-black text-slate-950">{label}</p>
+              <p className="mt-1 text-sm text-slate-600">{description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section className="grid gap-4 md:grid-cols-4">
         {[
-          ["Total products listed", vendorProducts.length.toString()],
-          ["Active products", activeProductsCount.toString()],
-          ["Low stock products", lowStockCount.toString()],
-          ["Out of stock products", outOfStockCount.toString()],
-          ["Orders containing your products", vendorOrders.length.toString()],
-          ["Pending orders", pendingOrderCount.toString()],
-          ["Paid / confirmed orders", paidOrderCount.toString()],
-          ["Product performance", formatNaira(revenue)],
-        ].map(([label, value]) => (
+          ["Own products", vendorProducts.length.toString(), "Your active catalogue in the marketplace.", "Manage"],
+          ["Active products", activeProductsCount.toString(), "Products currently available to buyers.", "View"],
+          ["Low stock products", lowStockCount.toString(), "Products that need stock attention.", "Manage"],
+          ["Orders for vendor products", vendorOrders.length.toString(), "Orders containing your listings.", "View"],
+          ["Pending orders", pendingOrderCount.toString(), "Orders awaiting payment completion.", "View"],
+          ["Paid orders", paidOrderCount.toString(), "Confirmed orders ready for processing.", "View"],
+          ["Product performance", formatNaira(revenue), "Order value tied to your products.", "View"],
+          ["Top product", topProduct?.product.name ?? "No orders yet", "Best performing item by ordered units.", "View"],
+        ].map(([label, value, description, action]) => (
           <div key={label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <p className="text-sm text-slate-500">{label}</p>
+            <p className="text-sm font-semibold text-slate-500">{label}</p>
             <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
+            <p className="mt-2 text-sm text-slate-600">{description}</p>
+            <p className="mt-4 text-sm font-black text-emerald-800">{action} →</p>
           </div>
         ))}
+      </section>
+
+      <section className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="text-xl font-black text-slate-950">Product performance cards</h2>
+          <div className="mt-4 grid gap-3">
+            {[
+              ["Order value", formatNaira(revenue)],
+              ["Inventory units", stockTotal.toString()],
+              ["Out of stock", outOfStockCount.toString()],
+            ].map(([label, value]) => (
+              <div key={label} className="flex items-center justify-between rounded-md bg-slate-50 px-3 py-3 text-sm">
+                <span className="font-semibold text-slate-700">{label}</span>
+                <span className="font-black text-slate-950">{value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="text-xl font-black text-slate-950">Recent activity</h2>
+          <div className="mt-4 grid gap-3">
+            {vendorProducts.length === 0 && vendorOrders.length === 0 ? (
+              <p className="rounded-md border border-dashed border-slate-300 p-4 text-sm text-slate-600">No recent activity yet.</p>
+            ) : [
+                ...vendorProducts.slice(0, 2).map((product) => ({ title: "Vendor product added", detail: product.name, status: inventoryLabel(product.stock).status })),
+                ...vendorOrders.slice(0, 2).map((order) => ({ title: "Order for vendor product", detail: `${order.id} · ${order.customerName}`, status: order.status })),
+              ].map((item, index) => (
+                <div key={`${item.title}-${index}`} className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-slate-50 px-3 py-3 text-sm">
+                  <div>
+                    <p className="font-black text-slate-950">{item.title}</p>
+                    <p className="mt-1 text-slate-600">{item.detail}</p>
+                  </div>
+                  <StatusBadge status={item.status} />
+                </div>
+              ))}
+          </div>
+        </div>
       </section>
 
       <section className="grid gap-8 lg:grid-cols-[420px_1fr]">
@@ -325,6 +399,29 @@ export function VendorDashboard() {
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">
+        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="text-xl font-black text-slate-950">Low stock products</h2>
+          <p className="mt-1 text-sm text-slate-600">Prioritize stock updates before customers place new orders.</p>
+          <div className="mt-4 grid gap-3">
+            {lowStockProducts.length === 0 ? (
+              <p className="rounded-md border border-dashed border-slate-300 p-4 text-sm text-slate-600">No low stock products.</p>
+            ) : lowStockProducts.map((product) => {
+              const status = inventoryLabel(product.stock);
+              return (
+                <div key={product.id} className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-slate-50 px-3 py-3 text-sm">
+                  <div>
+                    <p className="font-bold text-slate-950">{product.name}</p>
+                    <p className="text-slate-600">{product.stock} units · {getBranch(product.branchId)?.state}</p>
+                  </div>
+                  <button className="rounded-md border border-slate-300 px-3 py-2 text-xs font-bold" onClick={() => editProduct(product)} type="button">
+                    Update inventory
+                  </button>
+                  <StatusBadge status={status.status} label={status.label} />
+                </div>
+              );
+            })}
+          </div>
+        </div>
         <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
           <h2 className="text-xl font-black text-slate-950">Recent product activity</h2>
           <p className="mt-1 text-sm text-slate-600">Latest listings and stock condition for your own catalogue.</p>
