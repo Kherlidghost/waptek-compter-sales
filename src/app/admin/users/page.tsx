@@ -2,6 +2,7 @@ import { createStaffAccount, resetStaffPassword, updateStaffAccount } from "@/ap
 import { DashboardSessionBar } from "@/components/DashboardSessionBar";
 import { StatusBadge } from "@/components/StatusBadge";
 import { getAuthProfile, isAdmin } from "@/lib/auth";
+import { isSupabaseConfigured } from "@/lib/supabase-config";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import type { BranchState, UserRole } from "@/lib/types";
@@ -85,6 +86,17 @@ export default async function AdminUsersPage({
   const params = await searchParams;
   const success = decodeMessage(params.success);
   const error = decodeMessage(params.error);
+  if (!isSupabaseConfigured()) {
+    return (
+      <main className="min-h-screen dashboard-shell px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
+        <DashboardSessionBar role="admin" />
+        <section className="mx-auto max-w-4xl rounded-2xl border border-amber-200 bg-amber-50 p-6 text-sm font-semibold text-amber-900 shadow-sm">
+          Supabase is not configured for this deployment. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY, then redeploy.
+        </section>
+      </main>
+    );
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

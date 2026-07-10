@@ -6,6 +6,7 @@ import { OnlineVendorProductForm } from "@/components/OnlineVendorProductForm";
 import { StatusBadge } from "@/components/StatusBadge";
 import { VendorDashboard } from "@/components/VendorDashboard";
 import { getAuthProfile } from "@/lib/auth";
+import { isSupabaseConfigured } from "@/lib/supabase-config";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -33,23 +34,39 @@ export default async function VendorDashboardPage({
   searchParams: Promise<{ error?: string; success?: string }>;
 }) {
   const params = await searchParams;
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const profile = user ? await getAuthProfile(supabase, user.id) : null;
-  const { data: vendorData } = profile
-    ? await supabase.from("vendors").select("id, branch_id, business_name, owner_name, business_email, business_phone, business_address, city, business_type, status, rejection_reason, suspension_reason, approved_at, created_at").eq("profile_id", profile.id).maybeSingle()
-    : { data: null };
-  const vendor = vendorData as VendorRow | null;
-  const [{ data: categoryRows }, { data: branchData }] = await Promise.all([
-    supabase.from("categories").select("id, name, slug").neq("slug", "repair-services").order("name"),
-    vendor?.branch_id ? supabase.from("branches").select("id, name, state").eq("id", vendor.branch_id).maybeSingle() : Promise.resolve({ data: null }),
-  ]);
+  let vendor: VendorRow | null = null;
+  let categoryRows: Array<{ id: string; name: string; slug: string }> = [];
+  let branchData: { id: string; name: string; state: "Adamawa" | "Yobe" | "Borno" } | null = null;
+  let loadError = "";
+
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = await createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const profile = user ? await getAuthProfile(supabase, user.id) : null;
+      const { data: vendorData } = profile
+        ? await supabase.from("vendors").select("id, branch_id, business_name, owner_name, business_email, business_phone, business_address, city, business_type, status, rejection_reason, suspension_reason, approved_at, created_at").eq("profile_id", profile.id).maybeSingle()
+        : { data: null };
+      vendor = vendorData as VendorRow | null;
+      const [{ data: categories }, { data: branch }] = await Promise.all([
+        supabase.from("categories").select("id, name, slug").neq("slug", "repair-services").order("name"),
+        vendor?.branch_id ? supabase.from("branches").select("id, name, state").eq("id", vendor.branch_id).maybeSingle() : Promise.resolve({ data: null }),
+      ]);
+      categoryRows = (categories ?? []) as Array<{ id: string; name: string; slug: string }>;
+      branchData = branch as { id: string; name: string; state: "Adamawa" | "Yobe" | "Borno" } | null;
+    } catch {
+      loadError = "Vendor dashboard data could not be loaded. Please refresh or sign in again.";
+    }
+  } else {
+    loadError = "Supabase is not configured for this deployment.";
+  }
 
   return (
     <main className="min-h-screen space-y-6 dashboard-shell px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
       <DashboardSessionBar role="vendor" />
+      {loadError ? <p className="mx-auto max-w-7xl rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">{loadError}</p> : null}
       {!vendor ? (
         <section className="mx-auto max-w-5xl rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
           <p className="text-sm font-bold uppercase text-emerald-700">Vendor onboarding required</p>
@@ -110,8 +127,8 @@ export default async function VendorDashboardPage({
           </section>
           <VendorDashboard />
           <OnlineVendorProductForm
-            branches={branchData ? [branchData as { id: string; name: string; state: "Adamawa" | "Yobe" | "Borno" }] : []}
-            categories={(categoryRows ?? []) as Array<{ id: string; name: string; slug: string }>}
+            branches={branchData ? [branchData] : []}
+            categories={categoryRows}
             error={params.error}
             lockedBranchId={vendor.branch_id}
             returnTo="/vendor"

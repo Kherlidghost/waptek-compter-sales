@@ -13,19 +13,23 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
       : "/orders";
 
   if (isSupabaseConfigured()) {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    try {
+      const supabase = await createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-    if (user) {
-      const profile = await getAuthProfile(supabase, user.id);
-      const resolvedRole = profile?.role ?? role;
-      userSummary = {
-        email: user.email ?? "Signed in",
-        role: resolvedRole,
-        home: roleHome[resolvedRole],
-      };
+      if (user) {
+        const profile = await getAuthProfile(supabase, user.id);
+        const resolvedRole = profile?.role ?? role;
+        userSummary = {
+          email: user.email ?? "Signed in",
+          role: resolvedRole,
+          home: roleHome[resolvedRole],
+        };
+      }
+    } catch {
+      userSummary = null;
     }
   }
 

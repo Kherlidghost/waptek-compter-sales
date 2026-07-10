@@ -1,6 +1,16 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { emailNotConfirmedMessage, getAuthProfile, incompleteProfileMessage, isCashier, isCustomer, isEmailConfirmed, isManager, isSafeRedirect, roleHome, routeAccess } from "@/lib/auth";
 import { updateSession } from "@/lib/supabase/middleware";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { AuthProfile } from "@/lib/auth";
+
+async function safeGetAuthProfile(supabase: SupabaseClient, userId: string): Promise<AuthProfile | null> {
+  try {
+    return await getAuthProfile(supabase, userId);
+  } catch {
+    return null;
+  }
+}
 
 export async function middleware(request: NextRequest) {
   const session = await updateSession(request);
@@ -21,7 +31,7 @@ export async function middleware(request: NextRequest) {
       }
 
       const next = request.nextUrl.searchParams.get("next");
-      const profile = await getAuthProfile(supabase, user.id);
+      const profile = await safeGetAuthProfile(supabase, user.id);
       if (!profile) {
         return response;
       }
@@ -52,7 +62,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  const profile = await getAuthProfile(supabase, user.id);
+  const profile = await safeGetAuthProfile(supabase, user.id);
 
   if (!profile) {
     const loginUrl = new URL("/login", request.url);
