@@ -74,6 +74,7 @@ export async function createCheckoutOrder(formData: FormData) {
   const customerEmail = String(formData.get("customer_email") ?? "").trim();
   const supportNote = String(formData.get("support_note") ?? "").trim();
   const cartItems = parseCartItems(formData.get("cart_items"));
+  console.log("[Checkout/action] user=", user.id, "cartItems=", cartItems);
 
   if (cartItems.length === 0) {
     redirect("/checkout?error=Your%20cart%20is%20empty.%20Add%20products%20before%20checkout.");
@@ -96,7 +97,14 @@ export async function createCheckoutOrder(formData: FormData) {
     .in("id", cartProductIds)
     .eq("status", "active");
 
+  console.log("[Checkout/action] cartProductIds=", cartProductIds, "dbProducts count=", dbProducts?.length ?? 0, "productsError=", productsError?.message);
+
   if (productsError || !dbProducts || dbProducts.length === 0) {
+    // Detect seed-mode IDs (prod-1, prod-2, …) — these only exist in local seed data, not in the DB.
+    const hasSeedIds = cartProductIds.some((id) => /^prod-\d+$/.test(id));
+    if (hasSeedIds) {
+      redirect("/checkout?error=These%20products%20are%20demo%20items%20and%20cannot%20be%20ordered.%20Please%20contact%20support%20to%20add%20real%20products%20to%20the%20catalogue.");
+    }
     redirect("/checkout?error=Checkout%20products%20are%20not%20available.");
   }
 
@@ -104,7 +112,14 @@ export async function createCheckoutOrder(formData: FormData) {
   const validCartItems = cartItems.filter((line) =>
     (dbProducts as CheckoutProductRow[]).some((p) => p.id === line.productId),
   );
+
+  console.log("[Checkout/action] validCartItems=", validCartItems);
+
   if (validCartItems.length === 0) {
+    const hasSeedIds = cartProductIds.some((id) => /^prod-\d+$/.test(id));
+    if (hasSeedIds) {
+      redirect("/checkout?error=These%20products%20are%20demo%20items%20and%20cannot%20be%20ordered.%20Please%20contact%20support%20to%20add%20real%20products%20to%20the%20catalogue.");
+    }
     redirect("/checkout?error=Checkout%20products%20are%20not%20available.");
   }
 

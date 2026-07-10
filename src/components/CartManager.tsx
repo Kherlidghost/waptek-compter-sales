@@ -80,7 +80,7 @@ export function CartManager({ products }: { products: Product[] }) {
         </div>
       </div>
       <div className="mt-6 flex flex-wrap gap-3">
-        <Link className="rounded-lg bg-emerald-700 px-6 py-3 text-sm font-black text-white shadow-sm shadow-emerald-950/10" href="/login?next=/checkout">
+        <Link className="rounded-lg bg-emerald-700 px-6 py-3 text-sm font-black text-white shadow-sm shadow-emerald-950/10" href="/checkout">
           Continue to checkout
         </Link>
         <Link className="rounded-lg border border-slate-300 bg-white/80 px-6 py-3 text-sm font-black" href="/products">

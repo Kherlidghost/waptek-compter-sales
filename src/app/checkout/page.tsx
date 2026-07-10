@@ -35,7 +35,7 @@ export default async function CheckoutPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const params = await searchParams;
-  const [bankSettings, { products }] = await Promise.all([getBankSettings(), getStorefrontCatalog()]);
+  const [bankSettings, { products, source: catalogSource }] = await Promise.all([getBankSettings(), getStorefrontCatalog()]);
   const hasBankDetails = Boolean(bankSettings?.bank_name && bankSettings.account_name && bankSettings.account_number);
 
   return (
@@ -52,7 +52,7 @@ export default async function CheckoutPage({
               {params.error}
             </div>
           ) : null}
-          <CheckoutForm action={createCheckoutOrder} products={products} />
+          <CheckoutForm action={createCheckoutOrder} products={products} catalogSource={catalogSource} />
         </section>
         <aside className="h-fit rounded-2xl border border-slate-200 bg-slate-950 p-6 text-white shadow-xl shadow-slate-950/10">
           <h2 className="text-lg font-black text-white">Company bank account</h2>
