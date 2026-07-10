@@ -5,10 +5,41 @@ import { revalidatePath } from "next/cache";
 import { supabaseConfig } from "@/lib/supabase-config";
 import { createClient } from "@/lib/supabase/server";
 
-const checkoutProductSlugs = ["hp-elitebook-840-g6", "logitech-wireless-keyboard-mouse"];
+type CheckoutCartLine = {
+  productId: string;
+  quantity: number;
+};
+
+type CheckoutProductRow = {
+  id: string;
+  vendor_id: string | null;
+  price: number | string;
+  discount_price: number | string | null;
+  inventory: Array<{ quantity: number; status?: string }> | null;
+};
 
 function cleanFileName(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9.]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function parseCartItems(value: FormDataEntryValue | null): CheckoutCartLine[] {
+  if (typeof value !== "string" || !value.trim()) return [];
+
+  try {
+    const parsed = JSON.parse(value) as Array<Partial<CheckoutCartLine>>;
+    const merged = new Map<string, number>();
+
+    parsed.forEach((line) => {
+      const productId = String(line.productId ?? "").trim();
+      const quantity = Math.max(1, Math.floor(Number(line.quantity ?? 1)));
+      if (!productId || !Number.isFinite(quantity)) return;
+      merged.set(productId, (merged.get(productId) ?? 0) + quantity);
+    });
+
+    return [...merged.entries()].map(([productId, quantity]) => ({ productId, quantity }));
+  } catch {
+    return [];
+  }
 }
 
 async function notifyProfiles(supabase: Awaited<ReturnType<typeof createClient>>, profileIds: Array<string | null | undefined>, message: string) {
@@ -42,6 +73,11 @@ export async function createCheckoutOrder(formData: FormData) {
   const customerPhone = String(formData.get("customer_phone") ?? "").trim();
   const customerEmail = String(formData.get("customer_email") ?? "").trim();
   const supportNote = String(formData.get("support_note") ?? "").trim();
+  const cartItems = parseCartItems(formData.get("cart_items"));
+
+  if (cartItems.length === 0) {
+    redirect("/checkout?error=Your%20cart%20is%20empty.%20Add%20products%20before%20checkout.");
+  }
 
   const { data: branch, error: branchError } = await supabase
     .from("branches")
@@ -53,28 +89,35 @@ export async function createCheckoutOrder(formData: FormData) {
     redirect("/checkout?error=Selected%20branch%20is%20not%20available.");
   }
 
+  const cartProductIds = cartItems.map((line) => line.productId);
   const { data: dbProducts, error: productsError } = await supabase
     .from("products")
-    .select("id, vendor_id, slug, price, inventory(quantity, status)")
-    .in("slug", checkoutProductSlugs)
+    .select("id, vendor_id, price, discount_price, inventory(quantity, status)")
+    .in("id", cartProductIds)
     .eq("status", "active");
 
-  if (productsError || !dbProducts || dbProducts.length === 0) {
+  if (productsError || !dbProducts || dbProducts.length !== cartItems.length) {
     redirect("/checkout?error=Checkout%20products%20are%20not%20available.");
   }
 
-  const unavailableProduct = dbProducts.find((product) => {
+  const productById = new Map((dbProducts as CheckoutProductRow[]).map((product) => [product.id, product]));
+  const unavailableProduct = cartItems.find((line) => {
+    const product = productById.get(line.productId);
+    if (!product) return true;
     const inventoryRows = (product.inventory ?? []) as Array<{ quantity: number; status?: string }>;
     const available = inventoryRows
       .filter((item) => item.status !== "archived")
       .reduce((sum, item) => sum + Number(item.quantity ?? 0), 0);
-    return available <= 0;
+    return available < line.quantity;
   });
   if (unavailableProduct) {
     redirect("/checkout?error=One%20or%20more%20products%20are%20out%20of%20stock.");
   }
 
-  const total = dbProducts.reduce((sum, item) => sum + Number(item.price), 0);
+  const total = cartItems.reduce((sum, line) => {
+    const product = productById.get(line.productId);
+    return sum + Number(product?.discount_price ?? product?.price ?? 0) * line.quantity;
+  }, 0);
   const orderNumber = `ORD-${Date.now().toString().slice(-8)}`;
 
   const { data: order, error: orderError } = await supabase
@@ -99,13 +142,17 @@ export async function createCheckoutOrder(formData: FormData) {
     redirect("/checkout?error=Could%20not%20create%20order.");
   }
 
-  const orderItems = dbProducts.map((product) => ({
+  const orderItems = cartItems.map((line) => {
+    const product = productById.get(line.productId);
+    const unitPrice = Number(product?.discount_price ?? product?.price ?? 0);
+    return {
     order_id: order.id,
-    product_id: product.id,
-    vendor_id: product.vendor_id,
-    quantity: 1,
-    unit_price: product.price,
-  }));
+    product_id: line.productId,
+    vendor_id: product?.vendor_id ?? null,
+    quantity: line.quantity,
+    unit_price: unitPrice,
+    };
+  });
 
   const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
   if (itemsError) {
