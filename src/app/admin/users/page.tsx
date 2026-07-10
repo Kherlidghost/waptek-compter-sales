@@ -41,6 +41,42 @@ function decodeMessage(value?: string) {
   }
 }
 
+function cleanAdminAuthMessage(error: unknown) {
+  const setupMessage =
+    "Add the server-only SUPABASE_SERVICE_ROLE_KEY to Vercel Production environment variables and redeploy. Use the service_role key from the same Supabase project.";
+
+  if (!error) return setupMessage;
+
+  const message =
+    error instanceof Error
+      ? error.message
+      : typeof error === "string"
+        ? error
+        : typeof error === "object" && "message" in error && typeof error.message === "string"
+          ? error.message
+          : "";
+
+  const trimmed = message.trim();
+  if (!trimmed) return setupMessage;
+
+  const lower = trimmed.toLowerCase();
+  if (
+    trimmed.startsWith("{") ||
+    lower.includes("\"url\"") ||
+    lower.includes("/auth/v1/admin/users") ||
+    lower.includes("fetch failed") ||
+    lower.includes("failed to fetch")
+  ) {
+    return setupMessage;
+  }
+
+  if (lower.includes("invalid api key") || lower.includes("jwt") || lower.includes("unauthorized")) {
+    return "Supabase rejected the Admin API request. Set the real service_role key for this production Supabase project, not the anon key, then redeploy.";
+  }
+
+  return trimmed;
+}
+
 export default async function AdminUsersPage({
   searchParams,
 }: {
@@ -83,7 +119,7 @@ export default async function AdminUsersPage({
     const { data, error: authError } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
     if (authError) {
       authAdminReady = false;
-      authAdminMessage = authError.message;
+      authAdminMessage = cleanAdminAuthMessage(authError);
     } else {
       data.users.forEach((authUser) => {
         if (authUser.email) emailById.set(authUser.id, authUser.email);
@@ -91,7 +127,7 @@ export default async function AdminUsersPage({
     }
   } catch (authError) {
     authAdminReady = false;
-    authAdminMessage = authError instanceof Error ? authError.message : "SUPABASE_SERVICE_ROLE_KEY is not configured.";
+    authAdminMessage = cleanAdminAuthMessage(authError);
   }
 
   return (
@@ -117,7 +153,11 @@ export default async function AdminUsersPage({
       {error ? <div className="mx-auto max-w-7xl rounded-lg border border-red-200 bg-red-50 p-4 text-sm font-bold text-red-800">{error}</div> : null}
       {!authAdminReady ? (
         <div className="mx-auto max-w-7xl rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">
-          Staff Auth email and account creation require <span className="font-black">SUPABASE_SERVICE_ROLE_KEY</span> on Vercel. Details: {authAdminMessage}
+          <p className="font-black">Staff Auth email lookup, account creation, and password reset need Supabase Admin access.</p>
+          <p className="mt-1">
+            Add <span className="font-black">SUPABASE_SERVICE_ROLE_KEY</span> as a server-only Vercel Production environment variable, then redeploy.
+          </p>
+          <p className="mt-1 text-amber-800">Details: {authAdminMessage}</p>
         </div>
       ) : null}
 
@@ -147,8 +187,11 @@ export default async function AdminUsersPage({
               </select>
             </label>
             <Field label="Temporary password" name="temporary_password" type="password" required />
-            <button className="rounded-lg bg-emerald-700 px-5 py-3 text-sm font-black text-white shadow-sm shadow-emerald-950/10 hover:bg-emerald-800">
-              Create Staff Account
+            <button
+              className="rounded-lg bg-emerald-700 px-5 py-3 text-sm font-black text-white shadow-sm shadow-emerald-950/10 hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+              disabled={!authAdminReady}
+            >
+              {authAdminReady ? "Create Staff Account" : "Add service role key to create staff"}
             </button>
           </div>
         </form>
@@ -185,7 +228,7 @@ export default async function AdminUsersPage({
                   return (
                     <tr key={item.id} className="align-top">
                       <td className="px-4 py-3 font-black text-slate-950">{item.full_name}</td>
-                      <td className="px-4 py-3">{emailById.get(item.id) ?? "No auth email found"}</td>
+                      <td className="px-4 py-3">{emailById.get(item.id) ?? (authAdminReady ? "No auth email found" : "Auth email unavailable")}</td>
                       <td className="px-4 py-3">{item.phone ?? "Not set"}</td>
                       <td className="px-4 py-3 capitalize">{item.role}</td>
                       <td className="px-4 py-3">{branch ? `${branch.name} (${branch.state})` : "No branch"}</td>
@@ -224,8 +267,11 @@ export default async function AdminUsersPage({
                           <form action={resetStaffPassword} className="mt-3 grid gap-2 border-t border-slate-200 pt-3">
                             <input type="hidden" name="profile_id" value={item.id} />
                             <Field label="New temporary password" name="temporary_password" type="password" required />
-                            <button className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-900">
-                              Reset password
+                            <button
+                              className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-900 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
+                              disabled={!authAdminReady}
+                            >
+                              {authAdminReady ? "Reset password" : "Service role key required"}
                             </button>
                           </form>
                         </details>

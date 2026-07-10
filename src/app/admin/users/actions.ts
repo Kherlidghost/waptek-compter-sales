@@ -23,6 +23,41 @@ function encode(value: string) {
   return encodeURIComponent(value);
 }
 
+function adminSetupMessage() {
+  return "Staff account actions require SUPABASE_SERVICE_ROLE_KEY on the server. Add the production Supabase service_role key to Vercel and redeploy.";
+}
+
+function adminActionMessage(error: unknown, fallback: string) {
+  const message =
+    error instanceof Error
+      ? error.message
+      : typeof error === "string"
+        ? error
+        : typeof error === "object" && error !== null && "message" in error && typeof error.message === "string"
+          ? error.message
+          : "";
+
+  const trimmed = message.trim();
+  if (!trimmed) return fallback;
+
+  const lower = trimmed.toLowerCase();
+  if (
+    trimmed.startsWith("{") ||
+    lower.includes("\"url\"") ||
+    lower.includes("/auth/v1/admin/users") ||
+    lower.includes("fetch failed") ||
+    lower.includes("failed to fetch")
+  ) {
+    return fallback;
+  }
+
+  if (lower.includes("invalid api key") || lower.includes("jwt") || lower.includes("unauthorized")) {
+    return "Supabase rejected the Admin API request. Use the real service_role key for this production Supabase project, not the anon key.";
+  }
+
+  return trimmed;
+}
+
 async function requireAdmin() {
   const supabase = await createClient();
   const {
@@ -64,7 +99,7 @@ export async function createStaffAccount(formData: FormData) {
   try {
     admin = createAdminClient();
   } catch {
-    redirect("/admin/users?error=SUPABASE_SERVICE_ROLE_KEY%20is%20missing%20on%20the%20server.");
+    redirect(`/admin/users?error=${encode(adminSetupMessage())}`);
   }
 
   const { data: authData, error: authError } = await admin.auth.admin.createUser({
@@ -79,7 +114,11 @@ export async function createStaffAccount(formData: FormData) {
   });
 
   if (authError || !authData.user) {
-    redirect(`/admin/users?error=${encode(authError?.message ?? "Could not create staff Auth user.")}`);
+    redirect(
+      `/admin/users?error=${encode(
+        adminActionMessage(authError, "Could not create staff Auth user. Confirm SUPABASE_SERVICE_ROLE_KEY is set in Vercel Production and belongs to this Supabase project."),
+      )}`,
+    );
   }
 
   const { error: profileError } = await admin.from("profiles").upsert(
@@ -120,7 +159,7 @@ export async function updateStaffAccount(formData: FormData) {
   try {
     admin = createAdminClient();
   } catch {
-    redirect("/admin/users?error=SUPABASE_SERVICE_ROLE_KEY%20is%20missing%20on%20the%20server.");
+    redirect(`/admin/users?error=${encode(adminSetupMessage())}`);
   }
 
   const { error } = await admin
@@ -154,14 +193,20 @@ export async function resetStaffPassword(formData: FormData) {
   try {
     admin = createAdminClient();
   } catch {
-    redirect("/admin/users?error=SUPABASE_SERVICE_ROLE_KEY%20is%20missing%20on%20the%20server.");
+    redirect(`/admin/users?error=${encode(adminSetupMessage())}`);
   }
 
   const { error } = await admin.auth.admin.updateUserById(profileId, {
     password,
   });
 
-  if (error) redirect(`/admin/users?error=${encode(error.message || "Could not reset password.")}`);
+  if (error) {
+    redirect(
+      `/admin/users?error=${encode(
+        adminActionMessage(error, "Could not reset password. Confirm SUPABASE_SERVICE_ROLE_KEY is set in Vercel Production and belongs to this Supabase project."),
+      )}`,
+    );
+  }
 
   refreshUsers();
   redirect("/admin/users?success=Temporary%20password%20updated.");
