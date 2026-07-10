@@ -19,9 +19,10 @@ Create `.env.local` locally and add the same variables in Vercel:
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-server-only-service-role-key
+SUPABASE_SECRET_KEY=your-server-only-supabase-secret-key
 ```
 
-`SUPABASE_SERVICE_ROLE_KEY` is required for Admin Staff Management so the server can create manager/cashier Auth users. Add it only to Vercel environment variables and local `.env.local`; never expose it in client components and never prefix it with `NEXT_PUBLIC_`.
+`SUPABASE_SECRET_KEY` or `SUPABASE_SERVICE_ROLE_KEY` is required for Admin Staff Management so the server can create manager/cashier Auth users. Add it only to Vercel environment variables and local `.env.local`; never expose it in client components and never prefix it with `NEXT_PUBLIC_`.
 
 ## Local Verification
 
