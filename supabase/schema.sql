@@ -362,6 +362,70 @@ as $$
   select id from public.vendors where profile_id = (select auth.uid()) and status = 'approved'
 $$;
 
+create or replace function public.current_user_owns_order(p_order_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.orders o
+    where o.id = p_order_id
+      and o.profile_id = (select auth.uid())
+  )
+$$;
+
+create or replace function public.current_user_can_read_order(p_order_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.orders o
+    where o.id = p_order_id
+      and (
+        o.profile_id = (select auth.uid())
+        or public.current_user_role() = 'admin'
+        or (
+          public.current_user_role() in ('manager', 'cashier')
+          and o.branch_id = public.current_user_branch_id()
+        )
+        or exists (
+          select 1
+          from public.order_items oi
+          where oi.order_id = o.id
+            and oi.vendor_id = public.current_vendor_id()
+        )
+      )
+  )
+$$;
+
+create or replace function public.current_user_can_review_order_payment(p_order_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.orders o
+    where o.id = p_order_id
+      and (
+        public.current_user_role() = 'admin'
+        or (
+          public.current_user_role() = 'cashier'
+          and o.branch_id = public.current_user_branch_id()
+        )
+      )
+  )
+$$;
+
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -386,6 +450,12 @@ create trigger on_auth_user_created
   for each row execute function public.handle_new_user();
 
 revoke execute on function public.handle_new_user() from public, anon, authenticated;
+revoke execute on function public.current_user_owns_order(uuid) from public, anon;
+revoke execute on function public.current_user_can_read_order(uuid) from public, anon;
+revoke execute on function public.current_user_can_review_order_payment(uuid) from public, anon;
+grant execute on function public.current_user_owns_order(uuid) to authenticated;
+grant execute on function public.current_user_can_read_order(uuid) to authenticated;
+grant execute on function public.current_user_can_review_order_payment(uuid) to authenticated;
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values
@@ -554,88 +624,33 @@ using (cart_id in (select id from public.carts where profile_id = (select auth.u
 with check (cart_id in (select id from public.carts where profile_id = (select auth.uid())));
 
 create policy "customers create own orders" on public.orders for insert to authenticated with check ((select auth.uid()) = profile_id);
-create policy "customers read own orders" on public.orders for select to authenticated using ((select auth.uid()) = profile_id);
-create policy "vendors read orders containing own products" on public.orders for select to authenticated using (
-  id in (select order_id from public.order_items where vendor_id = public.current_vendor_id())
-);
-create policy "staff read branch orders" on public.orders for select to authenticated using (
-  public.current_user_role() = 'admin'
-  or (public.current_user_role() in ('manager', 'cashier') and branch_id = public.current_user_branch_id())
-);
+create policy "read permitted orders" on public.orders for select to authenticated using (public.current_user_can_read_order(id));
 create policy "cashiers confirm branch orders" on public.orders for update to authenticated
 using (public.current_user_role() = 'admin' or (public.current_user_role() = 'cashier' and branch_id = public.current_user_branch_id()))
 with check (public.current_user_role() = 'admin' or (public.current_user_role() = 'cashier' and branch_id = public.current_user_branch_id()));
 
-create policy "customers create order items" on public.order_items for insert to authenticated with check (
-  order_id in (select id from public.orders where profile_id = (select auth.uid()))
-);
-create policy "customers read own order items" on public.order_items for select to authenticated using (
-  order_id in (select id from public.orders where profile_id = (select auth.uid()))
-);
-create policy "vendors read own order items" on public.order_items for select to authenticated using (vendor_id = public.current_vendor_id());
-create policy "staff read order items" on public.order_items for select to authenticated using (
-  public.current_user_role() = 'admin'
-  or order_id in (select id from public.orders where branch_id = public.current_user_branch_id())
-);
+create policy "customers create permitted order items" on public.order_items for insert to authenticated with check (public.current_user_owns_order(order_id));
+create policy "read permitted order items" on public.order_items for select to authenticated using (public.current_user_can_read_order(order_id));
 
 create policy "order event visibility" on public.order_events for select to authenticated using (
-  order_id in (
-    select o.id
-    from public.orders o
-    where o.profile_id = (select auth.uid())
-      or public.current_user_role() = 'admin'
-      or (public.current_user_role() in ('manager', 'cashier') and o.branch_id = public.current_user_branch_id())
-      or o.id in (select oi.order_id from public.order_items oi where oi.vendor_id = public.current_vendor_id())
-  )
+  public.current_user_can_read_order(order_id)
 );
 create policy "create permitted order events" on public.order_events for insert to authenticated with check (
   profile_id = (select auth.uid())
-  and (
-    order_id in (
-      select o.id
-      from public.orders o
-      where o.profile_id = (select auth.uid())
-    )
-    or public.current_user_role() = 'admin'
-    or order_id in (
-      select o.id
-      from public.orders o
-      where public.current_user_role() in ('manager', 'cashier')
-        and o.branch_id = public.current_user_branch_id()
-    )
-  )
+  and public.current_user_can_read_order(order_id)
 );
 
 create policy "customers upload own receipts" on public.payment_receipts for insert to authenticated with check (
   uploaded_by = (select auth.uid())
   and order_id in (select id from public.orders where profile_id = (select auth.uid()))
 );
-create policy "customers read own receipts" on public.payment_receipts for select to authenticated using (
+create policy "read permitted receipts" on public.payment_receipts for select to authenticated using (
   uploaded_by = (select auth.uid())
-  or order_id in (select id from public.orders where profile_id = (select auth.uid()))
+  or public.current_user_can_read_order(order_id)
 );
 create policy "cashiers review receipts" on public.payment_receipts for update to authenticated
-using (
-  public.current_user_role() = 'admin'
-  or (
-    public.current_user_role() = 'cashier'
-    and order_id in (select id from public.orders where branch_id = public.current_user_branch_id())
-  )
-)
-with check (
-  public.current_user_role() = 'admin'
-  or (
-    public.current_user_role() = 'cashier'
-    and order_id in (select id from public.orders where branch_id = public.current_user_branch_id())
-  )
-);
-create policy "staff read receipts" on public.payment_receipts for select to authenticated using (
-  public.current_user_role() = 'admin'
-  or (
-    public.current_user_role() in ('manager', 'cashier')
-    and order_id in (select id from public.orders where branch_id = public.current_user_branch_id())
-  )
-);
+using (public.current_user_can_review_order_payment(order_id))
+with check (public.current_user_can_review_order_payment(order_id));
 
 create policy "customers create repair requests" on public.repair_requests for insert to authenticated with check ((select auth.uid()) = profile_id);
 create policy "customers read own repair requests" on public.repair_requests for select to authenticated using ((select auth.uid()) = profile_id);
