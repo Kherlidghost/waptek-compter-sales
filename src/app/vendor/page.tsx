@@ -12,6 +12,7 @@ export const dynamic = "force-dynamic";
 
 type VendorRow = {
   id: string;
+  branch_id: string;
   business_name: string;
   owner_name: string | null;
   business_email: string | null;
@@ -38,9 +39,13 @@ export default async function VendorDashboardPage({
   } = await supabase.auth.getUser();
   const profile = user ? await getAuthProfile(supabase, user.id) : null;
   const { data: vendorData } = profile
-    ? await supabase.from("vendors").select("id, business_name, owner_name, business_email, business_phone, business_address, city, business_type, status, rejection_reason, suspension_reason, approved_at, created_at").eq("profile_id", profile.id).maybeSingle()
+    ? await supabase.from("vendors").select("id, branch_id, business_name, owner_name, business_email, business_phone, business_address, city, business_type, status, rejection_reason, suspension_reason, approved_at, created_at").eq("profile_id", profile.id).maybeSingle()
     : { data: null };
   const vendor = vendorData as VendorRow | null;
+  const [{ data: categoryRows }, { data: branchData }] = await Promise.all([
+    supabase.from("categories").select("id, name, slug").neq("slug", "repair-services").order("name"),
+    vendor?.branch_id ? supabase.from("branches").select("id, name, state").eq("id", vendor.branch_id).maybeSingle() : Promise.resolve({ data: null }),
+  ]);
 
   return (
     <main className="min-h-screen space-y-6 bg-slate-50 px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
@@ -104,7 +109,14 @@ export default async function VendorDashboardPage({
             </details>
           </section>
           <VendorDashboard />
-          <OnlineVendorProductForm error={params.error} returnTo="/vendor" success={params.success} />
+          <OnlineVendorProductForm
+            branches={branchData ? [branchData as { id: string; name: string; state: "Adamawa" | "Yobe" | "Borno" }] : []}
+            categories={(categoryRows ?? []) as Array<{ id: string; name: string; slug: string }>}
+            error={params.error}
+            lockedBranchId={vendor.branch_id}
+            returnTo="/vendor"
+            success={params.success}
+          />
           <OnlineOrderStatusPanel role="vendor" />
         </>
       )}

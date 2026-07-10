@@ -11,9 +11,8 @@
 -- - categories
 -- - products
 --
--- Products require an existing approved vendor because public.products.vendor_id
--- is a required foreign key. If no approved vendor exists yet, product rows are
--- skipped with a notice.
+-- Product seed rows prefer an existing approved vendor. If no approved vendor
+-- exists yet, the rows are inserted as company-owned products.
 
 insert into public.branches (id, name, state, city, address)
 values
@@ -49,8 +48,7 @@ begin
   limit 1;
 
   if seed_vendor_id is null then
-    raise notice 'No approved vendor found. Product seed skipped. Create/sync a real vendor profile first with supabase/auth-profile-sync.sql.';
-    return;
+    raise notice 'No approved vendor found. Product seed will be company-owned.';
   end if;
 
   insert into public.products (

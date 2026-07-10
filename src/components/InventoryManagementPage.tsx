@@ -26,7 +26,7 @@ type InventoryProduct = {
   sku: string | null;
   brand: string | null;
   price: number | string;
-  vendor_id: string;
+  vendor_id: string | null;
   category_id: string;
   branch_id: string;
   categories: { name: string; slug: string } | { name: string; slug: string }[] | null;

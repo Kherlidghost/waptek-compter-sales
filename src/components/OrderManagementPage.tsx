@@ -36,7 +36,7 @@ type OrderRow = {
   updated_at: string;
   branches: { name: string; state: string; city: string } | { name: string; state: string; city: string }[] | null;
   payment_receipts: Array<{ id: string; storage_path: string; status: "pending" | "confirmed" | "rejected"; review_note: string | null; created_at: string; reviewed_at: string | null }>;
-  order_items: Array<{ quantity: number; unit_price: number | string; vendor_id: string; products: { name: string; slug: string } | { name: string; slug: string }[] | null; vendors: { business_name: string } | { business_name: string }[] | null }>;
+  order_items: Array<{ quantity: number; unit_price: number | string; vendor_id: string | null; products: { name: string; slug: string } | { name: string; slug: string }[] | null; vendors: { business_name: string } | { business_name: string }[] | null }>;
   order_events: Array<{ event_type: string; note: string | null; created_at: string }>;
 };
 

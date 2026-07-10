@@ -73,7 +73,7 @@ create table public.categories (
 
 create table public.products (
   id uuid primary key default gen_random_uuid(),
-  vendor_id uuid not null references public.vendors(id) on delete cascade,
+  vendor_id uuid references public.vendors(id) on delete set null,
   category_id uuid not null references public.categories(id),
   branch_id uuid not null references public.branches(id),
   name text not null,
@@ -181,7 +181,7 @@ create table public.order_items (
   id uuid primary key default gen_random_uuid(),
   order_id uuid not null references public.orders(id) on delete cascade,
   product_id uuid not null references public.products(id),
-  vendor_id uuid not null references public.vendors(id),
+  vendor_id uuid references public.vendors(id) on delete set null,
   quantity integer not null check (quantity > 0),
   unit_price numeric(12, 2) not null check (unit_price >= 0),
   created_at timestamptz not null default now()
@@ -549,8 +549,8 @@ create policy "admin manages company settings" on public.company_settings for al
 create policy "public reads marketplace settings" on public.marketplace_settings for select to anon, authenticated using (true);
 create policy "admin manages marketplace settings" on public.marketplace_settings for all to authenticated using (public.current_user_role() = 'admin') with check (public.current_user_role() = 'admin');
 
-create policy "approved vendors insert products" on public.products for insert to authenticated with check (vendor_id = public.current_vendor_id());
-create policy "approved vendors update own products" on public.products for update to authenticated using (vendor_id = public.current_vendor_id()) with check (vendor_id = public.current_vendor_id());
+create policy "approved vendors insert products" on public.products for insert to authenticated with check (vendor_id is not null and vendor_id = public.current_vendor_id());
+create policy "approved vendors update own products" on public.products for update to authenticated using (vendor_id is not null and vendor_id = public.current_vendor_id()) with check (vendor_id is not null and vendor_id = public.current_vendor_id());
 create policy "staff manage products" on public.products for all to authenticated
 using (
   public.current_user_role() = 'admin'

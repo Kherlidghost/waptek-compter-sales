@@ -32,7 +32,7 @@ type OnlineOrderDetail = {
   order_events: Array<{ event_type: string; note: string | null; created_at: string }>;
   order_items: Array<{
     product_id: string;
-    vendor_id: string;
+    vendor_id: string | null;
     quantity: number;
     unit_price: number | string;
     products: { name: string; slug: string } | Array<{ name: string; slug: string }> | null;

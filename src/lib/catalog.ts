@@ -7,7 +7,7 @@ type JoinedOne<T> = T | T[] | null;
 
 type CatalogProductRow = {
   id: string;
-  vendor_id: string;
+  vendor_id: string | null;
   category_id: string;
   branch_id: string;
   name: string;
@@ -90,7 +90,7 @@ function mapProduct(row: CatalogProductRow): Product {
     branchName: branch?.name,
     branchState: branch?.state,
     branchCity: branch?.city,
-    vendorName: vendor?.business_name,
+    vendorName: vendor?.business_name ?? "CompuMarket NG",
   };
 }
 

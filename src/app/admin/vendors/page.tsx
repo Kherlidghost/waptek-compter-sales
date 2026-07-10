@@ -137,7 +137,7 @@ export default async function AdminVendorsPage({
                     <td className="px-4 py-3">New</td>
                     <td className="px-4 py-3">{new Date(vendor.created_at).toLocaleDateString("en-NG")}</td>
                     <td className="px-4 py-3"><StatusBadge status={vendor.status} label={vendor.status === "pending" ? "Pending" : undefined} /></td>
-                    <td className="px-4 py-3"><VendorStatusActions vendorId={vendor.id} /></td>
+                    <td className="px-4 py-3"><VendorStatusActions status={vendor.status} vendorId={vendor.id} /></td>
                   </tr>
                 );
               })}
@@ -149,22 +149,38 @@ export default async function AdminVendorsPage({
   );
 }
 
-function VendorStatusActions({ vendorId }: { vendorId: string }) {
+function VendorStatusActions({ vendorId, status }: { vendorId: string; status: string }) {
+  const actionGroups: Array<[string, string, boolean]> =
+    status === "pending"
+      ? [
+          ["approved", "Approve vendor", true],
+          ["rejected", "Reject vendor", false],
+        ]
+      : status === "approved"
+        ? [["suspended", "Suspend vendor", false]]
+        : status === "suspended"
+          ? [["approved", "Reactivate vendor", true]]
+          : status === "rejected"
+            ? [["pending", "Reconsider", true]]
+            : [["approved", "Reactivate vendor", true]];
+
   return (
     <div className="grid min-w-64 gap-2">
-      {[
-        ["approved", "Approve vendor"],
-        ["rejected", "Reject vendor"],
-        ["suspended", "Suspend vendor"],
-        ["approved", "Reactivate vendor"],
-        ["inactive", "Mark inactive"],
-      ].map(([status, label]) => (
+      <a className="rounded-md border border-slate-300 px-3 py-2 text-center text-xs font-bold" href={`/vendors/${vendorId}`}>
+        View
+      </a>
+      {status === "approved" ? (
+        <a className="rounded-md border border-slate-300 px-3 py-2 text-center text-xs font-bold" href={`/admin/products?vendor=${vendorId}`}>
+          View Products
+        </a>
+      ) : null}
+      {actionGroups.map(([nextStatus, label, primary]) => (
         <form key={label} action={updateVendorApprovalStatus} className="grid gap-2">
           <input type="hidden" name="return_to" value="/admin/vendors" />
           <input type="hidden" name="vendor_id" value={vendorId} />
-          <input type="hidden" name="status" value={status} />
-          {(status === "rejected" || status === "suspended" || status === "inactive") ? <input className="h-9 rounded-md border border-slate-300 px-2 text-xs" name="reason" placeholder="Reason" /> : null}
-          <button className={status === "approved" ? "rounded-md bg-emerald-700 px-3 py-2 text-xs font-bold text-white" : "rounded-md border border-slate-300 px-3 py-2 text-xs font-bold"}>
+          <input type="hidden" name="status" value={String(nextStatus)} />
+          {(nextStatus === "rejected" || nextStatus === "suspended" || nextStatus === "inactive") ? <input className="h-9 rounded-md border border-slate-300 px-2 text-xs" name="reason" placeholder="Reason" /> : null}
+          <button className={primary ? "rounded-md bg-emerald-700 px-3 py-2 text-xs font-bold text-white" : "rounded-md border border-slate-300 px-3 py-2 text-xs font-bold"}>
             {label}
           </button>
         </form>

@@ -33,7 +33,7 @@ async function requireProfile() {
 
 async function getProductScope(supabase: Awaited<ReturnType<typeof createClient>>, productId: string) {
   const { data } = await supabase.from("products").select("id, vendor_id, branch_id, name").eq("id", productId).maybeSingle();
-  return data as { id: string; vendor_id: string; branch_id: string; name: string } | null;
+  return data as { id: string; vendor_id: string | null; branch_id: string; name: string } | null;
 }
 
 async function getVendorId(supabase: Awaited<ReturnType<typeof createClient>>, profileId: string) {
@@ -41,7 +41,7 @@ async function getVendorId(supabase: Awaited<ReturnType<typeof createClient>>, p
   return data?.id ?? null;
 }
 
-async function canManageInventory(product: { vendor_id: string; branch_id: string }, branchId: string) {
+async function canManageInventory(product: { vendor_id: string | null; branch_id: string }, branchId: string) {
   const { supabase, user, profile } = await requireProfile();
   if (isAdmin(profile)) return { supabase, user, profile, allowed: true };
   if (isManager(profile)) return { supabase, user, profile, allowed: profile.branch_id === branchId };

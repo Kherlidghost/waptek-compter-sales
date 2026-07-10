@@ -8,7 +8,7 @@ export function ProductCard({ product }: { product: Product }) {
   const branch = getBranch(product.branchId);
   const branchState = product.branchState ?? branch?.state;
   const branchName = product.branchName ?? branch?.name;
-  const vendorName = product.vendorName ?? getVendor(product.vendorId)?.businessName ?? "Approved vendor";
+  const vendorName = product.vendorName ?? (product.vendorId ? getVendor(product.vendorId)?.businessName : null) ?? "CompuMarket NG";
   const stockStatus = product.stock <= 0 ? "Out of Stock" : product.stock <= 3 ? "Low Stock" : "In Stock";
   const stockClasses =
     product.stock <= 0
@@ -37,10 +37,14 @@ export function ProductCard({ product }: { product: Product }) {
         </div>
         <div className="grid gap-2 text-sm text-slate-600">
           <p>
-            Vendor:{" "}
-            <Link className="font-semibold text-slate-800 hover:text-emerald-700" href={`/vendors/${product.vendorId}`}>
-              {vendorName}
-            </Link>
+            Seller:{" "}
+            {product.vendorId ? (
+              <Link className="font-semibold text-slate-800 hover:text-emerald-700" href={`/vendors/${product.vendorId}`}>
+                {vendorName}
+              </Link>
+            ) : (
+              <span className="font-semibold text-slate-800">{vendorName}</span>
+            )}
           </p>
           <p>Location: <span className="font-semibold text-slate-800">{branchName ?? branchState ?? "Online"}</span></p>
           <span className={`w-fit rounded-md px-2 py-1 text-xs font-bold ${stockClasses}`}>{stockStatus}</span>

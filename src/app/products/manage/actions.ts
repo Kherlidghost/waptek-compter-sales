@@ -47,7 +47,7 @@ async function requireProfile() {
 
 async function getProductScope(supabase: Awaited<ReturnType<typeof createClient>>, productId: string) {
   const { data } = await supabase.from("products").select("id, vendor_id, branch_id").eq("id", productId).maybeSingle();
-  return data as { id: string; vendor_id: string; branch_id: string } | null;
+  return data as { id: string; vendor_id: string | null; branch_id: string } | null;
 }
 
 async function canManageProduct(productId: string) {

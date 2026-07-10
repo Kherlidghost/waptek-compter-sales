@@ -5,7 +5,6 @@ import { OnlineVendorProductForm } from "@/components/OnlineVendorProductForm";
 import { getAuthProfile } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/supabase-config";
 import { createClient } from "@/lib/supabase/server";
-import type { BranchState } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -19,17 +18,21 @@ type VendorOptionRow = {
   branch_id: string;
 };
 
-function asBranchState(value?: string | null): BranchState | undefined {
-  return value === "Adamawa" || value === "Yobe" || value === "Borno" ? value : undefined;
-}
+type ManagerBranchOption = {
+  id: string;
+  name: string;
+  state: "Adamawa" | "Yobe" | "Borno";
+};
 
 export default async function ManagerDashboardPage({
   searchParams,
 }: {
   searchParams: Promise<{ error?: string; success?: string }>;
 }) {
-  let branch: { name: string; state: string } | null = null;
+  let branch: ManagerBranchOption | null = null;
   let approvedVendors: Array<{ id: string; businessName: string; branchId: string }> = [];
+  let productCategories: Array<{ id: string; name: string; slug: string }> = [];
+  let productBranches: ManagerBranchOption[] = [];
 
   if (isSupabaseConfigured()) {
     try {
@@ -39,21 +42,26 @@ export default async function ManagerDashboardPage({
       } = await supabase.auth.getUser();
       const profile = user ? await getAuthProfile(supabase, user.id) : null;
       const { data } = profile?.branch_id
-        ? await supabase.from("branches").select("name, state").eq("id", profile.branch_id).maybeSingle()
+        ? await supabase.from("branches").select("id, name, state").eq("id", profile.branch_id).maybeSingle()
         : { data: null };
-      branch = data;
+      branch = data as ManagerBranchOption | null;
       if (profile?.branch_id) {
-        const { data: vendorRows } = await supabase
-          .from("vendors")
-          .select("id, business_name, branch_id")
-          .eq("status", "approved")
-          .eq("branch_id", profile.branch_id)
-          .order("business_name", { ascending: true });
+        const [{ data: vendorRows }, { data: categoryRows }] = await Promise.all([
+          supabase
+            .from("vendors")
+            .select("id, business_name, branch_id")
+            .eq("status", "approved")
+            .eq("branch_id", profile.branch_id)
+            .order("business_name", { ascending: true }),
+          supabase.from("categories").select("id, name, slug").neq("slug", "repair-services").order("name"),
+        ]);
         approvedVendors = ((vendorRows ?? []) as VendorOptionRow[]).map((vendor) => ({
           id: vendor.id,
           businessName: vendor.business_name,
           branchId: vendor.branch_id,
         }));
+        productCategories = (categoryRows ?? []) as Array<{ id: string; name: string; slug: string }>;
+        productBranches = branch ? [branch] : [];
       }
     } catch {
       branch = null;
@@ -67,8 +75,10 @@ export default async function ManagerDashboardPage({
     <main className="min-h-screen space-y-6 bg-slate-50 px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
       <DashboardSessionBar role="manager" />
       <OnlineVendorProductForm
+        branches={productBranches}
+        categories={productCategories}
         error={params.error}
-        lockedBranchState={asBranchState(branch?.state)}
+        lockedBranchId={branch?.id ?? null}
         returnTo="/manager"
         role="manager"
         success={params.success}

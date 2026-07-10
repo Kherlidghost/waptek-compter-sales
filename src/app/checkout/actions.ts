@@ -160,7 +160,7 @@ export async function createCheckoutOrder(formData: FormData) {
   const { data: vendorProfiles } = await supabase
     .from("vendors")
     .select("profile_id")
-    .in("id", dbProducts.map((product) => product.vendor_id));
+    .in("id", dbProducts.map((product) => product.vendor_id).filter(Boolean));
   await notifyProfiles(
     supabase,
     [

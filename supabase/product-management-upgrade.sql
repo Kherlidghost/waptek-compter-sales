@@ -2,12 +2,16 @@
 -- Run this in Supabase Production SQL Editor before using the full product management UI.
 
 alter table public.products
+  alter column vendor_id drop not null,
   add column if not exists sku text,
   add column if not exists brand text,
   add column if not exists discount_price numeric(12, 2) check (discount_price is null or discount_price >= 0),
   add column if not exists specifications text,
   add column if not exists warranty text,
   add column if not exists featured boolean not null default false;
+
+alter table public.order_items
+  alter column vendor_id drop not null;
 
 do $$
 begin

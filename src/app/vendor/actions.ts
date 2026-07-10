@@ -23,7 +23,7 @@ export async function createOnlineVendorProduct(formData: FormData) {
   const returnTo = String(formData.get("return_to") ?? "/vendor");
   const safeReturnTo = isSafeRedirect(returnTo) ? returnTo : "/vendor";
   const errorRedirect = (message: string): never => redirect(`${safeReturnTo}?error=${encodeURIComponent(message)}#add-product`);
-  const successRedirect = (message: string): never => redirect(`${safeReturnTo}?success=${encodeURIComponent(message)}#add-product`);
+  const successRedirect = (message: string): never => redirect(`${safeReturnTo}?success=${encodeURIComponent(message)}`);
 
   if (!user) redirect(`/login?next=${encodeURIComponent(safeReturnTo)}`);
 
@@ -40,10 +40,10 @@ export async function createOnlineVendorProduct(formData: FormData) {
   const specifications = String(formData.get("specifications") ?? "").trim();
   const warranty = String(formData.get("warranty") ?? "").trim();
   const categorySlug = String(formData.get("category_slug") ?? "laptops");
-  const branchState = String(formData.get("branch_state") ?? "Adamawa");
+  const selectedBranchId = String(formData.get("branch_id") ?? "");
   const condition = String(formData.get("condition") ?? "New");
   const status = String(formData.get("status") ?? "active");
-  const selectedVendorId = String(formData.get("vendor_id") ?? "");
+  const selectedVendorId = String(formData.get("vendor_id") ?? "").trim();
   const price = Number(formData.get("price") ?? 0);
   const discountPriceRaw = String(formData.get("discount_price") ?? "").trim();
   const discountPrice = discountPriceRaw ? Number(discountPriceRaw) : null;
@@ -61,21 +61,27 @@ export async function createOnlineVendorProduct(formData: FormData) {
   }
 
   if (imageFiles.length === 0) errorRedirect("Upload at least one product image.");
+  if (!selectedBranchId && !isVendor(authProfile)) errorRedirect("Select a branch for this product.");
 
   const vendorQuery = isVendor(authProfile)
     ? supabase.from("vendors").select("id, branch_id").eq("profile_id", user.id).eq("status", "approved").maybeSingle()
-    : supabase.from("vendors").select("id, branch_id").eq("id", selectedVendorId).eq("status", "approved").maybeSingle();
+    : selectedVendorId
+      ? supabase.from("vendors").select("id, branch_id").eq("id", selectedVendorId).eq("status", "approved").maybeSingle()
+      : Promise.resolve({ data: null, error: null });
 
-  const [{ data: vendor }, { data: category }, { data: branch }] = await Promise.all([
+  const [{ data: vendor, error: vendorError }, { data: category }] = await Promise.all([
     vendorQuery,
     supabase.from("categories").select("id").eq("slug", categorySlug).maybeSingle(),
-    supabase.from("branches").select("id").eq("state", branchState).maybeSingle(),
   ]);
+  const branchIdForProduct = isVendor(authProfile) ? vendor?.branch_id : selectedBranchId;
+  const { data: branch } = branchIdForProduct
+    ? await supabase.from("branches").select("id").eq("id", branchIdForProduct).maybeSingle()
+    : { data: null };
 
-  if (!vendor || !category || !branch) {
-    errorRedirect("Vendor, category, or branch setup is missing.");
+  if ((isVendor(authProfile) && (!vendor || vendorError)) || !category || !branch) {
+    errorRedirect("Product category, branch, or approved vendor setup is missing.");
   }
-  const productVendor = vendor!;
+  const productVendor = vendor ?? null;
   const productCategory = category!;
   const productBranch = branch!;
 
@@ -83,7 +89,7 @@ export async function createOnlineVendorProduct(formData: FormData) {
     errorRedirect("Managers can only upload products for their assigned branch.");
   }
 
-  if ((isManager(authProfile) || isAdmin(authProfile)) && productVendor.branch_id !== productBranch.id) {
+  if ((isManager(authProfile) || isAdmin(authProfile)) && productVendor && productVendor.branch_id !== productBranch.id) {
     errorRedirect("Selected vendor must belong to the selected branch.");
   }
 
@@ -93,7 +99,7 @@ export async function createOnlineVendorProduct(formData: FormData) {
   const { data: product, error: productError } = await supabase
     .from("products")
     .insert({
-      vendor_id: productVendor.id,
+      vendor_id: productVendor?.id ?? null,
       category_id: productCategory.id,
       branch_id: productBranch.id,
       name,
@@ -113,13 +119,14 @@ export async function createOnlineVendorProduct(formData: FormData) {
     .single();
 
   if (productError || !product) {
-    errorRedirect("Could not create product.");
+    errorRedirect(`Could not create product${productError?.message ? `: ${productError.message}` : "."}`);
   }
   const createdProduct = product!;
 
   const uploadedImages: Array<{ product_id: string; storage_path: string; alt_text: string; is_primary: boolean }> = [];
   for (const [index, imageFile] of imageFiles.entries()) {
-    const imagePath = `${productVendor.id}/${createdProduct.id}/${Date.now()}-${index}-${cleanFileName(imageFile.name || "product-image")}`;
+    const ownerFolder = productVendor?.id ?? `company-${authProfile.role}-${user.id}`;
+    const imagePath = `${ownerFolder}/${createdProduct.id}/${Date.now()}-${index}-${cleanFileName(imageFile.name || "product-image")}`;
     const { error: uploadError } = await supabase.storage
       .from(supabaseConfig.storageBuckets.productImages)
       .upload(imagePath, imageFile, {
@@ -128,7 +135,7 @@ export async function createOnlineVendorProduct(formData: FormData) {
       });
 
     if (uploadError) {
-      errorRedirect("Product created but image upload failed.");
+      errorRedirect(`Product created but image upload failed${uploadError.message ? `: ${uploadError.message}` : "."}`);
     }
 
     uploadedImages.push({
@@ -151,6 +158,7 @@ export async function createOnlineVendorProduct(formData: FormData) {
   });
 
   revalidatePath("/products");
+  revalidatePath(`/products/${productSlug}`);
   revalidatePath(roleHome[authProfile.role]);
-  successRedirect("Product created online with Supabase Storage image.");
+  successRedirect("Product added successfully.");
 }

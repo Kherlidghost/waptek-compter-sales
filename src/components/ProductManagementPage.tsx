@@ -26,7 +26,7 @@ type SearchParams = {
 
 type ProductRow = {
   id: string;
-  vendor_id: string;
+  vendor_id: string | null;
   category_id: string;
   branch_id: string;
   name: string;
@@ -168,6 +168,11 @@ export async function ProductManagementPage({
     .filter((vendor) => !scopedBranchId || vendor.branch_id === scopedBranchId)
     .map((vendor) => ({ id: vendor.id, businessName: vendor.business_name ?? "Approved vendor", branchId: vendor.branch_id ?? "" }));
   const lockedBranch = scopedBranchId ? ((branchRows ?? []) as OptionRow[]).find((branch) => branch.id === scopedBranchId) : null;
+  const uploadCategories = ((categoryRows ?? []) as OptionRow[])
+    .filter((category) => category.slug !== "repair-services")
+    .map((category) => ({ id: category.id, name: category.name ?? "Category", slug: category.slug ?? category.id }));
+  const uploadBranches = ((branchRows ?? []) as OptionRow[])
+    .map((branch) => ({ id: branch.id, name: branch.name ?? branch.state ?? "Branch", state: asBranchState(branch.state) ?? "Adamawa" }));
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
@@ -193,8 +198,10 @@ export async function ProductManagementPage({
       </header>
 
       <OnlineVendorProductForm
+        branches={uploadBranches}
+        categories={uploadCategories}
         error={searchParams.error}
-        lockedBranchState={asBranchState(lockedBranch?.state)}
+        lockedBranchId={lockedBranch?.id ?? null}
         returnTo={returnTo}
         role={role}
         success={searchParams.success}
@@ -284,7 +291,7 @@ export async function ProductManagementPage({
                     <td className="px-4 py-3 font-semibold">{formatNaira(Number(product.discount_price ?? product.price))}</td>
                     <td className="px-4 py-3">{quantity}</td>
                     <td className="px-4 py-3">{branch?.state ?? "Unknown"}</td>
-                    <td className="px-4 py-3">{vendor?.business_name ?? "Unknown"}</td>
+                    <td className="px-4 py-3">{vendor?.business_name ?? "Company-owned"}</td>
                     <td className="px-4 py-3"><StatusBadge status={publicStatus(product.status, quantity, reorderLevel, product.featured)} /></td>
                     <td className="px-4 py-3">{new Date(product.updated_at).toLocaleDateString("en-NG")}</td>
                     <td className="px-4 py-3">

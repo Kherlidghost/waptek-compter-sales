@@ -44,7 +44,7 @@ export type Category = {
 
 export type Product = {
   id: string;
-  vendorId: string;
+  vendorId?: string | null;
   categoryId: string;
   branchId: string;
   name: string;

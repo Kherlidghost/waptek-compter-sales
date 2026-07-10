@@ -33,7 +33,7 @@ type ProductRow = {
   name: string;
   sku: string | null;
   branch_id: string;
-  vendor_id: string;
+  vendor_id: string | null;
   branches: { state: BranchState } | { state: BranchState }[] | null;
   vendors: { business_name: string } | { business_name: string }[] | null;
   inventory: Array<{ quantity: number; reorder_level: number; status?: string }> | null;
@@ -42,7 +42,7 @@ type ProductRow = {
 type OrderItemRow = {
   order_id: string;
   product_id: string;
-  vendor_id: string;
+  vendor_id: string | null;
   quantity: number;
   unit_price: number | string;
 };
@@ -211,7 +211,7 @@ export async function ReportsDashboard({ role, searchParams }: { role: ReportsRo
   const branchById = new Map(branches.map((branch) => [branch.id, branch]));
   const vendorBaseRows = (vendorRows ?? []) as Array<{ id: string; business_name: string; status: string }>;
   const vendorById = new Map(vendorBaseRows.map((vendor) => [vendor.id, vendor]));
-  const productBaseRows = (productRows ?? []) as Array<{ id: string; name: string; sku: string | null; branch_id: string; vendor_id: string }>;
+  const productBaseRows = (productRows ?? []) as Array<{ id: string; name: string; sku: string | null; branch_id: string; vendor_id: string | null }>;
   const productById = new Map(productBaseRows.map((product) => [product.id, product]));
   const inventoryByProduct = new Map(((inventoryRows ?? []) as InventoryReportRow[]).map((row) => [row.product_id, row]));
   const orderItems = (orderItemRows ?? []) as OrderItemRow[];
@@ -239,7 +239,7 @@ export async function ReportsDashboard({ role, searchParams }: { role: ReportsRo
       order_items: (orderItemsByOrder.get(order.id) ?? []).map((item) => ({
         ...item,
         products: productById.get(item.product_id) ? { name: productById.get(item.product_id)?.name ?? "Product" } : null,
-        vendors: vendorById.get(item.vendor_id) ? { business_name: vendorById.get(item.vendor_id)?.business_name ?? "Vendor" } : null,
+        vendors: item.vendor_id && vendorById.get(item.vendor_id) ? { business_name: vendorById.get(item.vendor_id)?.business_name ?? "Vendor" } : null,
       })),
     })) as OrderRow[];
   const products = productBaseRows
@@ -247,7 +247,7 @@ export async function ReportsDashboard({ role, searchParams }: { role: ReportsRo
     .map((product) => ({
       ...product,
       branches: branchById.get(product.branch_id) ?? null,
-      vendors: vendorById.get(product.vendor_id) ? { business_name: vendorById.get(product.vendor_id)?.business_name ?? "Vendor" } : null,
+      vendors: product.vendor_id && vendorById.get(product.vendor_id) ? { business_name: vendorById.get(product.vendor_id)?.business_name ?? "Vendor" } : null,
       inventory: inventoryByProduct.get(product.id) ? [inventoryByProduct.get(product.id) as InventoryReportRow] : [],
     })) as ProductRow[];
   const repairs = ((repairRows ?? []) as RepairRow[]).filter((repair) => dateInRange(repair.created_at, searchParams));
@@ -380,7 +380,7 @@ export async function ReportsDashboard({ role, searchParams }: { role: ReportsRo
       {reportErrors.length > 0 ? (
         <div className="rounded-lg border border-red-200 bg-red-50 p-5 text-sm font-semibold text-red-800">
           <p>Could not load report data. Check Supabase production schema and role permissions.</p>
-          {reportErrorDetail ? <p className="mt-2 text-xs font-medium text-red-700">Details: {reportErrorDetail}</p> : null}
+          {role === "admin" && reportErrorDetail ? <p className="mt-2 text-xs font-medium text-red-700">Details: {reportErrorDetail}</p> : null}
         </div>
       ) : null}
 
