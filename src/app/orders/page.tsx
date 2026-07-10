@@ -120,18 +120,18 @@ export default async function OrdersPage() {
   const firstPendingOrder = displayedOrders.find((order) => order.status === "awaiting_receipt" || order.status === "payment_rejected" || order.status === "rejected");
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen marketplace-shell text-slate-900">
       <PublicHeader />
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-6">
-          <p className="text-sm font-bold uppercase text-emerald-700">{isCustomerAccount ? "Customer account" : `${profile.role} orders`}</p>
-          <h1 className="mt-1 text-3xl font-black text-slate-950">{isCustomerAccount ? "My Account" : "Order tracking"}</h1>
-          <p className="mt-2 text-sm text-slate-600">
+        <section className="mb-6 overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 p-6 text-white shadow-2xl shadow-slate-950/15">
+          <p className="w-fit rounded-full border border-emerald-300/30 bg-emerald-300/10 px-4 py-2 text-sm font-black uppercase text-emerald-200">{isCustomerAccount ? "Customer account" : `${profile.role} orders`}</p>
+          <h1 className="mt-4 text-3xl font-black text-white sm:text-4xl">{isCustomerAccount ? "Welcome to My Account" : "Order tracking"}</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
             {isCustomerAccount
-              ? "Track your orders, payments, saved products, and repair requests."
+              ? "Decide what to do next: track orders, upload receipts, continue shopping, or request repair support."
               : "Track manual bank transfer orders and cashier confirmation status for your permitted role scope."}
           </p>
-        </div>
+        </section>
 
         {isCustomerAccount ? (
           <section className="mb-6 grid gap-4 md:grid-cols-4">
@@ -141,7 +141,7 @@ export default async function OrdersPage() {
               ["💰 Upload Receipt", firstPendingOrder ? `/orders/${firstPendingOrder.id}` : "/orders", "Send payment proof"],
               ["🛠 Request Repair", "/repair", "Ask for diagnosis or repair"],
             ].map(([label, href, description]) => (
-              <Link key={label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm hover:border-emerald-300" href={href}>
+              <Link key={label} className="min-h-28 rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 shadow-xl shadow-slate-950/5 hover:border-emerald-300 hover:from-emerald-50 hover:to-white" href={href}>
                 <p className="font-black text-slate-950">{label}</p>
                 <p className="mt-1 text-sm text-slate-600">{description}</p>
               </Link>
@@ -163,9 +163,9 @@ export default async function OrdersPage() {
                 ["Paid / confirmed", paidOrders.toString()],
                 [rejectedOrders > 0 ? "Rejected payments" : "Order value", rejectedOrders > 0 ? rejectedOrders.toString() : formatNaira(totalValue)],
               ]).map(([label, value]) => (
-            <div key={label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <div key={label} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5">
               <p className="text-sm text-slate-500">{label}</p>
-              <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
+              <p className="mt-2 text-3xl font-black text-slate-950">{value}</p>
             </div>
           ))}
         </section>
@@ -177,7 +177,7 @@ export default async function OrdersPage() {
 
         <div className="grid gap-4">
           {displayedOrders.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center">
+            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center shadow-xl shadow-slate-950/5">
               <p className="text-lg font-bold text-slate-950">No orders yet.</p>
               <p className="mt-2 text-sm text-slate-600">Place an order and upload a receipt to see it here.</p>
               <Link className="mt-4 inline-flex rounded-md bg-emerald-700 px-4 py-2 text-sm font-bold text-white" href="/products">
@@ -186,7 +186,7 @@ export default async function OrdersPage() {
             </div>
           ) : (
             displayedOrders.map((order) => (
-              <article key={order.id} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+              <article key={order.id} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
                     <p className="text-lg font-black text-slate-950">{order.id}</p>

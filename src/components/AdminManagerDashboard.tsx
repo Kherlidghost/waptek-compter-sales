@@ -246,26 +246,33 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
 
   return (
     <div className="mx-auto max-w-7xl space-y-8">
-      <header className="flex flex-wrap items-end justify-between gap-4">
+      <header className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 p-6 text-white shadow-2xl shadow-slate-950/15">
+        <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
-          <p className="text-sm font-bold uppercase text-emerald-700">{role === "admin" ? "Marketplace control" : branchLabel ?? "Assigned branch"}</p>
-          <h1 className="text-3xl font-black text-slate-950">{role === "admin" ? "Admin Dashboard" : "Branch Manager Dashboard"}</h1>
-          <p className="mt-2 text-sm text-slate-600">
+          <p className="w-fit rounded-full border border-emerald-300/30 bg-emerald-300/10 px-4 py-2 text-sm font-black uppercase text-emerald-200">{role === "admin" ? "Marketplace control" : branchLabel ?? "Assigned branch"}</p>
+          <h1 className="mt-4 text-3xl font-black text-white sm:text-4xl">{role === "admin" ? "Welcome back, Admin" : "Welcome back, Branch Manager"}</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
             {role === "admin"
-              ? "Manage the marketplace, vendors, products, orders, branches, and payments."
-              : "Manage your branch products, orders, payments, and repair requests."}
+              ? "Choose the next action for the marketplace: review payments, approve vendors, manage products, or check branch activity."
+              : "Start with the branch work that needs attention: orders, payments, stock, and repair requests."}
           </p>
         </div>
-        {notice ? <p className="rounded-md bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-800">{notice}</p> : null}
+        <div className="grid min-w-52 gap-2 rounded-2xl border border-white/10 bg-white/10 p-4 text-sm backdrop-blur">
+          <span className="font-bold text-slate-300">Workspace</span>
+          <span className="text-xl font-black text-white">{role === "admin" ? "All branches" : branchLabel ?? "Assigned branch"}</span>
+          <span className="text-emerald-200">Ready for action</span>
+        </div>
+        </div>
+        {notice ? <p className="mt-5 rounded-xl border border-emerald-300/30 bg-emerald-300/10 px-4 py-3 text-sm font-semibold text-emerald-100">{notice}</p> : null}
       </header>
 
-      <nav className="flex gap-2 overflow-x-auto rounded-lg border border-slate-200 bg-white p-2 shadow-sm">
+      <nav className="flex gap-2 overflow-x-auto rounded-2xl border border-slate-200 bg-white/90 p-2 shadow-xl shadow-slate-950/5 backdrop-blur">
         {visibleSections.map((section) => (
           <button
             key={section.id}
             onClick={() => setActiveSection(section.id)}
-            className={`whitespace-nowrap rounded-md px-3 py-2 text-sm font-bold ${
-              activeSection === section.id ? "bg-slate-950 text-white" : "text-slate-700 hover:bg-slate-100"
+            className={`whitespace-nowrap rounded-xl px-4 py-3 text-sm font-black ${
+              activeSection === section.id ? "bg-slate-950 text-white shadow-sm" : "text-slate-700 hover:bg-slate-100"
             }`}
             type="button"
           >
@@ -277,9 +284,12 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
       {activeSection === "analytics" ? (
         <section className="space-y-6">
           <QuickActions actions={dashboardActions} onSelect={setActiveSection} />
-          <div>
-            <h2 className="text-xl font-black text-slate-950">Needs attention</h2>
-            <p className="mt-1 text-sm text-slate-600">The most important work for this dashboard.</p>
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 className="text-2xl font-black text-slate-950">Needs attention</h2>
+              <p className="mt-1 text-sm text-slate-600">Start here before opening detailed reports.</p>
+            </div>
+            <span className="rounded-full bg-emerald-50 px-4 py-2 text-sm font-black text-emerald-800">Today’s workspace</span>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {dashboardCards.map((card) => (
@@ -510,11 +520,12 @@ function DataTable({ headers, rows }: { headers: string[]; rows: Array<Array<Rea
 
 function QuickActions({ actions, onSelect }: { actions: DashboardAction[]; onSelect: (section: Section) => void }) {
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <section className="rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-xl shadow-slate-950/5 backdrop-blur">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-black text-slate-950">What can I do here?</h2>
-          <p className="mt-1 text-sm text-slate-600">Choose the work you want to handle now.</p>
+          <p className="text-sm font-black uppercase text-emerald-700">Next best actions</p>
+          <h2 className="mt-1 text-2xl font-black text-slate-950">What do you want to do now?</h2>
+          <p className="mt-1 text-sm text-slate-600">Pick a task card to jump straight into the work.</p>
         </div>
       </div>
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -522,21 +533,21 @@ function QuickActions({ actions, onSelect }: { actions: DashboardAction[]; onSel
           action.href ? (
             <a
               key={action.label}
-              className="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-4 py-4 text-left text-sm font-bold text-slate-800 hover:border-emerald-300 hover:bg-emerald-50"
+              className="group flex min-h-28 items-center justify-between rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 px-5 py-4 text-left text-sm font-black text-slate-800 shadow-sm hover:border-emerald-300 hover:from-emerald-50 hover:to-white"
               href={action.href}
             >
               <span>{action.label}</span>
-              <span aria-hidden="true">Open</span>
+              <span className="rounded-full bg-slate-950 px-3 py-1 text-xs text-white group-hover:bg-emerald-700" aria-hidden="true">Open</span>
             </a>
           ) : (
             <button
               key={action.label}
-              className="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-4 py-4 text-left text-sm font-bold text-slate-800 hover:border-emerald-300 hover:bg-emerald-50"
+              className="group flex min-h-28 items-center justify-between rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 px-5 py-4 text-left text-sm font-black text-slate-800 shadow-sm hover:border-emerald-300 hover:from-emerald-50 hover:to-white"
               onClick={() => action.section && onSelect(action.section)}
               type="button"
             >
               <span>{action.label}</span>
-              <span aria-hidden="true">View</span>
+              <span className="rounded-full bg-slate-950 px-3 py-1 text-xs text-white group-hover:bg-emerald-700" aria-hidden="true">View</span>
             </button>
           ),
         )}
@@ -561,29 +572,42 @@ function SummaryCard({
   onSelect: (section: Section) => void;
 }) {
   return (
-    <article className="flex min-h-44 flex-col justify-between rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <article className="flex min-h-52 flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5">
       <div>
-        <p className="text-sm font-semibold text-slate-500">{title}</p>
-        <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-2xl">
+          {cardIcon(title)}
+        </div>
+        <p className="text-sm font-black text-slate-500">{title}</p>
+        <p className="mt-2 text-3xl font-black text-slate-950">{value}</p>
         <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
       </div>
-      <button className="mt-4 w-fit text-sm font-black text-emerald-800 hover:text-emerald-900" onClick={() => onSelect(section)} type="button">
+      <button className="mt-5 w-fit rounded-full bg-emerald-50 px-4 py-2 text-sm font-black text-emerald-800 hover:bg-emerald-100" onClick={() => onSelect(section)} type="button">
         {action} →
       </button>
     </article>
   );
 }
 
+function cardIcon(title: string) {
+  const normalized = title.toLowerCase();
+  if (normalized.includes("payment")) return "💰";
+  if (normalized.includes("vendor")) return "👥";
+  if (normalized.includes("order")) return "🧾";
+  if (normalized.includes("stock") || normalized.includes("product")) return "📦";
+  if (normalized.includes("repair")) return "🛠";
+  return "✓";
+}
+
 function RecentActivityPanel({ rows }: { rows: Array<{ title: string; detail: string; status: string }> }) {
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-      <h2 className="text-xl font-black text-slate-950">Recent activity</h2>
+    <section className="rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-xl shadow-slate-950/5">
+      <h2 className="text-2xl font-black text-slate-950">Recent activity</h2>
       <p className="mt-1 text-sm text-slate-600">What happened recently.</p>
       <div className="mt-4 grid gap-3">
         {rows.length === 0 ? (
-          <p className="rounded-md border border-dashed border-slate-300 p-4 text-sm text-slate-600">No recent activity yet. Everything looks good.</p>
+          <p className="rounded-2xl border border-dashed border-slate-300 p-5 text-sm text-slate-600">No recent activity yet. Everything looks good.</p>
         ) : rows.map((row, index) => (
-          <div key={`${row.title}-${index}`} className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-slate-50 px-3 py-3 text-sm">
+          <div key={`${row.title}-${index}`} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-slate-50 px-4 py-4 text-sm">
             <div>
               <p className="font-black text-slate-950">{row.title}</p>
               <p className="mt-1 text-slate-600">{row.detail}</p>

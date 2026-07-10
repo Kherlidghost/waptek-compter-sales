@@ -135,24 +135,27 @@ export function CashierDashboard({
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <InAppNotice message={notice} />
-      <header className="flex flex-wrap items-end justify-between gap-4">
+      <header className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 p-6 text-white shadow-2xl shadow-slate-950/15">
+        <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
-          <p className="text-sm font-bold uppercase text-emerald-700">Payments</p>
-          <h1 className="text-3xl font-black text-slate-950">Cashier Dashboard</h1>
-          <p className="mt-2 text-sm text-slate-600">Review customer payment receipts and confirm payments.</p>
+          <p className="w-fit rounded-full border border-emerald-300/30 bg-emerald-300/10 px-4 py-2 text-sm font-black uppercase text-emerald-200">Payments</p>
+          <h1 className="mt-4 text-3xl font-black text-white sm:text-4xl">Welcome back, Cashier</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">Start with receipts waiting for review, then confirm or reject customer payments clearly.</p>
         </div>
         <button
-          className="rounded-md border border-slate-300 px-4 py-2 text-sm font-bold hover:bg-white"
+          className="rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-black text-white hover:bg-white/20"
           onClick={() => setShowAll((current) => !current)}
           type="button"
         >
           {showAll ? "Show pending only" : "Show all receipts"}
         </button>
+        </div>
       </header>
       {isPending ? <p className="rounded-md bg-amber-50 p-3 text-sm font-semibold text-amber-800">Saving payment review online...</p> : null}
 
-      <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="text-xl font-black text-slate-950">What can I do here?</h2>
+      <section className="rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-xl shadow-slate-950/5">
+        <p className="text-sm font-black uppercase text-emerald-700">Next best actions</p>
+        <h2 className="mt-1 text-2xl font-black text-slate-950">What can I do here?</h2>
         <p className="mt-1 text-sm text-slate-600">Choose the payment task you want to handle now.</p>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[
@@ -162,12 +165,12 @@ export function CashierDashboard({
           ].map(([label, action]) => (
             <button
               key={String(label)}
-              className="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-4 py-4 text-left text-sm font-bold text-slate-800 hover:border-emerald-300 hover:bg-emerald-50"
+              className="group flex min-h-28 items-center justify-between rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 px-5 py-4 text-left text-sm font-black text-slate-800 shadow-sm hover:border-emerald-300 hover:from-emerald-50 hover:to-white"
               onClick={action as () => void}
               type="button"
             >
               <span>{String(label)}</span>
-              <span aria-hidden="true">View</span>
+              <span className="rounded-full bg-slate-950 px-3 py-1 text-xs text-white group-hover:bg-emerald-700" aria-hidden="true">View</span>
             </button>
           ))}
         </div>
@@ -180,22 +183,23 @@ export function CashierDashboard({
           { title: "Rejected today", value: rejectedCount.toString(), description: "Receipts rejected after review.", action: () => { setShowAll(true); setQuery("rejected"); } },
           { title: "Orders needing payment", value: awaitingConfirmationCount.toString(), description: awaitingConfirmationCount ? "Orders need payment action." : "Everything looks good.", action: () => { setShowAll(true); setQuery(""); } },
         ].map((card) => (
-          <div key={card.title} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div key={card.title} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-2xl">{card.title.includes("Receipt") ? "🧾" : card.title.includes("Confirmed") ? "💰" : card.title.includes("Rejected") ? "!" : "🧾"}</div>
             <p className="text-sm font-semibold text-slate-500">{card.title}</p>
-            <p className="mt-2 text-2xl font-black text-slate-950">{card.value}</p>
+            <p className="mt-2 text-3xl font-black text-slate-950">{card.value}</p>
             <p className="mt-2 text-sm text-slate-600">{card.description}</p>
-            <button className="mt-4 text-sm font-black text-emerald-800" onClick={card.action} type="button">View →</button>
+            <button className="mt-5 rounded-full bg-emerald-50 px-4 py-2 text-sm font-black text-emerald-800" onClick={card.action} type="button">View →</button>
           </div>
         ))}
       </section>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="text-xl font-black text-slate-950">Recent activity</h2>
+      <section className="rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-xl shadow-slate-950/5">
+        <h2 className="text-2xl font-black text-slate-950">Recent activity</h2>
         <div className="mt-4 grid gap-3">
           {reviewedOrders.length === 0 ? (
-            <p className="rounded-md border border-dashed border-slate-300 p-4 text-sm text-slate-600">No recent activity yet.</p>
+            <p className="rounded-2xl border border-dashed border-slate-300 p-5 text-sm text-slate-600">No recent activity yet.</p>
           ) : reviewedOrders.slice(0, 4).map((order) => (
-            <div key={`${order.id}-activity`} className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-slate-50 px-3 py-3 text-sm">
+            <div key={`${order.id}-activity`} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-slate-50 px-4 py-4 text-sm">
               <div>
                 <p className="font-black text-slate-950">Payment receipt uploaded</p>
                 <p className="mt-1 text-slate-600">{order.id} · {order.customerName} · {formatNaira(order.total)}</p>
