@@ -74,6 +74,7 @@ export default async function ManagerDashboardPage({
   return (
     <main className="min-h-screen space-y-6 bg-slate-50 px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
       <DashboardSessionBar role="manager" />
+      <AdminManagerDashboard branchLabel={branch?.name ?? "Assigned branch"} branchScopeId={stateToId(branch?.state)} role="manager" />
       <OnlineVendorProductForm
         branches={productBranches}
         categories={productCategories}
@@ -84,7 +85,6 @@ export default async function ManagerDashboardPage({
         success={params.success}
         vendors={approvedVendors}
       />
-      <AdminManagerDashboard branchLabel={branch?.name ?? "Assigned branch"} branchScopeId={stateToId(branch?.state)} role="manager" />
       <OnlineOrderStatusPanel role="manager" />
     </main>
   );

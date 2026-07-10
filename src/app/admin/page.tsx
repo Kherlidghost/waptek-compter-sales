@@ -54,6 +54,7 @@ export default async function AdminDashboardPage({
   return (
     <main className="min-h-screen space-y-6 bg-slate-50 px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
       <DashboardSessionBar role="admin" />
+      <AdminManagerDashboard role="admin" />
       <OnlineVendorProductForm
         branches={options.branches}
         categories={options.categories}
@@ -63,7 +64,6 @@ export default async function AdminDashboardPage({
         success={params.success}
         vendors={options.approvedVendors}
       />
-      <AdminManagerDashboard role="admin" />
       <OnlineOrderStatusPanel role="admin" />
     </main>
   );

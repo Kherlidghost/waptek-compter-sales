@@ -22,7 +22,7 @@ type Section =
   | "reports";
 
 const sections: Array<{ id: Section; label: string }> = [
-  { id: "analytics", label: "Analytics" },
+  { id: "analytics", label: "Dashboard" },
   { id: "vendors", label: "Vendors" },
   { id: "products", label: "Products" },
   { id: "categories", label: "Categories" },
@@ -31,8 +31,14 @@ const sections: Array<{ id: Section; label: string }> = [
   { id: "repairs", label: "Repairs" },
   { id: "notifications", label: "Notifications" },
   { id: "inventory", label: "Inventory" },
-  { id: "reports", label: "Sales reports" },
+  { id: "reports", label: "Reports" },
 ];
+
+type DashboardAction = {
+  label: string;
+  section?: Section;
+  href?: string;
+};
 
 const orderStatuses: OrderStatus[] = ["awaiting_receipt", "receipt_uploaded", "paid_approved", "payment_rejected", "fulfilled"];
 
@@ -80,46 +86,45 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
   const recentOrders = orderRows.slice(0, 5);
   const recentReceipts = orderRows.filter((order) => order.receiptStatus === "pending").slice(0, 5);
   const pendingVendorRows = vendorRows.filter((vendor) => vendor.status === "pending");
-  const totalOrders = Math.max(orderRows.length, 1);
-  const paymentCompletionRate = Math.round((stats.confirmedPayments / totalOrders) * 100);
-  const dashboardActions: Array<[string, Section]> =
+  const todaysOrders = orderRows.filter((order) => {
+    const created = new Date(order.createdAt);
+    return Number.isFinite(created.getTime()) && created.toDateString() === new Date().toDateString();
+  }).length;
+  const completedToday = orderRows.filter((order) => {
+    const created = new Date(order.createdAt);
+    return (order.status === "fulfilled" || order.status === "paid_approved") && Number.isFinite(created.getTime()) && created.toDateString() === new Date().toDateString();
+  }).length;
+  const dashboardActions: DashboardAction[] =
     role === "admin"
       ? [
-          ["Approve Vendors", "vendors" as Section],
-          ["View Pending Payments", "orders" as Section],
-          ["Add Product", "products" as Section],
-          ["View Orders", "orders" as Section],
-          ["View Repair Requests", "repairs" as Section],
-          ["View Sales Reports", "reports" as Section],
+          { label: "📦 Add Product", href: "#add-product" },
+          { label: "👥 Approve Vendors", section: "vendors" },
+          { label: "🧾 View Orders", section: "orders" },
+          { label: "💰 Check Payments", section: "orders" },
+          { label: "⚙ Manage Branches", section: "branches" },
         ]
       : [
-          ["View Branch Orders", "orders" as Section],
-          ["View Branch Payments", "orders" as Section],
-          ["View Branch Products", "products" as Section],
-          ["View Repair Requests", "repairs" as Section],
-          ["View Branch Report", "reports" as Section],
+          { label: "📦 Add Branch Product", href: "#add-product" },
+          { label: "🧾 View Branch Orders", section: "orders" },
+          { label: "💰 Check Branch Payments", section: "orders" },
+          { label: "📦 View Inventory", section: "inventory" },
+          { label: "🛠 Repair Requests", section: "repairs" },
         ];
   const dashboardCards =
     role === "admin"
       ? [
-          { title: "Total Orders", value: orderRows.length.toString(), description: "Marketplace orders across all branches.", action: "View", section: "orders" as Section },
-          { title: "Pending Payments", value: `${stats.pendingOrders} waiting`, description: "Receipts awaiting payment confirmation.", action: "View", section: "orders" as Section },
-          { title: "Confirmed Payments", value: stats.confirmedPayments.toString(), description: "Orders approved for processing.", action: "View", section: "reports" as Section },
-          { title: "Vendors", value: vendorRows.length.toString(), description: "Approved and pending marketplace sellers.", action: "Manage", section: "vendors" as Section },
-          { title: "Products", value: productRows.length.toString(), description: "Products available in the marketplace.", action: "Manage", section: "products" as Section },
-          { title: "Branches", value: branchRows.length.toString(), description: "Operational branch locations.", action: "View", section: "branches" as Section },
-          { title: "Repair Requests", value: "0", description: "Submitted repair requests appear in the repairs panel.", action: "View", section: "repairs" as Section },
-          { title: "Pending Vendor Approvals", value: stats.pendingVendors.toString(), description: "Vendors waiting for admin review.", action: "Manage", section: "vendors" as Section },
+          { title: "Payments waiting", value: `${stats.pendingOrders}`, description: stats.pendingOrders ? "Receipts need review." : "No payments waiting.", action: "View", section: "orders" as Section },
+          { title: "Vendors waiting approval", value: stats.pendingVendors.toString(), description: stats.pendingVendors ? "New sellers need a decision." : "Everything looks good.", action: "Manage", section: "vendors" as Section },
+          { title: "Today's orders", value: todaysOrders.toString(), description: todaysOrders ? "Orders placed today." : "No orders yet today.", action: "View", section: "orders" as Section },
+          { title: "Low stock products", value: stats.lowStock.toString(), description: stats.lowStock ? "Products need restock attention." : "Stock looks good.", action: "Manage", section: "inventory" as Section },
+          { title: "Repair requests", value: "0", description: "No repair requests waiting.", action: "View", section: "repairs" as Section },
         ]
       : [
-          { title: "Assigned Branch", value: branchLabel ?? "Assigned branch", description: "Manager scope for daily operations.", action: "View", section: "reports" as Section },
-          { title: "Branch Orders", value: orderRows.length.toString(), description: "Orders linked to this branch only.", action: "View", section: "orders" as Section },
-          { title: "Branch Pending Payments", value: `${stats.pendingOrders} waiting`, description: "Receipts awaiting branch payment review.", action: "View", section: "orders" as Section },
-          { title: "Branch Confirmed Payments", value: stats.confirmedPayments.toString(), description: "Confirmed branch payment records.", action: "View", section: "reports" as Section },
-          { title: "Branch Products", value: productRows.length.toString(), description: "Products assigned to this branch.", action: "Manage", section: "products" as Section },
-          { title: "Branch Repair Requests", value: "0", description: "Repair requests submitted for this branch.", action: "View", section: "repairs" as Section },
-          { title: "Low Stock Products", value: stats.lowStock.toString(), description: "Products that need restock attention.", action: "Manage", section: "inventory" as Section },
-          { title: "Branch Sales", value: formatNaira(stats.paidRevenue), description: "Confirmed branch order value.", action: "View", section: "reports" as Section },
+          { title: "Orders waiting", value: stats.pendingOrders.toString(), description: stats.pendingOrders ? "Branch orders need attention." : "No orders waiting.", action: "View", section: "orders" as Section },
+          { title: "Payments waiting", value: `${stats.pendingOrders}`, description: stats.pendingOrders ? "Receipts need branch review." : "No payments waiting.", action: "View", section: "orders" as Section },
+          { title: "Products low in stock", value: stats.lowStock.toString(), description: stats.lowStock ? "Restock these products soon." : "Stock looks good.", action: "Manage", section: "inventory" as Section },
+          { title: "Repair requests", value: "0", description: "No repair requests waiting.", action: "View", section: "repairs" as Section },
+          { title: "Completed orders today", value: completedToday.toString(), description: completedToday ? "Orders completed today." : "No completed orders today.", action: "View", section: "orders" as Section },
         ];
 
   const branchSales = branchRows.map((branch) => ({
@@ -169,6 +174,11 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
         detail: `${product.name} has ${product.stock} units left`,
         status: product.stock === 0 ? "out_of_stock" : "low_stock",
       })),
+    ...productRows.slice(0, 1).map((product) => ({
+      title: "Product added",
+      detail: product.name,
+      status: "in_stock",
+    })),
   ].slice(0, 5);
 
   function updateVendorStatus(vendorId: string, status: VendorStatus) {
@@ -238,12 +248,12 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
     <div className="mx-auto max-w-7xl space-y-8">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-sm font-bold uppercase text-emerald-700">Role: {role}</p>
-          <h1 className="text-3xl font-black text-slate-950">{role === "admin" ? "Admin operations dashboard" : `${branchLabel ?? "Branch"} manager dashboard`}</h1>
+          <p className="text-sm font-bold uppercase text-emerald-700">{role === "admin" ? "Marketplace control" : branchLabel ?? "Assigned branch"}</p>
+          <h1 className="text-3xl font-black text-slate-950">{role === "admin" ? "Admin Dashboard" : "Branch Manager Dashboard"}</h1>
           <p className="mt-2 text-sm text-slate-600">
             {role === "admin"
-              ? "Full marketplace control across branches, vendors, products, orders, payments, repairs, inventory, analytics, and sales reports."
-              : "Daily branch operations for products, orders, payment visibility, repair requests, inventory, and branch sales reports."}
+              ? "Manage the marketplace, vendors, products, orders, branches, and payments."
+              : "Manage your branch products, orders, payments, and repair requests."}
           </p>
         </div>
         {notice ? <p className="rounded-md bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-800">{notice}</p> : null}
@@ -267,33 +277,21 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
       {activeSection === "analytics" ? (
         <section className="space-y-6">
           <QuickActions actions={dashboardActions} onSelect={setActiveSection} />
+          <div>
+            <h2 className="text-xl font-black text-slate-950">Needs attention</h2>
+            <p className="mt-1 text-sm text-slate-600">The most important work for this dashboard.</p>
+          </div>
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {dashboardCards.map((card) => (
               <SummaryCard key={card.title} {...card} onSelect={setActiveSection} />
             ))}
           </div>
-          <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-            <RecentActivityPanel rows={recentActivity} />
-            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-              <h2 className="text-xl font-black text-slate-950">Payment status breakdown</h2>
-              <p className="mt-1 text-sm text-slate-600">Simple operational view of confirmed payments.</p>
-              <div className="mt-5">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-semibold text-slate-700">Confirmed</span>
-                  <span className="font-black text-slate-950">{paymentCompletionRate}%</span>
-                </div>
-                <div className="mt-2 h-3 overflow-hidden rounded-full bg-slate-100">
-                  <div className="h-full rounded-full bg-emerald-600" style={{ width: `${paymentCompletionRate}%` }} />
-                </div>
-                <p className="mt-3 text-sm text-slate-600">{stats.pendingOrders} pending payment review · {stats.confirmedPayments} confirmed.</p>
-              </div>
-            </div>
-          </div>
+          <RecentActivityPanel rows={recentActivity} />
           {role === "admin" ? (
             <section className="space-y-3">
               <div>
                 <h2 className="text-xl font-black text-slate-950">Branch overview</h2>
-                <p className="mt-1 text-sm text-slate-600">Safe branch counts from available marketplace data.</p>
+                <p className="mt-1 text-sm text-slate-600">A quick view of each branch.</p>
               </div>
               <div className="grid gap-4 md:grid-cols-3">
                 {branchOverview.map((item) => (
@@ -305,7 +303,7 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
             <section className="space-y-3">
               <div>
                 <h2 className="text-xl font-black text-slate-950">Branch summary</h2>
-                <p className="mt-1 text-sm text-slate-600">Assigned branch data only.</p>
+                <p className="mt-1 text-sm text-slate-600">Your assigned branch only.</p>
               </div>
               <div className="grid gap-4 md:grid-cols-2">
                 {branchOverview.map((item) => (
@@ -321,10 +319,6 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
               emptyMessage="No pending receipts."
               rows={recentReceipts.map((order) => [order.id, order.customerName, getBranch(order.branchId)?.state ?? "Unknown", <StatusBadge key={order.id} status={order.receiptStatus} />])}
             />
-          </div>
-          <div className="grid gap-4 lg:grid-cols-2">
-            <ReportPanel title={role === "admin" ? "Branch overview" : "Assigned branch overview"} rows={branchSales.map(({ branch, sales, orders: count }) => [`${branch.state} (${count} orders)`, formatNaira(sales)])} />
-            <ReportPanel title="Sales overview by category" rows={categorySales.map(({ category, sales }) => [category.name, formatNaira(sales)])} />
           </div>
           {role === "manager" ? (
             <ActivityPanel
@@ -514,27 +508,38 @@ function DataTable({ headers, rows }: { headers: string[]; rows: Array<Array<Rea
   );
 }
 
-function QuickActions({ actions, onSelect }: { actions: Array<[string, Section]>; onSelect: (section: Section) => void }) {
+function QuickActions({ actions, onSelect }: { actions: DashboardAction[]; onSelect: (section: Section) => void }) {
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-black text-slate-950">Quick actions</h2>
-          <p className="mt-1 text-sm text-slate-600">Jump straight to the operational work that matters most.</p>
+          <h2 className="text-xl font-black text-slate-950">What can I do here?</h2>
+          <p className="mt-1 text-sm text-slate-600">Choose the work you want to handle now.</p>
         </div>
       </div>
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {actions.map(([label, section]) => (
-          <button
-            key={label}
-            className="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm font-bold text-slate-800 hover:border-emerald-300 hover:bg-emerald-50"
-            onClick={() => onSelect(section)}
-            type="button"
-          >
-            <span>{label}</span>
-            <span aria-hidden="true">View</span>
-          </button>
-        ))}
+        {actions.map((action) =>
+          action.href ? (
+            <a
+              key={action.label}
+              className="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-4 py-4 text-left text-sm font-bold text-slate-800 hover:border-emerald-300 hover:bg-emerald-50"
+              href={action.href}
+            >
+              <span>{action.label}</span>
+              <span aria-hidden="true">Open</span>
+            </a>
+          ) : (
+            <button
+              key={action.label}
+              className="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-4 py-4 text-left text-sm font-bold text-slate-800 hover:border-emerald-300 hover:bg-emerald-50"
+              onClick={() => action.section && onSelect(action.section)}
+              type="button"
+            >
+              <span>{action.label}</span>
+              <span aria-hidden="true">View</span>
+            </button>
+          ),
+        )}
       </div>
     </section>
   );
@@ -573,10 +578,10 @@ function RecentActivityPanel({ rows }: { rows: Array<{ title: string; detail: st
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
       <h2 className="text-xl font-black text-slate-950">Recent activity</h2>
-      <p className="mt-1 text-sm text-slate-600">Role-specific marketplace signals from available orders, receipts, and inventory.</p>
+      <p className="mt-1 text-sm text-slate-600">What happened recently.</p>
       <div className="mt-4 grid gap-3">
         {rows.length === 0 ? (
-          <p className="rounded-md border border-dashed border-slate-300 p-4 text-sm text-slate-600">No recent activity yet.</p>
+          <p className="rounded-md border border-dashed border-slate-300 p-4 text-sm text-slate-600">No recent activity yet. Everything looks good.</p>
         ) : rows.map((row, index) => (
           <div key={`${row.title}-${index}`} className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-slate-50 px-3 py-3 text-sm">
             <div>

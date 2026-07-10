@@ -5,8 +5,6 @@ import Link from "next/link";
 import type { Order, OrderStatus, ReceiptStatus } from "@/lib/types";
 import { formatNaira, getBranch, orders } from "@/lib/marketplace-data";
 import { InAppNotice } from "@/components/InAppNotice";
-import { NotificationLog } from "@/components/NotificationLog";
-import { RepairRequestsPanel } from "@/components/RepairRequestsPanel";
 import { StatusBadge } from "@/components/StatusBadge";
 import { appendNotifications } from "@/lib/notification-flow";
 
@@ -139,11 +137,9 @@ export function CashierDashboard({
       <InAppNotice message={notice} />
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-sm font-bold uppercase text-emerald-700">Role: Cashier</p>
-          <h1 className="text-3xl font-black text-slate-950">Payment receipt confirmation</h1>
-          <p className="mt-2 text-sm text-slate-600">
-            Confirm or reject uploaded bank transfer receipts for your assigned branch. Cashiers do not manage products, vendors, or global reports.
-          </p>
+          <p className="text-sm font-bold uppercase text-emerald-700">Payments</p>
+          <h1 className="text-3xl font-black text-slate-950">Cashier Dashboard</h1>
+          <p className="mt-2 text-sm text-slate-600">Review customer payment receipts and confirm payments.</p>
         </div>
         <button
           className="rounded-md border border-slate-300 px-4 py-2 text-sm font-bold hover:bg-white"
@@ -156,18 +152,17 @@ export function CashierDashboard({
       {isPending ? <p className="rounded-md bg-amber-50 p-3 text-sm font-semibold text-amber-800">Saving payment review online...</p> : null}
 
       <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="text-xl font-black text-slate-950">Quick actions</h2>
-        <p className="mt-1 text-sm text-slate-600">Focus the receipt queue by payment status or search need.</p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <h2 className="text-xl font-black text-slate-950">What can I do here?</h2>
+        <p className="mt-1 text-sm text-slate-600">Choose the payment task you want to handle now.</p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[
-            ["Review Pending Receipts", () => { setShowAll(false); setQuery(""); }],
-            ["View Confirmed Payments", () => { setShowAll(true); setQuery("confirmed"); }],
-            ["View Rejected Payments", () => { setShowAll(true); setQuery("rejected"); }],
-            ["Search Order", () => { setShowAll(true); }],
+            ["🧾 Review Pending Receipts", () => { setShowAll(false); setQuery(""); }],
+            ["🔎 Search Order", () => { setShowAll(true); }],
+            ["💰 View Confirmed Payments", () => { setShowAll(true); setQuery("confirmed"); }],
           ].map(([label, action]) => (
             <button
               key={String(label)}
-              className="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm font-bold text-slate-800 hover:border-emerald-300 hover:bg-emerald-50"
+              className="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-4 py-4 text-left text-sm font-bold text-slate-800 hover:border-emerald-300 hover:bg-emerald-50"
               onClick={action as () => void}
               type="button"
             >
@@ -180,10 +175,10 @@ export function CashierDashboard({
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { title: "Pending receipts", value: pendingCount.toString(), description: "Receipts waiting for branch review.", action: () => { setShowAll(false); setQuery(""); } },
-          { title: "Confirmed payments", value: confirmedCount.toString(), description: "Payments already confirmed by cashier.", action: () => { setShowAll(true); setQuery("confirmed"); } },
-          { title: "Rejected payments", value: rejectedCount.toString(), description: "Receipts rejected after review.", action: () => { setShowAll(true); setQuery("rejected"); } },
-          { title: "Orders awaiting confirmation", value: awaitingConfirmationCount.toString(), description: "Orders in receipt uploaded state.", action: () => { setShowAll(true); setQuery(""); } },
+          { title: "Receipts waiting", value: pendingCount.toString(), description: pendingCount ? "Customers are waiting for review." : "No payments waiting.", action: () => { setShowAll(false); setQuery(""); } },
+          { title: "Confirmed today", value: confirmedCount.toString(), description: "Payments marked as confirmed.", action: () => { setShowAll(true); setQuery("confirmed"); } },
+          { title: "Rejected today", value: rejectedCount.toString(), description: "Receipts rejected after review.", action: () => { setShowAll(true); setQuery("rejected"); } },
+          { title: "Orders needing payment", value: awaitingConfirmationCount.toString(), description: awaitingConfirmationCount ? "Orders need payment action." : "Everything looks good.", action: () => { setShowAll(true); setQuery(""); } },
         ].map((card) => (
           <div key={card.title} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
             <p className="text-sm font-semibold text-slate-500">{card.title}</p>
@@ -214,8 +209,8 @@ export function CashierDashboard({
       <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-xl font-black text-slate-950">Recent payment receipts</h2>
-            <p className="mt-1 text-sm text-slate-600">Search by order number, customer, or branch before opening a receipt image.</p>
+            <h2 className="text-xl font-black text-slate-950">Payments waiting for confirmation</h2>
+            <p className="mt-1 text-sm text-slate-600">Search by order number, customer, or branch before opening a receipt.</p>
           </div>
           <input
             className="h-11 w-full rounded-md border border-slate-300 px-3 text-sm sm:w-80"
@@ -230,7 +225,7 @@ export function CashierDashboard({
         {visibleOrders.length === 0 ? (
           <div className="p-8 text-center">
             <p className="text-lg font-bold text-slate-950">{query ? "No receipts match your search." : "No pending receipts."}</p>
-            <p className="mt-2 text-sm text-slate-600">Confirmed and rejected receipts can be viewed with the all receipts toggle.</p>
+            <p className="mt-2 text-sm text-slate-600">Everything looks good.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -304,10 +299,6 @@ export function CashierDashboard({
           </div>
         </div>
       ) : null}
-
-      <RepairRequestsPanel compact />
-
-      <NotificationLog title="Cashier notification logs" />
     </div>
   );
 }

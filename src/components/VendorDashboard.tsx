@@ -69,29 +69,10 @@ export function VendorDashboard() {
     order.items.some((item) => vendorProducts.some((product) => product.id === item.productId)),
   );
 
-  const stockTotal = vendorProducts.reduce((sum, product) => sum + product.stock, 0);
   const lowStockCount = vendorProducts.filter((product) => product.stock <= 3).length;
-  const outOfStockCount = vendorProducts.filter((product) => product.stock === 0).length;
-  const activeProductsCount = vendorProducts.filter((product) => product.stock > 0).length;
   const pendingOrderCount = vendorOrders.filter((order) => order.status === "awaiting_receipt" || order.status === "receipt_uploaded").length;
   const paidOrderCount = vendorOrders.filter((order) => order.status === "paid_approved" || order.status === "fulfilled").length;
   const lowStockProducts = vendorProducts.filter((product) => product.stock <= 3);
-  const topProduct = vendorProducts
-    .map((product) => {
-      const orderedUnits = vendorOrders.reduce(
-        (sum, order) => sum + order.items.filter((item) => item.productId === product.id).reduce((itemSum, item) => itemSum + item.quantity, 0),
-        0,
-      );
-      return { product, orderedUnits };
-    })
-    .sort((a, b) => b.orderedUnits - a.orderedUnits)[0];
-  const revenue = vendorOrders.reduce((sum, order) => {
-    const orderVendorTotal = order.items.reduce((itemSum, item) => {
-      const belongsToVendor = vendorProducts.some((product) => product.id === item.productId);
-      return belongsToVendor ? itemSum + item.price * item.quantity : itemSum;
-    }, 0);
-    return sum + orderVendorTotal;
-  }, 0);
 
   function persist(nextProducts: Product[]) {
     setVendorProducts(nextProducts);
@@ -156,9 +137,9 @@ export function VendorDashboard() {
     <div className="mx-auto max-w-7xl space-y-8">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <p className="text-sm font-bold uppercase text-emerald-700">Role: Vendor</p>
-          <h1 className="mt-1 text-3xl font-black text-slate-950">Vendor dashboard</h1>
-          <p className="mt-2 text-sm text-slate-600">Manage your own product listings, inventory, and order visibility. Vendors cannot confirm payments or view other vendors’ orders.</p>
+          <p className="text-sm font-bold uppercase text-emerald-700">Selling tools</p>
+          <h1 className="mt-1 text-3xl font-black text-slate-950">Vendor Dashboard</h1>
+          <p className="mt-2 text-sm text-slate-600">Manage your products, stock, and customer orders.</p>
         </div>
         <Link className="rounded-md border border-slate-300 px-4 py-2 text-sm font-bold" href="/products">
           View public listing
@@ -168,8 +149,8 @@ export function VendorDashboard() {
       <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-xl font-black text-slate-950">Quick actions</h2>
-            <p className="mt-1 text-sm text-slate-600">Manage listings, inventory, and vendor order visibility.</p>
+            <h2 className="text-xl font-black text-slate-950">What can I do here?</h2>
+            <p className="mt-1 text-sm text-slate-600">Choose the selling task you want to handle now.</p>
           </div>
           <Link className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-bold text-white" href="#add-product">
             Add Product
@@ -177,10 +158,10 @@ export function VendorDashboard() {
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            ["Manage Products", "Own products and inventory", "#vendor-products"],
-            ["View Orders", "Orders for own products", "#vendor-orders"],
-            ["Update Inventory", `${lowStockCount} low-stock items`, "#vendor-inventory"],
-            ["Add Product", "Create a live marketplace listing", "#add-product"],
+            ["📦 Add Product", "Create a live marketplace listing", "#add-product"],
+            ["📦 Manage Products", "View and edit your listings", "#vendor-products"],
+            ["⚙ Update Stock", `${lowStockCount} low-stock items`, "#vendor-inventory"],
+            ["🧾 View Orders", "Orders for your products", "#vendor-orders"],
           ].map(([label, description, href]) => (
             <Link key={label} className="rounded-md border border-slate-200 bg-slate-50 p-4 hover:border-emerald-300 hover:bg-emerald-50" href={href}>
               <p className="font-black text-slate-950">{label}</p>
@@ -192,14 +173,10 @@ export function VendorDashboard() {
 
       <section className="grid gap-4 md:grid-cols-4">
         {[
-          ["Own products", vendorProducts.length.toString(), "Your active catalogue in the marketplace.", "Manage"],
-          ["Active products", activeProductsCount.toString(), "Products currently available to buyers.", "View"],
-          ["Low stock products", lowStockCount.toString(), "Products that need stock attention.", "Manage"],
-          ["Orders for vendor products", vendorOrders.length.toString(), "Orders containing your listings.", "View"],
-          ["Pending orders", pendingOrderCount.toString(), "Orders awaiting payment completion.", "View"],
-          ["Paid orders", paidOrderCount.toString(), "Confirmed orders ready for processing.", "View"],
-          ["Product performance", formatNaira(revenue), "Order value tied to your products.", "View"],
-          ["Top product", topProduct?.product.name ?? "No orders yet", "Best performing item by ordered units.", "View"],
+          ["My products", vendorProducts.length.toString(), vendorProducts.length ? "Products listed by your business." : "No products added yet.", "Manage"],
+          ["Orders waiting", pendingOrderCount.toString(), pendingOrderCount ? "Orders still waiting for payment." : "No orders waiting.", "View"],
+          ["Paid orders", paidOrderCount.toString(), paidOrderCount ? "Confirmed customer orders." : "No paid orders yet.", "View"],
+          ["Low stock products", lowStockCount.toString(), lowStockCount ? "Products need stock attention." : "Everything looks good.", "Manage"],
         ].map(([label, value, description, action]) => (
           <div key={label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
             <p className="text-sm font-semibold text-slate-500">{label}</p>
@@ -210,22 +187,7 @@ export function VendorDashboard() {
         ))}
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-black text-slate-950">Product performance cards</h2>
-          <div className="mt-4 grid gap-3">
-            {[
-              ["Order value", formatNaira(revenue)],
-              ["Inventory units", stockTotal.toString()],
-              ["Out of stock", outOfStockCount.toString()],
-            ].map(([label, value]) => (
-              <div key={label} className="flex items-center justify-between rounded-md bg-slate-50 px-3 py-3 text-sm">
-                <span className="font-semibold text-slate-700">{label}</span>
-                <span className="font-black text-slate-950">{value}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+      <section className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
           <h2 className="text-xl font-black text-slate-950">Recent activity</h2>
           <div className="mt-4 grid gap-3">
@@ -410,7 +372,7 @@ export function VendorDashboard() {
           <p className="mt-1 text-sm text-slate-600">Prioritize stock updates before customers place new orders.</p>
           <div className="mt-4 grid gap-3">
             {lowStockProducts.length === 0 ? (
-              <p className="rounded-md border border-dashed border-slate-300 p-4 text-sm text-slate-600">No low stock products.</p>
+              <p className="rounded-md border border-dashed border-slate-300 p-4 text-sm text-slate-600">Everything looks good.</p>
             ) : lowStockProducts.map((product) => {
               const status = inventoryLabel(product.stock);
               return (
@@ -446,24 +408,6 @@ export function VendorDashboard() {
                 </div>
               );
             })}
-          </div>
-        </div>
-        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-black text-slate-950">Product performance summary</h2>
-          <p className="mt-1 text-sm text-slate-600">A simple view of order value tied to your own items.</p>
-          <div className="mt-4 grid gap-3 text-sm">
-            <div className="flex justify-between rounded-md bg-slate-50 px-3 py-3">
-              <span className="font-semibold text-slate-700">Vendor order value</span>
-              <span className="font-black text-slate-950">{formatNaira(revenue)}</span>
-            </div>
-            <div className="flex justify-between rounded-md bg-slate-50 px-3 py-3">
-              <span className="font-semibold text-slate-700">Inventory units</span>
-              <span className="font-black text-slate-950">{stockTotal}</span>
-            </div>
-            <div className="flex justify-between rounded-md bg-slate-50 px-3 py-3">
-              <span className="font-semibold text-slate-700">Orders awaiting payment review</span>
-              <span className="font-black text-slate-950">{pendingOrderCount}</span>
-            </div>
           </div>
         </div>
       </section>

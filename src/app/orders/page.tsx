@@ -117,6 +117,7 @@ export default async function OrdersPage() {
   const rejectedOrders = displayedOrders.filter((order) => order.status === "payment_rejected" || order.status === "rejected").length;
   const totalValue = displayedOrders.reduce((sum, order) => sum + order.total, 0);
   const isCustomerAccount = isCustomer(profile);
+  const firstPendingOrder = displayedOrders.find((order) => order.status === "awaiting_receipt" || order.status === "payment_rejected" || order.status === "rejected");
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -124,35 +125,21 @@ export default async function OrdersPage() {
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-6">
           <p className="text-sm font-bold uppercase text-emerald-700">{isCustomerAccount ? "Customer account" : `${profile.role} orders`}</p>
-          <h1 className="mt-1 text-3xl font-black text-slate-950">{isCustomerAccount ? "My orders and activity" : "Order tracking"}</h1>
+          <h1 className="mt-1 text-3xl font-black text-slate-950">{isCustomerAccount ? "My Account" : "Order tracking"}</h1>
           <p className="mt-2 text-sm text-slate-600">
             {isCustomerAccount
-              ? "Track your orders, receipt status, repair requests, wishlist, and reviews from one account area."
+              ? "Track your orders, payments, saved products, and repair requests."
               : "Track manual bank transfer orders and cashier confirmation status for your permitted role scope."}
           </p>
         </div>
 
-        <section className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            ["Own orders", displayedOrders.length.toString()],
-            ["Pending / processing", pendingOrders.toString()],
-            ["Paid / confirmed", paidOrders.toString()],
-            [rejectedOrders > 0 ? "Rejected payments" : "Order value", rejectedOrders > 0 ? rejectedOrders.toString() : formatNaira(totalValue)],
-          ].map(([label, value]) => (
-            <div key={label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-              <p className="text-sm text-slate-500">{label}</p>
-              <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
-            </div>
-          ))}
-        </section>
-
         {isCustomerAccount ? (
           <section className="mb-6 grid gap-4 md:grid-cols-4">
             {[
-              ["Wishlist", "/wishlist", "View saved products"],
-              ["Reviews submitted", "/products", "Review purchased items"],
-              ["Repair requests", "/repair", "Request diagnosis or repair"],
-              ["Continue shopping", "/products", "Browse computers and accessories"],
+              ["🧾 View My Orders", "/orders", "Check order status"],
+              ["📦 Continue Shopping", "/products", "Browse computers and accessories"],
+              ["💰 Upload Receipt", firstPendingOrder ? `/orders/${firstPendingOrder.id}` : "/orders", "Send payment proof"],
+              ["🛠 Request Repair", "/repair", "Ask for diagnosis or repair"],
             ].map(([label, href, description]) => (
               <Link key={label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm hover:border-emerald-300" href={href}>
                 <p className="font-black text-slate-950">{label}</p>
@@ -161,6 +148,27 @@ export default async function OrdersPage() {
             ))}
           </section>
         ) : null}
+
+        <section className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {(isCustomerAccount
+            ? [
+                ["Orders waiting payment", pendingOrders.toString()],
+                ["Paid orders", paidOrders.toString()],
+                ["Repair requests", "0"],
+                ["Wishlist items", "0"],
+              ]
+            : [
+                ["Own orders", displayedOrders.length.toString()],
+                ["Pending / processing", pendingOrders.toString()],
+                ["Paid / confirmed", paidOrders.toString()],
+                [rejectedOrders > 0 ? "Rejected payments" : "Order value", rejectedOrders > 0 ? rejectedOrders.toString() : formatNaira(totalValue)],
+              ]).map(([label, value]) => (
+            <div key={label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+              <p className="text-sm text-slate-500">{label}</p>
+              <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
+            </div>
+          ))}
+        </section>
 
         <section className="mb-4">
           <h2 className="text-xl font-black text-slate-950">Recent activity</h2>
@@ -199,12 +207,37 @@ export default async function OrdersPage() {
                     Buy again
                   </Link>
                 </div>
+                {isCustomerAccount ? <OrderTimeline status={order.status} /> : null}
               </article>
             ))
           )}
         </div>
       </main>
       <PublicFooter />
+    </div>
+  );
+}
+
+function OrderTimeline({ status }: { status: string }) {
+  const steps = [
+    ["Order placed", ["awaiting_receipt", "receipt_uploaded", "payment_rejected", "rejected", "paid_approved", "processing", "fulfilled"]],
+    ["Receipt uploaded", ["receipt_uploaded", "payment_rejected", "rejected", "paid_approved", "processing", "fulfilled"]],
+    ["Payment confirmed", ["paid_approved", "processing", "fulfilled"]],
+    ["Preparing order", ["processing", "fulfilled"]],
+    ["Ready for pickup", ["fulfilled"]],
+    ["Completed", ["fulfilled"]],
+  ] as const;
+
+  return (
+    <div className="mt-5 grid gap-2 sm:grid-cols-3 lg:grid-cols-6">
+      {steps.map(([label, activeStatuses]) => {
+        const isActive = (activeStatuses as readonly string[]).includes(status);
+        return (
+          <div key={label} className={`rounded-md border px-3 py-2 text-xs font-bold ${isActive ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-slate-200 bg-slate-50 text-slate-500"}`}>
+            {label}
+          </div>
+        );
+      })}
     </div>
   );
 }
