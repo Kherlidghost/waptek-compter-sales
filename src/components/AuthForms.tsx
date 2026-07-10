@@ -37,8 +37,8 @@ export function AuthForms({
   return (
     <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[0.9fr_1.1fr]">
       <section className="rounded-lg border border-slate-200 bg-slate-950 p-6 text-white shadow-sm">
-        <p className="text-sm font-bold uppercase text-emerald-300">CompuMarket NG</p>
-        <h1 className="mt-3 text-3xl font-black">Secure marketplace access</h1>
+        <p className="text-sm font-bold uppercase text-emerald-300">WAPTEK COMPUTER SERVICES</p>
+        <h1 className="mt-3 text-3xl font-black">Sales of Computers & Repairs</h1>
         <p className="mt-3 text-sm leading-6 text-slate-300">
           Sign in to complete checkout, upload payment receipts, manage orders, or access staff and vendor dashboards.
         </p>

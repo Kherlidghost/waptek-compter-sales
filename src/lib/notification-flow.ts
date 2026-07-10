@@ -10,8 +10,8 @@ export type SimulatedNotification = {
   source: "checkout" | "cashier" | "system";
 };
 
-export const notificationsStorageKey = "computermarket-notifications";
-export const notificationsChangedEvent = "computermarket-notifications-changed";
+export const notificationsStorageKey = "waptek-notifications";
+export const notificationsChangedEvent = "waptek-notifications-changed";
 
 export const defaultNotificationLog: SimulatedNotification[] = notifications.map((notification) => ({
   ...notification,

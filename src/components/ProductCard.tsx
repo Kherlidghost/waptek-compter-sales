@@ -8,7 +8,7 @@ export function ProductCard({ product }: { product: Product }) {
   const branch = getBranch(product.branchId);
   const branchState = product.branchState ?? branch?.state;
   const branchName = product.branchName ?? branch?.name;
-  const vendorName = product.vendorName ?? (product.vendorId ? getVendor(product.vendorId)?.businessName : null) ?? "CompuMarket NG";
+  const vendorName = product.vendorName ?? (product.vendorId ? getVendor(product.vendorId)?.businessName : null) ?? "WAPTEK COMPUTER SERVICES";
   const stockStatus = product.stock <= 0 ? "Out of Stock" : product.stock <= 3 ? "Low Stock" : "In Stock";
   const stockClasses =
     product.stock <= 0

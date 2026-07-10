@@ -23,7 +23,7 @@ export default async function BecomeVendorPage({
       <main className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:px-8">
         <section className="space-y-5">
           <p className="text-sm font-bold uppercase text-emerald-700">Vendor onboarding</p>
-          <h1 className="text-4xl font-black text-slate-950">Sell Your Computer Products on CompuMarket NG</h1>
+          <h1 className="text-4xl font-black text-slate-950">Sell Your Computer Products on WAPTEK COMPUTER SERVICES</h1>
           <p className="text-base leading-7 text-slate-600">
             Join our verified vendor network and reach customers looking for laptops, desktops, accessories, components, and repair-related products across Adamawa, Yobe, and Borno.
           </p>

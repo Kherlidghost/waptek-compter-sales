@@ -12,7 +12,7 @@ export default function WishlistPage() {
           <div>
             <p className="text-sm font-bold uppercase text-emerald-700">Customer wishlist</p>
             <h1 className="mt-1 text-3xl font-black text-slate-950">Saved products</h1>
-            <p className="mt-2 text-sm text-slate-600">Wishlist changes are stored locally for this POC session.</p>
+            <p className="mt-2 text-sm text-slate-600">Wishlist changes are saved on this device for quick shopping access.</p>
           </div>
           <Link className="rounded-md border border-slate-300 px-4 py-2 text-sm font-bold" href="/products">
             Browse products

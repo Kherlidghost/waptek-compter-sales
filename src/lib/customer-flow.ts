@@ -1,8 +1,8 @@
 import { orders, products } from "./marketplace-data";
 
-export const cartStorageKey = "computermarket-cart";
-export const wishlistStorageKey = "computermarket-wishlist";
-export const reviewStorageKey = "computermarket-reviews";
+export const cartStorageKey = "waptek-cart";
+export const wishlistStorageKey = "waptek-wishlist";
+export const reviewStorageKey = "waptek-reviews";
 
 export type CartLine = {
   productId: string;
@@ -39,7 +39,7 @@ export const trackedOrders = [
   ...orders,
   {
     id: "ORD-2407-003",
-    customerName: "Demo Customer",
+    customerName: "Sample Customer",
     branchId: "adamawa",
     status: "receipt_uploaded" as const,
     total: products[0].price + products[2].price,

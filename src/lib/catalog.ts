@@ -90,7 +90,7 @@ function mapProduct(row: CatalogProductRow): Product {
     branchName: branch?.name,
     branchState: branch?.state,
     branchCity: branch?.city,
-    vendorName: vendor?.business_name ?? "CompuMarket NG",
+    vendorName: vendor?.business_name ?? "WAPTEK COMPUTER SERVICES",
   };
 }
 

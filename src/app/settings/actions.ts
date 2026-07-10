@@ -71,7 +71,7 @@ export async function updateCompanySettings(formData: FormData) {
   const { error } = await supabase.from("company_settings").upsert(
     {
       id: 1,
-      company_name: text(formData, "company_name") || "CompuMarket NG",
+      company_name: text(formData, "company_name") || "WAPTEK COMPUTER SERVICES",
       logo_path: logoPath,
       support_email: optionalText(formData, "support_email"),
       support_phone: optionalText(formData, "support_phone"),

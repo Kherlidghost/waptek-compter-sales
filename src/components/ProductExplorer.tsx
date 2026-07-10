@@ -6,7 +6,16 @@ import { branches as seedBranches, categories as seedCategories, products as see
 import type { Branch, Category, Product } from "@/lib/types";
 
 const conditions = ["New", "UK Used", "Refurbished"] as const;
-const categoryChips = ["Laptops", "Desktops", "Accessories", "Printers", "Repair Tools", "Components"];
+const categoryChips = [
+  "Laptops",
+  "Desktop Computers",
+  "Printers",
+  "Computer Accessories",
+  "Networking Equipment",
+  "Storage Devices",
+  "Software",
+  "Repair Services",
+];
 
 type SortOption = "featured" | "price-low" | "price-high" | "stock-high";
 
@@ -50,7 +59,8 @@ export function ProductExplorer({
       const matchesChip =
         !normalizedChip ||
         categoryName.toLowerCase().includes(normalizedChip) ||
-        (normalizedChip === "repair tools" && categoryName.toLowerCase().includes("repair"));
+        normalizedChip.includes(categoryName.toLowerCase()) ||
+        (normalizedChip === "repair services" && categoryName.toLowerCase().includes("repair"));
       const matchesBranch = branchId === "all" || product.branchId === branchId;
       const matchesCondition = condition === "all" || product.condition === condition;
       const matchesPrice = !hasMaxPrice || product.price <= parsedMaxPrice;

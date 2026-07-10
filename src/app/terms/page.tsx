@@ -4,7 +4,7 @@ export default function TermsPage() {
   return (
     <InfoPage
       eyebrow="Legal"
-      intro="These terms explain the basic rules for using CompuMarket NG as a buyer, vendor, cashier, manager, or administrator."
+      intro="These terms explain the basic rules for using WAPTEK COMPUTER SERVICES as a buyer, vendor, cashier, manager, or administrator."
       sections={[
         {
           title: "Marketplace use",

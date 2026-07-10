@@ -15,8 +15,12 @@ export const branches: Branch[] = [
 
 export const categories: Category[] = [
   { id: "laptops", name: "Laptops", description: "Business, student, gaming, and workstation laptops." },
-  { id: "desktops", name: "Desktops", description: "Office desktops, mini PCs, and custom builds." },
-  { id: "accessories", name: "Accessories", description: "Chargers, keyboards, mice, bags, RAM, SSDs, and monitors." },
+  { id: "desktops", name: "Desktop Computers", description: "Office desktops, mini PCs, workstations, and custom builds." },
+  { id: "printers", name: "Printers", description: "Office printers, ink systems, toners, and print accessories." },
+  { id: "accessories", name: "Computer Accessories", description: "Chargers, keyboards, mice, bags, RAM, SSDs, and monitors." },
+  { id: "networking-equipment", name: "Networking Equipment", description: "Routers, switches, cables, Wi-Fi devices, and network tools." },
+  { id: "storage-devices", name: "Storage Devices", description: "Hard drives, SSDs, flash drives, memory cards, and backup storage." },
+  { id: "software", name: "Software", description: "Operating systems, productivity tools, security software, and setup support." },
   { id: "repairs", name: "Repair Services", description: "Diagnostics, screen replacement, board repair, and software fixes." },
 ];
 

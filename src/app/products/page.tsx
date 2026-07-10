@@ -25,7 +25,7 @@ export default async function ProductsPage({
               {category ? `${category.name} in the marketplace` : "Browse all marketplace products"}
             </h1>
             <p className="mt-4 max-w-2xl leading-7 text-slate-300">
-              Search {products.length} {source === "database" ? "live" : "demo"} products across Adamawa, Yobe, and Borno. Filter by category, branch, condition, stock, and price.
+              Search {products.length} {source === "database" ? "live" : "sample"} products across Adamawa, Yobe, and Borno. Filter by category, branch, condition, stock, and price.
             </p>
           </div>
         </section>

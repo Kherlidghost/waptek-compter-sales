@@ -36,12 +36,12 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
   return (
     <header className="premium-panel mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 rounded-2xl p-4 sm:p-5">
       <div className="flex items-center gap-3">
-        <Link href="/" className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-950 text-lg font-black text-emerald-300 shadow-lg shadow-slate-950/10" aria-label="CompuMarket NG home">
-          CN
+        <Link href="/" className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-950 text-lg font-black text-emerald-300 shadow-lg shadow-slate-950/10" aria-label="WAPTEK COMPUTER SERVICES home">
+          WCS
         </Link>
         <div>
           <Link href="/" className="text-xl font-black text-slate-950">
-            CompuMarket NG
+            WAPTEK COMPUTER SERVICES
           </Link>
           <p className="mt-1 text-sm font-semibold capitalize text-slate-500">{role} workspace</p>
         </div>

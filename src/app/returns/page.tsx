@@ -4,7 +4,7 @@ export default function ReturnsPage() {
   return (
     <InfoPage
       eyebrow="Policy"
-      intro="This return policy outlines how CompuMarket NG expects return and issue handling to work for computer products, accessories, and repair-related orders."
+      intro="This return policy outlines how WAPTEK COMPUTER SERVICES expects return and issue handling to work for computer products, accessories, and repair-related orders."
       sections={[
         {
           title: "Product condition checks",

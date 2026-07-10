@@ -26,9 +26,9 @@ export function PublicFooter() {
     <footer className="border-t border-slate-200 bg-slate-950 text-white">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.2fr] lg:px-8">
         <section>
-          <h2 className="text-lg font-black">About CompuMarket NG</h2>
+          <h2 className="text-lg font-black">About WAPTEK COMPUTER SERVICES</h2>
           <p className="mt-3 text-sm leading-6 text-slate-300">
-            Computer marketplace for laptops, desktops, accessories, and repairs across Adamawa, Yobe, and Borno.
+            Sales of computers, accessories, spare parts, and professional repair services, with trusted vendor marketplace support.
           </p>
         </section>
 
@@ -43,8 +43,8 @@ export function PublicFooter() {
             <p>Phone: +234 800 000 0001</p>
             <p>
               Email:{" "}
-              <a className="font-semibold text-white hover:text-emerald-300" href="mailto:support@compumarket.ng">
-                support@compumarket.ng
+              <a className="font-semibold text-white hover:text-emerald-300" href="mailto:support@waptekcomputerservices.com">
+                support@waptekcomputerservices.com
               </a>
             </p>
             <p>Locations: Adamawa, Yobe, Borno</p>
@@ -52,7 +52,7 @@ export function PublicFooter() {
         </section>
       </div>
       <div className="border-t border-white/10 px-4 py-4 text-center text-sm text-slate-400">
-        © 2026 CompuMarket NG. All rights reserved.
+        © 2026 WAPTEK COMPUTER SERVICES. All rights reserved.
       </div>
     </footer>
   );

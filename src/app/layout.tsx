@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Naija Computer Marketplace POC",
-  description: "Local multi-vendor computer sales and repair marketplace POC.",
+  title: "WAPTEK COMPUTER SERVICES",
+  description: "Sales of Computers & Repairs.",
 };
 
 export default function RootLayout({

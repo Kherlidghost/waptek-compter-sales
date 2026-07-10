@@ -35,8 +35,8 @@ export async function PublicHeader() {
     <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 shadow-sm backdrop-blur">
       <nav className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-3 text-xl font-black text-slate-950">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-950 text-sm text-emerald-300 shadow-lg shadow-slate-950/10">CN</span>
-          <span>CompuMarket NG</span>
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-950 text-sm text-emerald-300 shadow-lg shadow-slate-950/10">WCS</span>
+          <span>WAPTEK COMPUTER SERVICES</span>
         </Link>
         <div className="hidden flex-wrap items-center gap-2 text-sm font-semibold md:flex">
           {navItems.map((item) => (

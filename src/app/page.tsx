@@ -63,14 +63,15 @@ export default async function Home({
       <main>
         <section className="relative overflow-hidden bg-slate-950 text-white">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(16,185,129,0.28),transparent_32rem),radial-gradient(circle_at_80%_0%,rgba(59,130,246,0.16),transparent_28rem)]" />
+          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-slate-900/80 to-transparent" />
           <div className="relative mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
             <div className="flex flex-col justify-center">
-              <p className="w-fit rounded-full border border-emerald-300/30 bg-emerald-300/10 px-4 py-2 text-sm font-black uppercase tracking-wide text-emerald-200">Nigeria Computer Marketplace</p>
+              <p className="w-fit rounded-full border border-emerald-300/30 bg-emerald-300/10 px-4 py-2 text-sm font-black uppercase tracking-wide text-emerald-200">Sales of Computers & Repairs</p>
               <h1 className="mt-4 max-w-3xl text-4xl font-black leading-tight sm:text-5xl">
-                Nigeria’s Trusted Marketplace for Computers, Accessories, and Professional Repair Services.
+                Your Trusted Computer Sales & Repair Center
               </h1>
               <p className="mt-5 max-w-2xl text-base leading-7 text-slate-300">
-                Buy quality laptops, desktops, accessories, and repair services from verified vendors across Adamawa, Yobe, and Borno. Place orders securely with receipt-confirmed payments.
+                Buy computers, accessories, and spare parts. Request professional repair services or shop from trusted vendors across our marketplace.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <Link className="rounded-lg bg-emerald-500 px-6 py-3 text-sm font-black text-slate-950 shadow-lg shadow-emerald-950/20 hover:bg-emerald-400" href="/products">
@@ -111,7 +112,7 @@ export default async function Home({
               <p className="text-sm font-bold uppercase text-emerald-300">Trust & Safety</p>
               <h2 className="mt-1 text-2xl font-black text-white">Built for Safer Computer Buying</h2>
               <p className="mt-4 leading-7 text-slate-300">
-                CompuMarket NG is designed to reduce fake listings and payment confusion by adding review steps before orders move forward.
+                WAPTEK COMPUTER SERVICES is designed to reduce fake listings and payment confusion by adding review steps before orders move forward.
               </p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -133,7 +134,7 @@ export default async function Home({
           <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
             <div className="max-w-3xl">
               <p className="text-sm font-bold uppercase text-emerald-700">Why choose us</p>
-              <h2 className="mt-1 text-2xl font-black text-slate-950">Why Choose CompuMarket NG?</h2>
+              <h2 className="mt-1 text-2xl font-black text-slate-950">Why Choose WAPTEK COMPUTER SERVICES?</h2>
             </div>
             <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {reasons.map((reason) => (
@@ -166,7 +167,7 @@ export default async function Home({
           <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-10 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
             <div className="max-w-3xl">
               <p className="text-sm font-bold uppercase text-emerald-300">For vendors</p>
-              <h2 className="mt-1 text-2xl font-black">Sell Your Computer Products on CompuMarket NG</h2>
+              <h2 className="mt-1 text-2xl font-black">Sell Your Computer Products on WAPTEK COMPUTER SERVICES</h2>
               <p className="mt-3 text-sm leading-6 text-slate-300">
                 Join our verified vendor network and reach customers looking for computers, accessories, and repair-related products.
               </p>

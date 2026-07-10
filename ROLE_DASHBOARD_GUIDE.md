@@ -1,6 +1,6 @@
 # Role Dashboard Guide
 
-This guide explains what each CompuMarket NG dashboard shows and why it is scoped that way.
+This guide explains what each WAPTEK COMPUTER SERVICES dashboard shows and why it is scoped that way.
 
 ## Admin Dashboard
 

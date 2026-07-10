@@ -6,7 +6,7 @@ import type { Product } from "@/lib/types";
 import { branches, categories, formatNaira, getBranch, getCategory, orders, products } from "@/lib/marketplace-data";
 import { StatusBadge } from "@/components/StatusBadge";
 
-const vendorProductsStorageKey = "computermarket-vendor-products";
+const vendorProductsStorageKey = "waptek-vendor-products";
 const activeVendorId = "vendor-1";
 
 type ProductForm = {
@@ -114,7 +114,7 @@ export function VendorDashboard() {
 
     persist(nextProducts);
     setForm(emptyForm);
-    setNotice(form.id ? "Product updated locally." : "Product added locally.");
+    setNotice(form.id ? "Planner item updated." : "Planner item added.");
   }
 
   function editProduct(product: Product) {
@@ -215,10 +215,10 @@ export function VendorDashboard() {
 
       <section id="vendor-products" className="grid scroll-mt-24 gap-8 lg:grid-cols-[420px_1fr]">
         <form onSubmit={submitProduct} className="h-fit rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm font-bold uppercase text-emerald-700">{form.id ? "Edit local planner item" : "Local inventory planner"}</p>
-          <h2 className="mt-1 text-2xl font-black text-slate-950">{form.id ? "Update planner item" : "Plan stock locally"}</h2>
+          <p className="text-sm font-bold uppercase text-emerald-700">{form.id ? "Edit planner item" : "Inventory planner"}</p>
+          <h2 className="mt-1 text-2xl font-black text-slate-950">{form.id ? "Update planner item" : "Plan stock"}</h2>
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            This local planner helps preview inventory data on the dashboard. Use the live online upload form above to publish products to Supabase.
+            Use this planner to organize vendor stock ideas. Use the online upload form above to publish products to the marketplace.
           </p>
           <Link className="mt-4 inline-flex rounded-md bg-emerald-700 px-4 py-2 text-sm font-bold text-white" href="#add-product">
             Go to live product upload

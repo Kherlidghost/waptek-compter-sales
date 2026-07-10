@@ -218,11 +218,11 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
       {
         id: slugify(name),
         name,
-        description: "New admin-created category for the local POC.",
+        description: "New admin-created category for the marketplace.",
       },
     ]);
     setCategoryName("");
-    setNotice("Category added locally.");
+    setNotice("Category added to this workspace.");
   }
 
   function addBranch(event: React.FormEvent<HTMLFormElement>) {
@@ -241,7 +241,7 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
       },
     ]);
     setBranchName("");
-    setNotice("Branch added locally.");
+    setNotice("Branch added to this workspace.");
   }
 
   return (

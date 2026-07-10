@@ -1,4 +1,4 @@
-# CompuMarket NG Role Guide
+# WAPTEK COMPUTER SERVICES Role Guide
 
 This marketplace uses five roles. Every protected dashboard must be accessed only by the matching role.
 

@@ -4,7 +4,7 @@ export default function PrivacyPage() {
   return (
     <InfoPage
       eyebrow="Privacy"
-      intro="CompuMarket NG collects only the information needed to manage accounts, orders, payment confirmation, repairs, and vendor operations."
+      intro="WAPTEK COMPUTER SERVICES collects only the information needed to manage accounts, orders, payment confirmation, repairs, and vendor operations."
       sections={[
         {
           title: "Information we use",

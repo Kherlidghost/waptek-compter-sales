@@ -4,7 +4,7 @@ export default function AboutPage() {
   return (
     <InfoPage
       eyebrow="About"
-      intro="CompuMarket NG connects customers with verified computer vendors, accessories, and repair service support across Adamawa, Yobe, and Borno."
+      intro="WAPTEK COMPUTER SERVICES connects customers with verified computer vendors, accessories, and repair service support across Adamawa, Yobe, and Borno."
       sections={[
         {
           title: "Regional computer marketplace",
@@ -19,7 +19,7 @@ export default function AboutPage() {
           body: "Customers pay to the company account, upload a receipt, and wait for cashier confirmation before an order moves forward for processing.",
         },
       ]}
-      title="About CompuMarket NG"
+      title="About WAPTEK COMPUTER SERVICES"
     />
   );
 }

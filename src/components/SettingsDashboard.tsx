@@ -222,7 +222,7 @@ export async function SettingsDashboard({ role, searchParams }: { role: Settings
             <form action={updateCompanySettings} className="grid gap-4 md:grid-cols-2">
               <input type="hidden" name="return_to" value={returnTo} />
               <input type="hidden" name="existing_logo_path" value={company?.logo_path ?? ""} />
-              <Field label="Company name" name="company_name" defaultValue={company?.company_name ?? "CompuMarket NG"} required />
+              <Field label="Company name" name="company_name" defaultValue={company?.company_name ?? "WAPTEK COMPUTER SERVICES"} required />
               <Field label="Support email" name="support_email" type="email" defaultValue={company?.support_email} />
               <Field label="Support phone" name="support_phone" defaultValue={company?.support_phone} />
               <Field label="WhatsApp placeholder" name="whatsapp_number" defaultValue={company?.whatsapp_number} />
@@ -244,7 +244,7 @@ export async function SettingsDashboard({ role, searchParams }: { role: Settings
             <form action={updateCompanySettings} className="grid gap-4 md:grid-cols-2">
               <input type="hidden" name="return_to" value={returnTo} />
               <input type="hidden" name="existing_logo_path" value={company?.logo_path ?? ""} />
-              <input type="hidden" name="company_name" value={company?.company_name ?? "CompuMarket NG"} />
+              <input type="hidden" name="company_name" value={company?.company_name ?? "WAPTEK COMPUTER SERVICES"} />
               <input type="hidden" name="support_email" value={company?.support_email ?? ""} />
               <input type="hidden" name="support_phone" value={company?.support_phone ?? ""} />
               <input type="hidden" name="whatsapp_number" value={company?.whatsapp_number ?? ""} />

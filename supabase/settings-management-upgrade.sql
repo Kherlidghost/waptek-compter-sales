@@ -14,7 +14,7 @@ alter table public.vendors
 
 create table if not exists public.company_settings (
   id integer primary key default 1 check (id = 1),
-  company_name text not null default 'CompuMarket NG',
+  company_name text not null default 'WAPTEK COMPUTER SERVICES',
   logo_path text,
   support_email text,
   support_phone text,
@@ -43,8 +43,8 @@ create table if not exists public.marketplace_settings (
 insert into public.company_settings (id, company_name, support_email, support_phone, whatsapp_number, business_address, about_text, payment_instructions)
 values (
   1,
-  'CompuMarket NG',
-  'support@compumarket.ng',
+  'WAPTEK COMPUTER SERVICES',
+  'support@waptekcomputerservices.com',
   '+234 800 000 0001',
   '+234 800 000 0000',
   'Adamawa, Yobe, and Borno',

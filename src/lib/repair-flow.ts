@@ -1,7 +1,7 @@
 import type { RepairRequest, RepairStatus } from "./types";
 import { repairRequests } from "./marketplace-data";
 
-export const repairRequestsStorageKey = "computermarket-repair-requests";
+export const repairRequestsStorageKey = "waptek-repair-requests";
 
 export const repairStatuses: RepairStatus[] = ["new", "diagnosing", "quoted", "in_repair", "ready", "closed", "cancelled"];
 

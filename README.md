@@ -1,4 +1,4 @@
-# CompuMarket NG MVP
+# WAPTEK COMPUTER SERVICES MVP
 
 Online MVP for a multi-vendor computer sales and repair marketplace in Nigeria. The deployment target is Vercel for the Next.js frontend and Supabase Free for Auth, Postgres, Storage, and row-level security.
 

@@ -4,11 +4,11 @@ export default function ContactPage() {
   return (
     <InfoPage
       eyebrow="Contact"
-      intro="Reach CompuMarket NG for order support, payment confirmation questions, repair requests, and vendor onboarding."
+      intro="Reach WAPTEK COMPUTER SERVICES for order support, payment confirmation questions, repair requests, and vendor onboarding."
       sections={[
         {
           title: "Customer support",
-          body: "Email support@compumarket.ng or call +234 800 000 0001 for help with product orders, receipt uploads, and order tracking.",
+          body: "Email support@waptekcomputerservices.com or call +234 800 000 0001 for help with product orders, receipt uploads, and order tracking.",
         },
         {
           title: "WhatsApp support",
@@ -16,10 +16,10 @@ export default function ContactPage() {
         },
         {
           title: "Supported locations",
-          body: "CompuMarket NG currently focuses on Adamawa, Yobe, and Borno, with branch-supported operations for sales and repair service handling.",
+          body: "WAPTEK COMPUTER SERVICES currently focuses on Adamawa, Yobe, and Borno, with branch-supported operations for sales and repair service handling.",
         },
       ]}
-      title="Contact CompuMarket NG"
+      title="Contact WAPTEK COMPUTER SERVICES"
     />
   );
 }
