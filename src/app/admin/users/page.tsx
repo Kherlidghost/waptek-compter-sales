@@ -44,7 +44,7 @@ function decodeMessage(value?: string) {
 
 function cleanAdminAuthMessage(error: unknown) {
   const setupMessage =
-    "Add SUPABASE_SECRET_KEY or SUPABASE_SERVICE_ROLE_KEY to Vercel Production environment variables and redeploy. Use a server-only key from the same Supabase project.";
+    "Add SUPABASE_SERVICE_ROLE_KEY to Vercel Production environment variables and redeploy. Use the service_role key from the same Supabase project.";
 
   if (!error) return setupMessage;
 
@@ -72,7 +72,7 @@ function cleanAdminAuthMessage(error: unknown) {
   }
 
   if (lower.includes("invalid api key") || lower.includes("jwt") || lower.includes("unauthorized")) {
-    return "Supabase rejected the Admin API request. Set the real SUPABASE_SECRET_KEY or service_role key for this production Supabase project, not the anon key, then redeploy.";
+    return "Supabase rejected the Admin API request. Set the real SUPABASE_SERVICE_ROLE_KEY for this production Supabase project, not the anon key, then redeploy.";
   }
 
   return trimmed;
@@ -167,7 +167,7 @@ export default async function AdminUsersPage({
         <div className="mx-auto max-w-7xl rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">
           <p className="font-black">Staff Auth email lookup, account creation, and password reset need Supabase Admin access.</p>
           <p className="mt-1">
-            Add <span className="font-black">SUPABASE_SECRET_KEY</span> or <span className="font-black">SUPABASE_SERVICE_ROLE_KEY</span> as a server-only Vercel Production environment variable, then redeploy.
+            Add <span className="font-black">SUPABASE_SERVICE_ROLE_KEY</span> as a server-only Vercel Production environment variable, then redeploy.
           </p>
           <p className="mt-1 text-amber-800">Details: {authAdminMessage}</p>
         </div>

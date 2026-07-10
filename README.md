@@ -22,7 +22,7 @@ SUPABASE_SERVICE_ROLE_KEY=your-server-only-service-role-key
 SUPABASE_SECRET_KEY=your-server-only-supabase-secret-key
 ```
 
-`SUPABASE_SECRET_KEY` or `SUPABASE_SERVICE_ROLE_KEY` is required for Admin Staff Management so the server can create manager/cashier Auth users. Add it only to Vercel environment variables and local `.env.local`; never expose it in client components and never prefix it with `NEXT_PUBLIC_`.
+`SUPABASE_SERVICE_ROLE_KEY` is required for Admin Staff Management so the server can create manager/cashier Auth users. The server can fall back to `SUPABASE_SECRET_KEY`, but the Supabase `service_role` key is preferred for Auth Admin operations. Add it only to Vercel environment variables and local `.env.local`; never expose it in client components and never prefix it with `NEXT_PUBLIC_`.
 
 ## Local Verification
 

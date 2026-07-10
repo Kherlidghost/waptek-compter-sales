@@ -24,7 +24,7 @@ function encode(value: string) {
 }
 
 function adminSetupMessage() {
-  return "Staff account actions require a server-only Supabase admin key on Vercel. Add SUPABASE_SECRET_KEY or SUPABASE_SERVICE_ROLE_KEY to Production and redeploy.";
+  return "Staff account actions require a server-only Supabase admin key on Vercel. Add SUPABASE_SERVICE_ROLE_KEY to Production and redeploy.";
 }
 
 function adminActionMessage(error: unknown, fallback: string) {
@@ -52,7 +52,7 @@ function adminActionMessage(error: unknown, fallback: string) {
   }
 
   if (lower.includes("invalid api key") || lower.includes("jwt") || lower.includes("unauthorized")) {
-    return "Supabase rejected the Admin API request. Use the real SUPABASE_SECRET_KEY or service_role key for this production Supabase project, not the anon key.";
+    return "Supabase rejected the Admin API request. Use the real SUPABASE_SERVICE_ROLE_KEY for this production Supabase project, not the anon key.";
   }
 
   return trimmed;
@@ -116,7 +116,7 @@ export async function createStaffAccount(formData: FormData) {
   if (authError || !authData.user) {
     redirect(
       `/admin/users?error=${encode(
-        adminActionMessage(authError, "Could not create staff Auth user. Confirm SUPABASE_SECRET_KEY or SUPABASE_SERVICE_ROLE_KEY is set in Vercel Production and belongs to this Supabase project."),
+        adminActionMessage(authError, "Could not create staff Auth user. Confirm SUPABASE_SERVICE_ROLE_KEY is set in Vercel Production and belongs to this Supabase project."),
       )}`,
     );
   }
@@ -203,7 +203,7 @@ export async function resetStaffPassword(formData: FormData) {
   if (error) {
     redirect(
       `/admin/users?error=${encode(
-        adminActionMessage(error, "Could not reset password. Confirm SUPABASE_SECRET_KEY or SUPABASE_SERVICE_ROLE_KEY is set in Vercel Production and belongs to this Supabase project."),
+        adminActionMessage(error, "Could not reset password. Confirm SUPABASE_SERVICE_ROLE_KEY is set in Vercel Production and belongs to this Supabase project."),
       )}`,
     );
   }
