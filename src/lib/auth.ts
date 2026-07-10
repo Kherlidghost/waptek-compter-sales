@@ -9,6 +9,7 @@ export type AuthProfile = {
   id: string;
   role: UserRole;
   branch_id: string | null;
+  is_active: boolean;
 };
 
 export const roleHome: Record<UserRole, string> = {
@@ -83,13 +84,15 @@ export function canManageProduct(profile: AuthProfile | null | undefined, ownerV
 }
 
 export async function getAuthProfile(supabase: SupabaseClient, userId: string): Promise<AuthProfile | null> {
-  const { data } = await supabase.from("profiles").select("id, role, branch_id").eq("id", userId).maybeSingle();
+  const { data } = await supabase.from("profiles").select("id, role, branch_id, is_active").eq("id", userId).maybeSingle();
   if (!data || !isUserRole(data.role)) return null;
+  if (data.is_active === false) return null;
 
   return {
     id: data.id,
     role: data.role,
     branch_id: data.branch_id ?? null,
+    is_active: data.is_active ?? true,
   };
 }
 

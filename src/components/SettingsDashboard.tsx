@@ -288,6 +288,21 @@ export async function SettingsDashboard({ role, searchParams }: { role: Settings
             </div>
           </Card>
 
+          <Card title="Staff Management" description="Create managers and cashiers, assign branches, activate or deactivate staff, and reset temporary passwords.">
+            <div className="grid gap-4 md:grid-cols-3">
+              {[
+                ["Manage Users", "View all users and update staff access.", "/admin/users"],
+                ["Add Manager", "Create a branch manager account.", "/admin/users"],
+                ["Add Cashier", "Create a cashier account for payment review.", "/admin/users"],
+              ].map(([title, description, href]) => (
+                <a key={title} className="rounded-xl border border-slate-200 bg-slate-50 p-4 hover:border-emerald-300 hover:bg-emerald-50" href={href}>
+                  <p className="font-black text-slate-950">{title}</p>
+                  <p className="mt-1 text-sm leading-6 text-slate-600">{description}</p>
+                </a>
+              ))}
+            </div>
+          </Card>
+
           <Card title="User Management" description="Assign roles, branches, and account active status for operational users.">
             {profiles.length === 0 ? <p className="rounded-md bg-slate-50 p-4 text-sm font-semibold text-slate-600">No users found.</p> : null}
             <div className="grid gap-3">
@@ -350,7 +365,7 @@ export async function SettingsDashboard({ role, searchParams }: { role: Settings
             <div className="grid gap-3 text-sm text-slate-700 md:grid-cols-3">
               <div className="rounded-md bg-slate-50 p-4"><strong>Email confirmation:</strong> keep Supabase email confirmation enabled for customers and staff.</div>
               <div className="rounded-md bg-slate-50 p-4"><strong>Password resets:</strong> use Supabase Auth password reset links from the dashboard or login flow.</div>
-              <div className="rounded-md bg-slate-50 p-4"><strong>Staff accounts:</strong> create staff in Supabase Auth first, then match the profile role and branch here.</div>
+              <div className="rounded-md bg-slate-50 p-4"><strong>Staff accounts:</strong> use Admin Users to create manager and cashier accounts directly from the website.</div>
             </div>
           </Card>
         </>
