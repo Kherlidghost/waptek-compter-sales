@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
+import { ClearCartOnSuccess } from "@/components/ClearCartOnSuccess";
 
 export default async function OrderConfirmationPage({
   searchParams,
@@ -12,6 +13,7 @@ export default async function OrderConfirmationPage({
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
+      <ClearCartOnSuccess />
       <PublicHeader />
       <main className="grid min-h-[calc(100vh-73px)] place-items-center px-4">
       <section className="max-w-xl rounded-lg border border-slate-200 bg-white p-8 text-center shadow-sm">

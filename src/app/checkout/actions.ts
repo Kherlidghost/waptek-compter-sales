@@ -96,12 +96,20 @@ export async function createCheckoutOrder(formData: FormData) {
     .in("id", cartProductIds)
     .eq("status", "active");
 
-  if (productsError || !dbProducts || dbProducts.length !== cartItems.length) {
+  if (productsError || !dbProducts || dbProducts.length === 0) {
+    redirect("/checkout?error=Checkout%20products%20are%20not%20available.");
+  }
+
+  // Only keep cart lines whose product was found in the DB.
+  const validCartItems = cartItems.filter((line) =>
+    (dbProducts as CheckoutProductRow[]).some((p) => p.id === line.productId),
+  );
+  if (validCartItems.length === 0) {
     redirect("/checkout?error=Checkout%20products%20are%20not%20available.");
   }
 
   const productById = new Map((dbProducts as CheckoutProductRow[]).map((product) => [product.id, product]));
-  const unavailableProduct = cartItems.find((line) => {
+  const unavailableProduct = validCartItems.find((line) => {
     const product = productById.get(line.productId);
     if (!product) return true;
     const inventoryRows = (product.inventory ?? []) as Array<{ quantity: number; status?: string }>;
@@ -114,7 +122,7 @@ export async function createCheckoutOrder(formData: FormData) {
     redirect("/checkout?error=One%20or%20more%20products%20are%20out%20of%20stock.");
   }
 
-  const total = cartItems.reduce((sum, line) => {
+  const total = validCartItems.reduce((sum, line) => {
     const product = productById.get(line.productId);
     return sum + Number(product?.discount_price ?? product?.price ?? 0) * line.quantity;
   }, 0);
@@ -142,7 +150,7 @@ export async function createCheckoutOrder(formData: FormData) {
     redirect("/checkout?error=Could%20not%20create%20order.");
   }
 
-  const orderItems = cartItems.map((line) => {
+  const orderItems = validCartItems.map((line) => {
     const product = productById.get(line.productId);
     const unitPrice = Number(product?.discount_price ?? product?.price ?? 0);
     return {

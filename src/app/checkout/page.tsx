@@ -2,7 +2,7 @@ import { CheckoutForm } from "@/components/CheckoutForm";
 import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 import { createCheckoutOrder } from "@/app/checkout/actions";
-import { formatNaira, products } from "@/lib/marketplace-data";
+import { getStorefrontCatalog } from "@/lib/catalog";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -35,8 +35,7 @@ export default async function CheckoutPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const params = await searchParams;
-  const bankSettings = await getBankSettings();
-  const total = products[0].price + products[2].price;
+  const [bankSettings, { products }] = await Promise.all([getBankSettings(), getStorefrontCatalog()]);
   const hasBankDetails = Boolean(bankSettings?.bank_name && bankSettings.account_name && bankSettings.account_number);
 
   return (
@@ -53,7 +52,7 @@ export default async function CheckoutPage({
               {params.error}
             </div>
           ) : null}
-          <CheckoutForm action={createCheckoutOrder} />
+          <CheckoutForm action={createCheckoutOrder} products={products} />
         </section>
         <aside className="h-fit rounded-2xl border border-slate-200 bg-slate-950 p-6 text-white shadow-xl shadow-slate-950/10">
           <h2 className="text-lg font-black text-white">Company bank account</h2>
@@ -62,7 +61,6 @@ export default async function CheckoutPage({
               <div><dt className="text-slate-300">Bank</dt><dd className="font-bold">{bankSettings?.bank_name}</dd></div>
               <div><dt className="text-slate-300">Account name</dt><dd className="font-bold">{bankSettings?.account_name}</dd></div>
               <div><dt className="text-slate-300">Account number</dt><dd className="font-bold">{bankSettings?.account_number}</dd></div>
-              <div><dt className="text-slate-300">Amount</dt><dd className="text-2xl font-black text-emerald-300">{formatNaira(total)}</dd></div>
               {bankSettings?.payment_instructions ? (
                 <div><dt className="text-slate-300">Instructions</dt><dd className="font-semibold text-slate-100">{bankSettings.payment_instructions}</dd></div>
               ) : null}
