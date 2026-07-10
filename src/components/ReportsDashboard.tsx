@@ -39,6 +39,27 @@ type ProductRow = {
   inventory: Array<{ quantity: number; reorder_level: number; status?: string }> | null;
 };
 
+type OrderItemRow = {
+  order_id: string;
+  product_id: string;
+  vendor_id: string;
+  quantity: number;
+  unit_price: number | string;
+};
+
+type ReceiptRow = {
+  order_id: string;
+  status: "pending" | "confirmed" | "rejected";
+  reviewed_at: string | null;
+  created_at: string;
+};
+
+type InventoryReportRow = {
+  product_id: string;
+  quantity: number;
+  reorder_level: number;
+};
+
 type VendorRow = {
   id: string;
   business_name: string;
@@ -146,39 +167,97 @@ export async function ReportsDashboard({ role, searchParams }: { role: ReportsRo
 
   let ordersQuery = supabase
     .from("orders")
-    .select("id, order_number, customer_name, branch_id, status, total, created_at, branches(name, state), payment_receipts(status, reviewed_at, created_at), order_items(quantity, unit_price, vendor_id, products(name), vendors(business_name))")
+    .select("id, order_number, customer_name, branch_id, status, total, created_at")
     .order("created_at", { ascending: false });
   if (scopedBranchId) ordersQuery = ordersQuery.eq("branch_id", scopedBranchId);
-  if (role === "vendor" && scopedVendorId) ordersQuery = ordersQuery.eq("order_items.vendor_id", scopedVendorId);
 
   let productsQuery = supabase
     .from("products")
-    .select("id, name, sku, branch_id, vendor_id, branches(state), vendors(business_name), inventory(quantity, reorder_level, status)")
+    .select("id, name, sku, branch_id, vendor_id")
     .order("updated_at", { ascending: false });
   if (scopedBranchId) productsQuery = productsQuery.eq("branch_id", scopedBranchId);
   if (role === "vendor" && scopedVendorId) productsQuery = productsQuery.eq("vendor_id", scopedVendorId);
 
+  let inventoryQuery = supabase.from("inventory").select("product_id, quantity, reorder_level");
+  if (scopedBranchId) inventoryQuery = inventoryQuery.eq("branch_id", scopedBranchId);
+
+  let orderItemsQuery = supabase.from("order_items").select("order_id, product_id, vendor_id, quantity, unit_price");
+  if (role === "vendor" && scopedVendorId) orderItemsQuery = orderItemsQuery.eq("vendor_id", scopedVendorId);
+
   let repairsQuery = supabase.from("repair_requests").select("id, branch_id, status, created_at").order("created_at", { ascending: false });
   if (scopedBranchId) repairsQuery = repairsQuery.eq("branch_id", scopedBranchId);
 
-  const [{ data: orderRows, error: ordersError }, { data: productRows, error: productsError }, { data: repairRows }, { data: branchRows }, { data: vendorRows }] = await Promise.all([
+  const [
+    { data: orderRows, error: ordersError },
+    { data: productRows, error: productsError },
+    { data: inventoryRows, error: inventoryError },
+    { data: orderItemRows, error: orderItemsError },
+    { data: receiptRows, error: receiptsError },
+    { data: repairRows },
+    { data: branchRows },
+    { data: vendorRows },
+  ] = await Promise.all([
     ordersQuery,
     productsQuery,
+    inventoryQuery,
+    orderItemsQuery,
+    supabase.from("payment_receipts").select("order_id, status, reviewed_at, created_at"),
     repairsQuery,
     supabase.from("branches").select("id, name, state").order("state"),
-    role === "admin"
-      ? supabase.from("vendors").select("id, business_name, status, products(id), order_items(quantity, unit_price, orders(status, created_at))").order("business_name")
-      : Promise.resolve({ data: [] }),
+    supabase.from("vendors").select("id, business_name, status").order("business_name"),
   ]);
 
-  const orders = ((orderRows ?? []) as unknown as OrderRow[])
+  const branches = (branchRows ?? []) as BranchRow[];
+  const branchById = new Map(branches.map((branch) => [branch.id, branch]));
+  const vendorBaseRows = (vendorRows ?? []) as Array<{ id: string; business_name: string; status: string }>;
+  const vendorById = new Map(vendorBaseRows.map((vendor) => [vendor.id, vendor]));
+  const productBaseRows = (productRows ?? []) as Array<{ id: string; name: string; sku: string | null; branch_id: string; vendor_id: string }>;
+  const productById = new Map(productBaseRows.map((product) => [product.id, product]));
+  const inventoryByProduct = new Map(((inventoryRows ?? []) as InventoryReportRow[]).map((row) => [row.product_id, row]));
+  const orderItems = (orderItemRows ?? []) as OrderItemRow[];
+  const orderItemsByOrder = new Map<string, OrderItemRow[]>();
+  orderItems.forEach((item) => {
+    const current = orderItemsByOrder.get(item.order_id) ?? [];
+    current.push(item);
+    orderItemsByOrder.set(item.order_id, current);
+  });
+  const receiptsByOrder = new Map<string, ReceiptRow[]>();
+  ((receiptRows ?? []) as ReceiptRow[]).forEach((receipt) => {
+    const current = receiptsByOrder.get(receipt.order_id) ?? [];
+    current.push(receipt);
+    receiptsByOrder.set(receipt.order_id, current);
+  });
+
+  const orders = ((orderRows ?? []) as Array<Omit<OrderRow, "branches" | "payment_receipts" | "order_items">>)
     .filter((order) => dateInRange(order.created_at, searchParams))
     .filter((order) => !searchParams.status || order.status === searchParams.status)
-    .filter((order) => role !== "vendor" || !scopedVendorId || order.order_items?.some((item) => item.vendor_id === scopedVendorId));
-  const products = ((productRows ?? []) as unknown as ProductRow[]).filter((product) => role !== "vendor" || !scopedVendorId || product.vendor_id === scopedVendorId);
+    .filter((order) => role !== "vendor" || !scopedVendorId || (orderItemsByOrder.get(order.id) ?? []).some((item) => item.vendor_id === scopedVendorId))
+    .map((order) => ({
+      ...order,
+      branches: branchById.get(order.branch_id) ?? null,
+      payment_receipts: receiptsByOrder.get(order.id) ?? [],
+      order_items: (orderItemsByOrder.get(order.id) ?? []).map((item) => ({
+        ...item,
+        products: productById.get(item.product_id) ? { name: productById.get(item.product_id)?.name ?? "Product" } : null,
+        vendors: vendorById.get(item.vendor_id) ? { business_name: vendorById.get(item.vendor_id)?.business_name ?? "Vendor" } : null,
+      })),
+    })) as OrderRow[];
+  const products = productBaseRows
+    .filter((product) => role !== "vendor" || !scopedVendorId || product.vendor_id === scopedVendorId)
+    .map((product) => ({
+      ...product,
+      branches: branchById.get(product.branch_id) ?? null,
+      vendors: vendorById.get(product.vendor_id) ? { business_name: vendorById.get(product.vendor_id)?.business_name ?? "Vendor" } : null,
+      inventory: inventoryByProduct.get(product.id) ? [inventoryByProduct.get(product.id) as InventoryReportRow] : [],
+    })) as ProductRow[];
   const repairs = ((repairRows ?? []) as RepairRow[]).filter((repair) => dateInRange(repair.created_at, searchParams));
-  const vendors = (vendorRows ?? []) as unknown as VendorRow[];
-  const branches = (branchRows ?? []) as BranchRow[];
+  const vendors = vendorBaseRows.map((vendor) => ({
+    ...vendor,
+    products: productBaseRows.filter((product) => product.vendor_id === vendor.id).map((product) => ({ id: product.id })),
+    order_items: orderItems.filter((item) => item.vendor_id === vendor.id).map((item) => ({ ...item, orders: null })),
+  })) as VendorRow[];
+  const reportErrors = [ordersError, productsError, inventoryError, orderItemsError, receiptsError].filter(Boolean);
+  const reportErrorDetail = reportErrors.map((error) => error?.message).filter(Boolean).join(" ");
 
   const confirmed = orders.filter((order) => paidLike(order.status));
   const totalSales = confirmed.reduce((sum, order) => sum + Number(order.total), 0);
@@ -298,8 +377,11 @@ export async function ReportsDashboard({ role, searchParams }: { role: ReportsRo
         </form>
       </section>
 
-      {ordersError || productsError ? (
-        <p className="rounded-lg border border-red-200 bg-red-50 p-5 text-sm font-semibold text-red-800">Could not load report data. Check Supabase production schema and role permissions.</p>
+      {reportErrors.length > 0 ? (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-5 text-sm font-semibold text-red-800">
+          <p>Could not load report data. Check Supabase production schema and role permissions.</p>
+          {reportErrorDetail ? <p className="mt-2 text-xs font-medium text-red-700">Details: {reportErrorDetail}</p> : null}
+        </div>
       ) : null}
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
