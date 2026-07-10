@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 import {
   saveBranchSettings,
@@ -8,7 +7,7 @@ import {
   updateUserAdministration,
   updateVendorSettings,
 } from "@/app/settings/actions";
-import { getAuthProfile, isAdmin, isCashier, isManager, isVendor, roleHome } from "@/lib/auth";
+import { getAuthProfile, isAdmin, isCashier, isManager, isVendor } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import type { BranchState, UserRole, VendorStatus } from "@/lib/types";
 
@@ -134,27 +133,6 @@ function SaveButton({ children = "Save changes" }: { children?: string }) {
   return <button className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-black text-white hover:bg-emerald-800">{children}</button>;
 }
 
-function DashboardNav({ role }: { role: SettingsRole }) {
-  const base = roleHome[role];
-  const links = [
-    ["Dashboard", base],
-    ...(role === "admin" || role === "manager" || role === "vendor" ? [["Products", `${base}/products`], ["Inventory", `${base}/inventory`]] : []),
-    ...(role === "admin" ? [["Vendors", "/admin/vendors"]] : []),
-    ["Orders", `${base}/orders`],
-    ["Reports", `${base}/reports`],
-    ["Settings", `${base}/settings`],
-  ];
-  return (
-    <nav className="flex gap-2 overflow-x-auto rounded-lg border border-slate-200 bg-white p-2 text-sm shadow-sm">
-      {links.map(([label, href]) => (
-        <Link key={label} href={href} className="whitespace-nowrap rounded-md px-3 py-2 font-bold text-slate-700 hover:bg-slate-100">
-          {label}
-        </Link>
-      ))}
-    </nav>
-  );
-}
-
 export async function SettingsDashboard({ role, searchParams }: { role: SettingsRole; searchParams: SearchParams }) {
   const supabase = await createClient();
   const {
@@ -214,7 +192,6 @@ export async function SettingsDashboard({ role, searchParams }: { role: Settings
 
   return (
     <div className="grid gap-6">
-      <DashboardNav role={role} />
       <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
         <p className="text-xs font-black uppercase tracking-wide text-emerald-700">Administration settings</p>
         <h1 className="mt-2 text-3xl font-black text-slate-950">

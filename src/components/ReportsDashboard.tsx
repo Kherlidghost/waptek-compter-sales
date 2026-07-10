@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { getAuthProfile, isCashier, isManager, isVendor } from "@/lib/auth";
@@ -343,7 +342,6 @@ export async function ReportsDashboard({ role, searchParams }: { role: ReportsRo
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
-      <ReportsNav role={role} />
       <header className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
         <p className="text-sm font-bold uppercase text-emerald-700">Business Reports</p>
         <h1 className="mt-2 text-3xl font-black text-slate-950">
@@ -491,24 +489,6 @@ export async function ReportsDashboard({ role, searchParams }: { role: ReportsRo
         </>
       ) : null}
     </div>
-  );
-}
-
-function ReportsNav({ role }: { role: ReportsRole }) {
-  const base = `/${role}`;
-  const links = [
-    ["Dashboard", base],
-    ...(role !== "cashier" ? [["Products", `${base}/products`]] : []),
-    ...(role === "admin" ? [["Vendors", "/admin/vendors"]] : []),
-    ...(role !== "cashier" ? [["Inventory", `${base}/inventory`]] : []),
-    ["Orders", `${base}/orders`],
-    ["Reports", `${base}/reports`],
-    ["Settings", `${base}/settings`],
-  ];
-  return (
-    <nav className="flex gap-2 overflow-x-auto rounded-lg border border-slate-200 bg-white p-2 text-sm shadow-sm">
-      {links.map(([label, href]) => <Link key={label} className="whitespace-nowrap rounded-md px-3 py-2 font-bold text-slate-700 hover:bg-slate-100" href={href}>{label}</Link>)}
-    </nav>
   );
 }
 
