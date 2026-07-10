@@ -18,7 +18,7 @@ export default async function LoginPage({
         : "";
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen marketplace-shell text-slate-900">
       <main className="px-4 py-10">
       <AuthForms next={next} errorMessage={errorMessage} successMessage={params.success} isConfigured={isSupabaseConfigured()} />
       <div className="mx-auto mt-6 max-w-6xl">

@@ -56,15 +56,16 @@ export default async function Home({
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen marketplace-shell text-slate-900">
       <SignedOutToast show={params.signed_out === "1"} />
       <PublicHeader />
 
       <main>
-        <section className="bg-slate-950 text-white">
-          <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
+        <section className="relative overflow-hidden bg-slate-950 text-white">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(16,185,129,0.28),transparent_32rem),radial-gradient(circle_at_80%_0%,rgba(59,130,246,0.16),transparent_28rem)]" />
+          <div className="relative mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
             <div className="flex flex-col justify-center">
-              <p className="text-sm font-semibold uppercase tracking-wide text-emerald-300">Nigeria Computer Marketplace</p>
+              <p className="w-fit rounded-full border border-emerald-300/30 bg-emerald-300/10 px-4 py-2 text-sm font-black uppercase tracking-wide text-emerald-200">Nigeria Computer Marketplace</p>
               <h1 className="mt-4 max-w-3xl text-4xl font-black leading-tight sm:text-5xl">
                 Nigeria’s Trusted Marketplace for Computers, Accessories, and Professional Repair Services.
               </h1>
@@ -72,20 +73,20 @@ export default async function Home({
                 Buy quality laptops, desktops, accessories, and repair services from verified vendors across Adamawa, Yobe, and Borno. Place orders securely with receipt-confirmed payments.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
-                <Link className="rounded-md bg-emerald-500 px-5 py-3 text-sm font-bold text-slate-950 hover:bg-emerald-400" href="/products">
+                <Link className="rounded-lg bg-emerald-500 px-6 py-3 text-sm font-black text-slate-950 shadow-lg shadow-emerald-950/20 hover:bg-emerald-400" href="/products">
                   Browse Products
                 </Link>
-                <Link className="rounded-md border border-white/20 px-5 py-3 text-sm font-bold hover:bg-white/10" href="/repairs">
+                <Link className="rounded-lg border border-white/20 px-6 py-3 text-sm font-black hover:bg-white/10" href="/repairs">
                   Request Repair
                 </Link>
-                <Link className="rounded-md border border-white/20 px-5 py-3 text-sm font-bold hover:bg-white/10" href="/become-a-vendor">
+                <Link className="rounded-lg border border-white/20 px-6 py-3 text-sm font-black hover:bg-white/10" href="/become-a-vendor">
                   Become a Vendor
                 </Link>
               </div>
             </div>
-            <div className="grid content-center gap-3 rounded-lg bg-white/10 p-4 sm:grid-cols-2">
+            <div className="grid content-center gap-3 rounded-2xl border border-white/10 bg-white/10 p-4 shadow-2xl shadow-slate-950/30 backdrop-blur sm:grid-cols-2">
               {trustCards.map((card) => (
-                <div key={card.title} className="rounded-md bg-white p-5 text-slate-950">
+                <div key={card.title} className="rounded-xl bg-white p-5 text-slate-950 shadow-lg shadow-slate-950/10">
                   <p className="text-lg font-black">{card.title}</p>
                   <p className="mt-2 text-sm leading-6 text-slate-600">{card.description}</p>
                 </div>
@@ -94,7 +95,7 @@ export default async function Home({
           </div>
         </section>
 
-        <section className="border-b border-slate-200 bg-white">
+        <section className="border-b border-slate-200 bg-white/80 backdrop-blur">
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="mb-5 max-w-3xl">
               <p className="text-sm font-bold uppercase text-emerald-700">Find computer products</p>
@@ -104,12 +105,12 @@ export default async function Home({
           </div>
         </section>
 
-        <section className="bg-slate-100">
+        <section className="bg-slate-950 text-white">
           <div className="mx-auto grid max-w-7xl gap-6 px-4 py-10 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
             <div>
-              <p className="text-sm font-bold uppercase text-emerald-700">Trust & Safety</p>
-              <h2 className="mt-1 text-2xl font-black text-slate-950">Built for Safer Computer Buying</h2>
-              <p className="mt-4 leading-7 text-slate-600">
+              <p className="text-sm font-bold uppercase text-emerald-300">Trust & Safety</p>
+              <h2 className="mt-1 text-2xl font-black text-white">Built for Safer Computer Buying</h2>
+              <p className="mt-4 leading-7 text-slate-300">
                 CompuMarket NG is designed to reduce fake listings and payment confusion by adding review steps before orders move forward.
               </p>
             </div>
@@ -120,8 +121,8 @@ export default async function Home({
                 "Cashiers confirm payment before order processing.",
                 "Vendors are verified before selling.",
               ].map((item) => (
-                <div key={item} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-                  <p className="font-bold leading-6 text-slate-950">{item}</p>
+                <div key={item} className="rounded-xl border border-white/10 bg-white/10 p-5 shadow-sm backdrop-blur">
+                  <p className="font-bold leading-6 text-white">{item}</p>
                 </div>
               ))}
             </div>
@@ -136,7 +137,7 @@ export default async function Home({
             </div>
             <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {reasons.map((reason) => (
-                <div key={reason} className="rounded-lg border border-slate-200 bg-slate-50 p-5">
+                <div key={reason} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
                   <p className="font-bold text-slate-950">{reason}</p>
                 </div>
               ))}
@@ -151,8 +152,8 @@ export default async function Home({
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             {steps.map((step, index) => (
-              <div key={step} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="flex h-9 w-9 items-center justify-center rounded-md bg-emerald-100 text-sm font-black text-emerald-800">
+              <div key={step} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-sm font-black text-emerald-800">
                   {index + 1}
                 </div>
                 <p className="mt-4 font-bold text-slate-950">{step}</p>
@@ -170,7 +171,7 @@ export default async function Home({
                 Join our verified vendor network and reach customers looking for computers, accessories, and repair-related products.
               </p>
             </div>
-            <Link className="w-fit rounded-md bg-emerald-500 px-5 py-3 text-sm font-bold text-slate-950 hover:bg-emerald-400" href="/become-a-vendor">
+            <Link className="w-fit rounded-lg bg-emerald-500 px-6 py-3 text-sm font-black text-slate-950 hover:bg-emerald-400" href="/become-a-vendor">
               Become a Vendor
             </Link>
           </div>
@@ -191,7 +192,7 @@ export default async function Home({
               <Link
                 key={category.id}
                 href={`/products?category=${category.id}`}
-                className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm hover:border-emerald-300 hover:shadow-md"
+                className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:border-emerald-300 hover:shadow-md"
               >
                 <p className="font-bold text-slate-950">{category.name}</p>
                 <p className="mt-2 text-sm leading-6 text-slate-600">{category.description}</p>

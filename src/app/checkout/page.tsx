@@ -40,11 +40,12 @@ export default async function CheckoutPage({
   const hasBankDetails = Boolean(bankSettings?.bank_name && bankSettings.account_name && bankSettings.account_number);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen marketplace-shell text-slate-900">
       <PublicHeader />
       <main className="px-4 py-8">
         <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1fr_360px]">
-        <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5">
+          <p className="text-sm font-black uppercase text-emerald-700">Receipt-confirmed payment</p>
           <h1 className="text-3xl font-black text-slate-950">Manual bank transfer checkout</h1>
           <p className="mt-2 text-sm text-slate-600">Pay by manual bank transfer and upload your receipt for cashier confirmation.</p>
           {params.error ? (
@@ -54,16 +55,16 @@ export default async function CheckoutPage({
           ) : null}
           <CheckoutForm action={createCheckoutOrder} />
         </section>
-        <aside className="h-fit rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-black text-slate-950">Company bank account</h2>
+        <aside className="h-fit rounded-2xl border border-slate-200 bg-slate-950 p-6 text-white shadow-xl shadow-slate-950/10">
+          <h2 className="text-lg font-black text-white">Company bank account</h2>
           {hasBankDetails ? (
             <dl className="mt-4 space-y-3 text-sm">
-              <div><dt className="text-slate-500">Bank</dt><dd className="font-bold">{bankSettings?.bank_name}</dd></div>
-              <div><dt className="text-slate-500">Account name</dt><dd className="font-bold">{bankSettings?.account_name}</dd></div>
-              <div><dt className="text-slate-500">Account number</dt><dd className="font-bold">{bankSettings?.account_number}</dd></div>
-              <div><dt className="text-slate-500">Amount</dt><dd className="text-2xl font-black">{formatNaira(total)}</dd></div>
+              <div><dt className="text-slate-300">Bank</dt><dd className="font-bold">{bankSettings?.bank_name}</dd></div>
+              <div><dt className="text-slate-300">Account name</dt><dd className="font-bold">{bankSettings?.account_name}</dd></div>
+              <div><dt className="text-slate-300">Account number</dt><dd className="font-bold">{bankSettings?.account_number}</dd></div>
+              <div><dt className="text-slate-300">Amount</dt><dd className="text-2xl font-black text-emerald-300">{formatNaira(total)}</dd></div>
               {bankSettings?.payment_instructions ? (
-                <div><dt className="text-slate-500">Instructions</dt><dd className="font-semibold text-slate-700">{bankSettings.payment_instructions}</dd></div>
+                <div><dt className="text-slate-300">Instructions</dt><dd className="font-semibold text-slate-100">{bankSettings.payment_instructions}</dd></div>
               ) : null}
             </dl>
           ) : (

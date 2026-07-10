@@ -59,7 +59,7 @@ export default async function AdminVendorsPage({
   const pending = vendors.filter((vendor) => vendor.status === "pending");
 
   return (
-    <main className="min-h-screen space-y-6 bg-slate-50 px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
+    <main className="min-h-screen space-y-6 dashboard-shell px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
       <DashboardSessionBar role="admin" />
       <section className="mx-auto max-w-7xl rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
         <p className="text-sm font-bold uppercase text-emerald-700">Vendor Management</p>

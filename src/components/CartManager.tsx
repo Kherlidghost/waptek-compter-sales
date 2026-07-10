@@ -48,7 +48,7 @@ export function CartManager({ products }: { products: Product[] }) {
 
   return (
     <div>
-      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-950/5">
         {lines.length === 0 ? (
           <div className="p-8 text-center">
             <p className="text-lg font-bold text-slate-950">Your cart is empty</p>
@@ -69,7 +69,7 @@ export function CartManager({ products }: { products: Product[] }) {
               onChange={(event) => updateQuantity(line.product.id, Number(event.target.value))}
               type="number"
               value={line.quantity}
-              className="h-10 rounded-md border border-slate-300 px-3 text-sm"
+              className="h-11 rounded-lg border border-slate-300 px-3 text-sm font-semibold"
             />
             <p className="font-bold">{formatNaira(line.product.price * line.quantity)}</p>
           </div>
@@ -80,10 +80,10 @@ export function CartManager({ products }: { products: Product[] }) {
         </div>
       </div>
       <div className="mt-6 flex flex-wrap gap-3">
-        <Link className="rounded-md bg-emerald-700 px-5 py-3 text-sm font-bold text-white" href="/login?next=/checkout">
+        <Link className="rounded-lg bg-emerald-700 px-6 py-3 text-sm font-black text-white shadow-sm shadow-emerald-950/10" href="/login?next=/checkout">
           Continue to checkout
         </Link>
-        <Link className="rounded-md border border-slate-300 px-5 py-3 text-sm font-bold" href="/products">
+        <Link className="rounded-lg border border-slate-300 bg-white/80 px-6 py-3 text-sm font-black" href="/products">
           Keep shopping
         </Link>
       </div>

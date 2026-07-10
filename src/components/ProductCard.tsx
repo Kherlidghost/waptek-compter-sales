@@ -18,10 +18,10 @@ export function ProductCard({ product }: { product: Product }) {
         : "bg-emerald-50 text-emerald-700";
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-emerald-200 hover:shadow-xl hover:shadow-slate-950/10">
       <Link
         href={`/products/${product.slug}`}
-        className="block h-48 bg-cover bg-center"
+        className="block h-48 bg-cover bg-center transition duration-300 group-hover:scale-[1.03]"
         style={{ backgroundImage: `url(${product.image})` }}
         aria-label={`View ${product.name}`}
       />
@@ -47,11 +47,11 @@ export function ProductCard({ product }: { product: Product }) {
             )}
           </p>
           <p>Location: <span className="font-semibold text-slate-800">{branchName ?? branchState ?? "Online"}</span></p>
-          <span className={`w-fit rounded-md px-2 py-1 text-xs font-bold ${stockClasses}`}>{stockStatus}</span>
+          <span className={`w-fit rounded-full px-3 py-1.5 text-xs font-black shadow-sm ${stockClasses}`}>{stockStatus}</span>
         </div>
         <div className="mt-auto flex items-end justify-between gap-4">
           <div>
-            <p className="text-xl font-bold text-slate-950">{formatNaira(product.price)}</p>
+            <p className="text-2xl font-black text-slate-950">{formatNaira(product.price)}</p>
             <p className="text-xs text-slate-500">
               {product.condition}
             </p>
@@ -61,7 +61,7 @@ export function ProductCard({ product }: { product: Product }) {
           <AddToCartButton disabled={product.stock <= 0} productId={product.id} productName={product.name} />
           <Link
             href={`/products/${product.slug}`}
-            className="rounded-md border border-slate-300 px-4 py-2 text-center text-sm font-bold text-slate-900 hover:border-emerald-600 hover:text-emerald-700"
+            className="rounded-lg border border-slate-300 px-4 py-2.5 text-center text-sm font-bold text-slate-900 hover:border-emerald-600 hover:text-emerald-700"
           >
             View Details
           </Link>
@@ -74,7 +74,7 @@ export function ProductCard({ product }: { product: Product }) {
 export function ProductGrid({ products, emptyMessage = "No products found. Try another search or category." }: { products: Product[]; emptyMessage?: string }) {
   if (products.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center">
+      <div className="rounded-2xl border border-dashed border-slate-300 bg-white/90 p-8 text-center shadow-sm">
         <p className="text-lg font-bold text-slate-950">{emptyMessage}</p>
         <p className="mt-2 text-sm text-slate-600">You can reset filters, search for a different product, or browse another category.</p>
       </div>
@@ -82,7 +82,7 @@ export function ProductGrid({ products, emptyMessage = "No products found. Try a
   }
 
   return (
-    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}

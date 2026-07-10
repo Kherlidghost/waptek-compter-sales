@@ -2,10 +2,10 @@ type StatusBadgeTone = "neutral" | "success" | "warning" | "danger" | "info";
 
 const toneClasses: Record<StatusBadgeTone, string> = {
   neutral: "border-slate-200 bg-slate-100 text-slate-700",
-  success: "border-emerald-200 bg-emerald-50 text-emerald-700",
-  warning: "border-amber-200 bg-amber-50 text-amber-800",
-  danger: "border-red-200 bg-red-50 text-red-700",
-  info: "border-sky-200 bg-sky-50 text-sky-700",
+  success: "border-emerald-200 bg-emerald-50 text-emerald-800",
+  warning: "border-amber-200 bg-amber-50 text-amber-900",
+  danger: "border-red-200 bg-red-50 text-red-800",
+  info: "border-sky-200 bg-sky-50 text-sky-800",
 };
 
 function getTone(status: string): StatusBadgeTone {
@@ -62,7 +62,7 @@ export function StatusBadge({ status, label }: { status: string; label?: string 
   const displayLabel = label ?? getDisplayLabel(status);
 
   return (
-    <span className={`inline-flex rounded-md border px-2.5 py-1 text-xs font-bold capitalize ${toneClasses[getTone(status)]}`}>
+    <span className={`inline-flex items-center rounded-full border px-3 py-1.5 text-xs font-black capitalize shadow-sm ${toneClasses[getTone(status)]}`}>
       {displayLabel}
     </span>
   );

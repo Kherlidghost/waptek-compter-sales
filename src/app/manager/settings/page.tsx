@@ -10,7 +10,7 @@ export default async function ManagerSettingsPage({
 }) {
   const params = await searchParams;
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-6 text-slate-900">
+    <main className="min-h-screen dashboard-shell px-4 py-6 text-slate-900">
       <div className="mx-auto grid max-w-7xl gap-6">
         <DashboardSessionBar role="manager" />
         <SettingsDashboard role="manager" searchParams={params} />

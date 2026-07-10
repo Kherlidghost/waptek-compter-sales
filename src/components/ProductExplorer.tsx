@@ -78,13 +78,13 @@ export function ProductExplorer({
 
   return (
     <section className={compact ? "w-full" : "mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8"}>
-      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-xl shadow-slate-950/5 backdrop-blur">
         <div className="grid gap-3 md:grid-cols-[1fr_190px_190px]">
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search laptops, desktops, accessories, repair tools…"
-          className="h-11 rounded-md border border-slate-300 px-3 text-sm outline-none focus:border-emerald-600"
+          className="h-12 rounded-lg border border-slate-300 px-4 text-sm font-medium outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
         />
         <select
           value={categoryId}
@@ -92,7 +92,7 @@ export function ProductExplorer({
             setCategoryId(event.target.value);
             setCategoryChip("");
           }}
-          className="h-11 rounded-md border border-slate-300 px-3 text-sm"
+          className="h-12 rounded-lg border border-slate-300 px-3 text-sm font-medium"
         >
           <option value="all">All categories</option>
           {categories.map((category) => (
@@ -104,7 +104,7 @@ export function ProductExplorer({
         <select
           value={branchId}
           onChange={(event) => setBranchId(event.target.value)}
-          className="h-11 rounded-md border border-slate-300 px-3 text-sm"
+          className="h-12 rounded-lg border border-slate-300 px-3 text-sm font-medium"
         >
           <option value="all">All branches</option>
           {branches.map((branch) => (
@@ -118,7 +118,7 @@ export function ProductExplorer({
           <select
             value={condition}
             onChange={(event) => setCondition(event.target.value)}
-            className="h-11 rounded-md border border-slate-300 px-3 text-sm"
+            className="h-12 rounded-lg border border-slate-300 px-3 text-sm font-medium"
           >
             <option value="all">All conditions</option>
             {conditions.map((item) => (
@@ -132,19 +132,19 @@ export function ProductExplorer({
             onChange={(event) => setMaxPrice(event.target.value)}
             inputMode="numeric"
             placeholder="Max price"
-            className="h-11 rounded-md border border-slate-300 px-3 text-sm outline-none focus:border-emerald-600"
+            className="h-12 rounded-lg border border-slate-300 px-4 text-sm font-medium outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
           />
           <select
             value={sort}
             onChange={(event) => setSort(event.target.value as SortOption)}
-            className="h-11 rounded-md border border-slate-300 px-3 text-sm"
+            className="h-12 rounded-lg border border-slate-300 px-3 text-sm font-medium"
           >
             <option value="featured">Featured first</option>
             <option value="price-low">Price: low to high</option>
             <option value="price-high">Price: high to low</option>
             <option value="stock-high">Stock: high to low</option>
           </select>
-          <label className="flex h-11 items-center gap-2 rounded-md border border-slate-300 px-3 text-sm">
+          <label className="flex h-12 items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm font-medium">
             <input
               checked={inStockOnly}
               onChange={(event) => setInStockOnly(event.target.checked)}
@@ -158,7 +158,7 @@ export function ProductExplorer({
           {categoryChips.map((chip) => (
             <button
               key={chip}
-              className={`rounded-full border px-3 py-2 text-sm font-semibold ${
+              className={`rounded-full border px-4 py-2 text-sm font-bold shadow-sm ${
                 categoryChip === chip
                   ? "border-emerald-700 bg-emerald-50 text-emerald-800"
                   : "border-slate-300 text-slate-700 hover:border-emerald-500 hover:text-emerald-700"
@@ -190,7 +190,7 @@ export function ProductExplorer({
             setInStockOnly(false);
             setSort("featured");
           }}
-          className="rounded-md border border-slate-300 px-3 py-2 font-semibold hover:bg-white"
+          className="rounded-lg border border-slate-300 bg-white/80 px-4 py-2 font-bold hover:bg-white"
           type="button"
         >
           Reset filters
