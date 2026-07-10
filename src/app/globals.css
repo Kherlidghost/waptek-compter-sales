@@ -14,45 +14,67 @@
 
 body {
   background:
-    radial-gradient(circle at top left, rgba(16, 185, 129, 0.1), transparent 32rem),
-    radial-gradient(circle at top right, rgba(15, 23, 42, 0.08), transparent 30rem),
-    linear-gradient(135deg, #f8fafc 0%, #ffffff 46%, #eefdf7 100%);
+    radial-gradient(circle at top left, rgba(16, 185, 129, 0.08), transparent 32rem),
+    radial-gradient(circle at top right, rgba(15, 23, 42, 0.06), transparent 30rem),
+    linear-gradient(160deg, #f0fdf4 0%, #f8fafc 40%, #ffffff 70%, #f1f5f9 100%);
   color: var(--foreground);
   font-family: Inter, Arial, Helvetica, sans-serif;
 }
 
+/* Dashboard pages — richer gradient with navy + emerald tint */
 .dashboard-shell {
+  min-height: 100vh;
   background:
-    radial-gradient(circle at 10% 0%, rgba(16, 185, 129, 0.12), transparent 28rem),
-    radial-gradient(circle at 90% 5%, rgba(15, 23, 42, 0.12), transparent 30rem),
-    linear-gradient(135deg, #f8fafc 0%, #ffffff 48%, #effdf7 100%);
+    radial-gradient(ellipse at 0% 0%, rgba(16, 185, 129, 0.13) 0%, transparent 45%),
+    radial-gradient(ellipse at 100% 0%, rgba(15, 23, 42, 0.10) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 100%, rgba(16, 185, 129, 0.06) 0%, transparent 50%),
+    linear-gradient(160deg, #ecfdf5 0%, #f8fafc 30%, #ffffff 60%, #f0f9ff 100%);
 }
 
+/* Storefront pages */
 .marketplace-shell {
   background:
-    radial-gradient(circle at 8% 0%, rgba(16, 185, 129, 0.1), transparent 26rem),
-    radial-gradient(circle at 88% 8%, rgba(15, 23, 42, 0.08), transparent 26rem),
+    radial-gradient(circle at 8% 0%, rgba(16, 185, 129, 0.09), transparent 26rem),
+    radial-gradient(circle at 88% 8%, rgba(15, 23, 42, 0.07), transparent 26rem),
     linear-gradient(180deg, #f8fafc 0%, #ffffff 42%, #f1f5f9 100%);
 }
 
+/* Elevated card borders + shadows inside dashboard/marketplace shells */
 .dashboard-shell .rounded-lg.border,
 .marketplace-shell .rounded-lg.border {
-  border-color: rgba(203, 213, 225, 0.82);
-  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.07);
+  border-color: rgba(203, 213, 225, 0.80);
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06), 0 1px 4px rgba(15, 23, 42, 0.04);
 }
 
+/* Form inputs inside shells get a clean white background */
 .dashboard-shell input,
 .dashboard-shell select,
 .dashboard-shell textarea,
 .marketplace-shell input,
 .marketplace-shell select,
 .marketplace-shell textarea {
-  background-color: rgba(255, 255, 255, 0.92);
+  background-color: rgba(255, 255, 255, 0.95);
 }
 
+/* Premium glass header/panel */
 .premium-panel {
   border: 1px solid rgba(203, 213, 225, 0.85);
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
-  backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 4px 32px rgba(15, 23, 42, 0.08), 0 1px 4px rgba(15, 23, 42, 0.04);
+  backdrop-filter: blur(16px);
+}
+
+/* Reusable dashboard stat/action card */
+.dashboard-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(203, 213, 225, 0.75);
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.07), 0 1px 3px rgba(15, 23, 42, 0.04);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.dashboard-card:hover {
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.10), 0 2px 6px rgba(15, 23, 42, 0.06);
+  border-color: rgba(16, 185, 129, 0.35);
+  transform: translateY(-1px);
 }

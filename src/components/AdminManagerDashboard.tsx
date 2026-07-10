@@ -22,16 +22,16 @@ type Section =
   | "reports";
 
 const sections: Array<{ id: Section; label: string }> = [
-  { id: "analytics", label: "Dashboard" },
-  { id: "vendors", label: "Vendors" },
-  { id: "products", label: "Products" },
-  { id: "categories", label: "Categories" },
-  { id: "branches", label: "Branches" },
-  { id: "orders", label: "Orders" },
-  { id: "repairs", label: "Repairs" },
-  { id: "notifications", label: "Notifications" },
-  { id: "inventory", label: "Inventory" },
-  { id: "reports", label: "Reports" },
+  { id: "analytics", label: "📊 Overview" },
+  { id: "vendors", label: "👥 Vendors" },
+  { id: "products", label: "📦 Products" },
+  { id: "categories", label: "🗂 Categories" },
+  { id: "branches", label: "🏪 Branches" },
+  { id: "orders", label: "🧾 Orders" },
+  { id: "repairs", label: "🛠 Repairs" },
+  { id: "notifications", label: "🔔 Notifications" },
+  { id: "inventory", label: "📋 Inventory" },
+  { id: "reports", label: "📈 Reports" },
 ];
 
 type DashboardAction = {
@@ -101,7 +101,8 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
           { label: "👥 Approve Vendors", section: "vendors" },
           { label: "🧾 View Orders", section: "orders" },
           { label: "💰 Check Payments", section: "orders" },
-          { label: "⚙ Manage Branches", section: "branches" },
+          { label: "🏪 Manage Branches", section: "branches" },
+          { label: "👤 Manage Users", href: "/admin/users" },
         ]
       : [
           { label: "📦 Add Branch Product", href: "#add-product" },
@@ -286,8 +287,8 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
           <QuickActions actions={dashboardActions} onSelect={setActiveSection} />
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <h2 className="text-2xl font-black text-slate-950">Needs attention</h2>
-              <p className="mt-1 text-sm text-slate-600">Start here before opening detailed reports.</p>
+              <h2 className="text-2xl font-black text-slate-950">What needs attention?</h2>
+              <p className="mt-1 text-sm text-slate-600">Start with these before opening detailed reports.</p>
             </div>
             <span className="rounded-full bg-emerald-50 px-4 py-2 text-sm font-black text-emerald-800">Today’s workspace</span>
           </div>

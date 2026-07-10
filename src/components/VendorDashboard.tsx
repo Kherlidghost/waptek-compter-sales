@@ -114,7 +114,7 @@ export function VendorDashboard() {
 
     persist(nextProducts);
     setForm(emptyForm);
-    setNotice(form.id ? "Planner item updated." : "Planner item added.");
+    setNotice(form.id ? "Stock plan item updated." : "Stock plan item added.");
   }
 
   function editProduct(product: Product) {
@@ -182,7 +182,7 @@ export function VendorDashboard() {
           ["Low stock products", lowStockCount.toString(), lowStockCount ? "Products need stock attention." : "Everything looks good.", "Manage"],
         ].map(([label, value, description, action]) => (
           <div key={label} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-2xl">{String(label).includes("product") ? "📦" : String(label).includes("order") ? "🧾" : "⚙"}</div>
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-2xl">{String(label).toLowerCase().includes("product") ? "📦" : String(label).toLowerCase().includes("paid") ? "💰" : String(label).toLowerCase().includes("waiting") || String(label).toLowerCase().includes("order") ? "🧾" : "📋"}</div>
             <p className="text-sm font-semibold text-slate-500">{label}</p>
             <p className="mt-2 text-3xl font-black text-slate-950">{value}</p>
             <p className="mt-2 text-sm text-slate-600">{description}</p>
@@ -215,8 +215,8 @@ export function VendorDashboard() {
 
       <section id="vendor-products" className="grid scroll-mt-24 gap-8 lg:grid-cols-[420px_1fr]">
         <form onSubmit={submitProduct} className="h-fit rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm font-bold uppercase text-emerald-700">{form.id ? "Edit planner item" : "Inventory planner"}</p>
-          <h2 className="mt-1 text-2xl font-black text-slate-950">{form.id ? "Update planner item" : "Plan stock"}</h2>
+          <p className="text-sm font-bold uppercase text-emerald-700">{form.id ? "Edit stock plan item" : "Stock planner"}</p>
+          <h2 className="mt-1 text-2xl font-black text-slate-950">{form.id ? "Update stock plan item" : "Add to stock plan"}</h2>
           <p className="mt-2 text-sm leading-6 text-slate-600">
             Use this planner to organize vendor stock ideas. Use the online upload form above to publish products to the marketplace.
           </p>

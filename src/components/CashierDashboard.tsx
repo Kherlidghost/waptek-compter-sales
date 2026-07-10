@@ -157,11 +157,12 @@ export function CashierDashboard({
         <p className="text-sm font-black uppercase text-emerald-700">Next best actions</p>
         <h2 className="mt-1 text-2xl font-black text-slate-950">What can I do here?</h2>
         <p className="mt-1 text-sm text-slate-600">Choose the payment task you want to handle now.</p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
             ["🧾 Review Pending Receipts", () => { setShowAll(false); setQuery(""); }],
             ["🔎 Search Order", () => { setShowAll(true); }],
             ["💰 View Confirmed Payments", () => { setShowAll(true); setQuery("confirmed"); }],
+            ["🚫 View Rejected Payments", () => { setShowAll(true); setQuery("rejected"); }],
           ].map(([label, action]) => (
             <button
               key={String(label)}
@@ -184,7 +185,7 @@ export function CashierDashboard({
           { title: "Orders needing payment", value: awaitingConfirmationCount.toString(), description: awaitingConfirmationCount ? "Orders need payment action." : "Everything looks good.", action: () => { setShowAll(true); setQuery(""); } },
         ].map((card) => (
           <div key={card.title} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-2xl">{card.title.includes("Receipt") ? "🧾" : card.title.includes("Confirmed") ? "💰" : card.title.includes("Rejected") ? "!" : "🧾"}</div>
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-2xl">{card.title.includes("Receipt") ? "🧾" : card.title.includes("Confirmed") ? "💰" : card.title.includes("Rejected") ? "🚫" : "🧾"}</div>
             <p className="text-sm font-semibold text-slate-500">{card.title}</p>
             <p className="mt-2 text-3xl font-black text-slate-950">{card.value}</p>
             <p className="mt-2 text-sm text-slate-600">{card.description}</p>
