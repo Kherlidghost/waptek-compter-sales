@@ -2,12 +2,14 @@ import Link from "next/link";
 import { getAuthProfile, roleHome } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/supabase-config";
 import { createClient } from "@/lib/supabase/server";
+import { NotificationBell } from "./notification-bell";
 import { SessionNavigation } from "./SessionNavigation";
 
 const navItems = [
   { href: "/categories", label: "Categories" },
   { href: "/products", label: "Products" },
   { href: "/repairs", label: "Repairs" },
+  { href: "/vendor/register", label: "Become a Vendor" },
 ];
 
 export async function PublicHeader() {
@@ -32,40 +34,90 @@ export async function PublicHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 shadow-sm backdrop-blur">
-      <nav className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-3 text-xl font-black text-slate-950">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-950 text-sm text-emerald-300 shadow-lg shadow-slate-950/10">WCS</span>
-          <span>WAPTEK COMPUTER SERVICES</span>
+    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 shadow-sm backdrop-blur">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+        {/* Logo */}
+        <Link
+          href="/"
+          className="flex shrink-0 items-center gap-2.5 text-slate-950 focus-visible:outline-emerald-600"
+          aria-label="WAPTEK COMPUTER SERVICES — home"
+        >
+          <span
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-950 text-xs font-black text-emerald-300 shadow-md shadow-slate-950/20"
+            aria-hidden="true"
+          >
+            WCS
+          </span>
+          <span className="hidden text-base font-black leading-tight sm:block">
+            WAPTEK<br />
+            <span className="text-xs font-semibold text-slate-500">COMPUTER SERVICES</span>
+          </span>
         </Link>
-        <div className="hidden flex-wrap items-center gap-2 text-sm font-semibold md:flex">
+
+        {/* Desktop nav */}
+        <nav className="hidden items-center gap-1 text-sm font-semibold md:flex" aria-label="Main navigation">
           {navItems.map((item) => (
-            <Link key={item.href} className="rounded-lg px-3 py-2 text-slate-700 hover:bg-slate-950 hover:text-white" href={item.href}>
+            <Link
+              key={item.href}
+              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white focus-visible:outline-emerald-600"
+              href={item.href}
+            >
               {item.label}
             </Link>
           ))}
-          <Link className="rounded-lg px-3 py-2 text-slate-700 hover:bg-slate-950 hover:text-white" href="/cart">
-            Cart
+        </nav>
+
+        {/* Desktop right actions */}
+        <div className="hidden items-center gap-2 md:flex">
+          {userSummary ? <NotificationBell /> : null}
+          <Link
+            href="/cart"
+            className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-emerald-400 hover:text-emerald-700 focus-visible:outline-emerald-600"
+            aria-label="Shopping cart"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
           </Link>
           <SessionNavigation user={userSummary} />
         </div>
-        <details className="w-full md:hidden">
-          <summary className="cursor-pointer list-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-bold shadow-sm">
-            Menu
-          </summary>
-          <div className="mt-3 grid gap-2 text-sm">
-            {navItems.map((item) => (
-              <Link key={item.href} className="rounded-md px-3 py-2 font-semibold hover:bg-slate-100" href={item.href}>
-                {item.label}
-              </Link>
-            ))}
-            <Link className="rounded-md px-3 py-2 font-semibold hover:bg-slate-100" href="/cart">
-              Cart
-            </Link>
-            <SessionNavigation mode="mobile" user={userSummary} />
-          </div>
-        </details>
-      </nav>
+
+        {/* Mobile: cart + menu */}
+        <div className="flex items-center gap-2 md:hidden">
+          {userSummary ? <NotificationBell /> : null}
+          <Link
+            href="/cart"
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm"
+            aria-label="Cart"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </Link>
+          <details className="relative">
+            <summary className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-xl border border-slate-200 bg-white shadow-sm" aria-label="Open menu">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </summary>
+            <div className="absolute right-0 top-12 z-50 w-64 rounded-2xl border border-slate-200 bg-white p-3 shadow-2xl shadow-slate-950/10">
+              <nav className="grid gap-1 text-sm" aria-label="Mobile navigation">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    className="rounded-xl px-4 py-3 font-semibold text-slate-700 hover:bg-slate-100"
+                    href={item.href}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+                <div className="my-1 border-t border-slate-100" />
+                <SessionNavigation mode="mobile" user={userSummary} />
+              </nav>
+            </div>
+          </details>
+        </div>
+      </div>
     </header>
   );
 }

@@ -3,6 +3,7 @@ import { getAuthProfile, roleHome } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/supabase-config";
 import { createClient } from "@/lib/supabase/server";
 import type { UserRole } from "@/lib/types";
+import { NotificationBell } from "./notification-bell";
 import { SessionNavigation } from "./SessionNavigation";
 
 const roleLabel: Record<UserRole, string> = {
@@ -155,9 +156,30 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
               ⚙ Settings
             </Link>
           ) : null}
+
+          {role === "admin" ? (
+            <Link
+              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              href="/admin/audit-logs"
+            >
+              🔐 Audit Logs
+            </Link>
+          ) : null}
+
+          {role === "admin" ? (
+            <Link
+              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              href="/admin/inventory/movements"
+            >
+              📋 Stock Movements
+            </Link>
+          ) : null}
         </nav>
 
-        <SessionNavigation mode="dashboard" user={userSummary} />
+        <div className="flex flex-wrap items-center gap-2">
+          {userSummary ? <NotificationBell /> : null}
+          <SessionNavigation mode="dashboard" user={userSummary} />
+        </div>
       </div>
     </header>
   );

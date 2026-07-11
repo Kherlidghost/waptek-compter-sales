@@ -1,9 +1,11 @@
 import { CheckoutForm } from "@/components/CheckoutForm";
 import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
+import { WhatsAppLink } from "@/components/WhatsAppLink";
 import { createCheckoutOrder } from "@/app/checkout/actions";
 import { getStorefrontCatalog } from "@/lib/catalog";
 import { createClient } from "@/lib/supabase/server";
+import { checkoutSupportMessage, resolveWhatsAppNumber } from "@/lib/whatsapp";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +14,7 @@ type BankSettings = {
   account_name: string | null;
   account_number: string | null;
   payment_instructions: string | null;
+  whatsapp_number: string | null;
 };
 
 async function getBankSettings(): Promise<BankSettings | null> {
@@ -19,7 +22,7 @@ async function getBankSettings(): Promise<BankSettings | null> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("company_settings")
-      .select("bank_name, account_name, account_number, payment_instructions")
+      .select("bank_name, account_name, account_number, payment_instructions, whatsapp_number")
       .eq("id", 1)
       .maybeSingle();
     if (error) return null;
@@ -37,6 +40,7 @@ export default async function CheckoutPage({
   const params = await searchParams;
   const [bankSettings, { products, source: catalogSource }] = await Promise.all([getBankSettings(), getStorefrontCatalog()]);
   const hasBankDetails = Boolean(bankSettings?.bank_name && bankSettings.account_name && bankSettings.account_number);
+  const waNumber = resolveWhatsAppNumber(bankSettings?.whatsapp_number);
 
   return (
     <div className="min-h-screen marketplace-shell text-slate-900">
@@ -70,6 +74,18 @@ export default async function CheckoutPage({
               Bank account details will be provided by support.
             </div>
           )}
+          {waNumber ? (
+            <div className="mt-6 border-t border-white/10 pt-5">
+              <p className="text-sm font-bold text-slate-300">Need help completing your order?</p>
+              <p className="mt-1 text-xs text-slate-400">Chat with our support team on WhatsApp.</p>
+              <WhatsAppLink
+                number={waNumber}
+                message={checkoutSupportMessage()}
+                label="Chat with Support"
+                className="mt-3 w-full justify-center"
+              />
+            </div>
+          ) : null}
         </aside>
       </div>
     </main>

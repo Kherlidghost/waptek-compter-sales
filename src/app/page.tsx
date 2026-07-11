@@ -9,6 +9,66 @@ import { branches, categories, products } from "@/lib/marketplace-data";
 
 export const dynamic = "force-dynamic";
 
+const categoryIcons: Record<string, string> = {
+  Laptops: "💻",
+  "Desktop Computers": "🖥️",
+  Printers: "🖨️",
+  "Computer Accessories": "🖱️",
+  "Networking Equipment": "📡",
+  "Storage Devices": "💾",
+  "Repair Services": "🔧",
+  Software: "📀",
+};
+
+const trustPoints = [
+  {
+    icon: "✓",
+    title: "Verified Vendors",
+    body: "Every seller is reviewed and approved before listing products.",
+  },
+  {
+    icon: "✓",
+    title: "Receipt-Confirmed Payments",
+    body: "Orders only move forward after a cashier reviews your payment proof.",
+  },
+  {
+    icon: "✓",
+    title: "Branch-Supported Service",
+    body: "Physical support across Adamawa, Yobe, and Borno.",
+  },
+  {
+    icon: "✓",
+    title: "Professional Repairs",
+    body: "Request computer diagnosis and repair from certified technicians.",
+  },
+  {
+    icon: "✓",
+    title: "Genuine Products",
+    body: "Laptops, desktops, accessories, and components from trusted sources.",
+  },
+  {
+    icon: "✓",
+    title: "Customer Support",
+    body: "Reach us by phone, email, or WhatsApp for order and repair help.",
+  },
+];
+
+const howItWorks = [
+  { step: "1", title: "Browse Products", body: "Search laptops, desktops, accessories, and repair services." },
+  { step: "2", title: "Add to Cart", body: "Select items and proceed to checkout when ready." },
+  { step: "3", title: "Pay to Company Account", body: "Transfer payment to the WAPTEK bank account." },
+  { step: "4", title: "Upload Receipt", body: "Submit your payment receipt through the checkout form." },
+  { step: "5", title: "Cashier Confirms", body: "A cashier reviews and confirms your payment." },
+  { step: "6", title: "Order Processed", body: "Your order is prepared and ready for pickup." },
+];
+
+const repairServices = [
+  { title: "Screen Replacement", desc: "Cracked or dead display? We replace laptop and desktop screens." },
+  { title: "Board Repair", desc: "Motherboard faults, power issues, and component-level repairs." },
+  { title: "Software & OS", desc: "Windows installation, virus removal, and system recovery." },
+  { title: "Diagnostics", desc: "Full hardware check with written estimate before any repair." },
+];
+
 export default async function Home({
   searchParams,
 }: {
@@ -19,41 +79,8 @@ export default async function Home({
   const catalogProducts = catalog.products.length > 0 ? catalog.products : products;
   const catalogCategories = catalog.categories.length > 0 ? catalog.categories : categories;
   const catalogBranches = catalog.branches.length > 0 ? catalog.branches : branches;
-  const featuredProducts = catalogProducts.filter((product) => product.featured).slice(0, 3);
-  const trustCards = [
-    {
-      title: "Verified Vendors",
-      description: "Products are listed by approved sellers.",
-    },
-    {
-      title: "Receipt-Confirmed Payments",
-      description: "Orders are processed after payment proof is reviewed.",
-    },
-    {
-      title: "Branch-Supported Service",
-      description: "Support across Adamawa, Yobe, and Borno.",
-    },
-    {
-      title: "Repair Support Available",
-      description: "Customers can request computer diagnosis and repair.",
-    },
-  ];
-  const reasons = [
-    "Verified computer vendors",
-    "Genuine computer products and accessories",
-    "Manual payment confirmation for safer orders",
-    "Repair service support",
-    "Branch-supported operations across Adamawa, Yobe, and Borno",
-    "Vendor marketplace opportunity",
-  ];
-  const steps = [
-    "Browse products",
-    "Add to cart",
-    "Pay to company account",
-    "Upload receipt",
-    "Cashier confirms payment",
-    "Order is processed",
-  ];
+  const featuredProducts = catalogProducts.filter((p) => p.featured).slice(0, 6);
+  const newArrivals = catalogProducts.slice(0, 6);
 
   return (
     <div className="min-h-screen marketplace-shell text-slate-900">
@@ -61,161 +88,267 @@ export default async function Home({
       <PublicHeader />
 
       <main>
+        {/* ── Hero ──────────────────────────────────────────────────────── */}
         <section className="relative overflow-hidden bg-slate-950 text-white">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(16,185,129,0.28),transparent_32rem),radial-gradient(circle_at_80%_0%,rgba(59,130,246,0.16),transparent_28rem)]" />
-          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-slate-900/80 to-transparent" />
-          <div className="relative mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
-            <div className="flex flex-col justify-center">
-              <p className="w-fit rounded-full border border-emerald-300/30 bg-emerald-300/10 px-4 py-2 text-sm font-black uppercase tracking-wide text-emerald-200">Sales of Computers & Repairs</p>
-              <h1 className="mt-4 max-w-3xl text-4xl font-black leading-tight sm:text-5xl">
-                Your Trusted Computer Sales & Repair Center
-              </h1>
-              <p className="mt-5 max-w-2xl text-base leading-7 text-slate-300">
-                Buy computers, accessories, and spare parts. Request professional repair services or shop from trusted vendors across our marketplace.
-              </p>
-              <div className="mt-7 flex flex-wrap gap-3">
-                <Link className="rounded-lg bg-emerald-500 px-6 py-3 text-sm font-black text-slate-950 shadow-lg shadow-emerald-950/20 hover:bg-emerald-400" href="/products">
-                  Browse Products
-                </Link>
-                <Link className="rounded-lg border border-white/20 px-6 py-3 text-sm font-black hover:bg-white/10" href="/repairs">
-                  Request Repair
-                </Link>
-                <Link className="rounded-lg border border-white/20 px-6 py-3 text-sm font-black hover:bg-white/10" href="/become-a-vendor">
-                  Become a Vendor
-                </Link>
-              </div>
-            </div>
-            <div className="grid content-center gap-3 rounded-2xl border border-white/10 bg-white/10 p-4 shadow-2xl shadow-slate-950/30 backdrop-blur sm:grid-cols-2">
-              {trustCards.map((card) => (
-                <div key={card.title} className="rounded-xl bg-white p-5 text-slate-950 shadow-lg shadow-slate-950/10">
-                  <p className="text-lg font-black">{card.title}</p>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">{card.description}</p>
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(circle at 18% 12%, rgba(16,185,129,0.30), transparent 34rem), radial-gradient(circle at 82% 0%, rgba(59,130,246,0.14), transparent 28rem)",
+            }}
+            aria-hidden="true"
+          />
+          <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+            <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+              <div>
+                <span className="inline-block rounded-full border border-emerald-300/30 bg-emerald-300/10 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-emerald-200">
+                  Sales of Computers &amp; Repairs
+                </span>
+                <h1 className="mt-5 text-4xl font-black leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+                  Computers, Accessories, and Professional Repair Services You Can Trust.
+                </h1>
+                <p className="mt-5 max-w-xl text-base leading-7 text-slate-300">
+                  Shop quality computer products from WAPTEK and verified vendors, or request expert computer repair support.
+                </p>
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <Link
+                    href="/products"
+                    className="rounded-lg bg-emerald-500 px-7 py-3.5 text-sm font-black text-slate-950 shadow-lg shadow-emerald-950/20 transition hover:bg-emerald-400 focus-visible:outline-emerald-400"
+                  >
+                    Shop Now
+                  </Link>
+                  <Link
+                    href="/repairs"
+                    className="rounded-lg border border-white/25 px-7 py-3.5 text-sm font-black transition hover:bg-white/10 focus-visible:outline-white"
+                  >
+                    Request Repair
+                  </Link>
+                  <Link
+                    href="/become-a-vendor"
+                    className="rounded-lg border border-white/25 px-7 py-3.5 text-sm font-black transition hover:bg-white/10 focus-visible:outline-white"
+                  >
+                    Become a Vendor
+                  </Link>
                 </div>
-              ))}
+              </div>
+
+              {/* Trust cards */}
+              <div className="grid grid-cols-2 gap-3 rounded-2xl border border-white/10 bg-white/8 p-4 backdrop-blur">
+                {[
+                  { title: "Verified Vendors", body: "Products from approved sellers only." },
+                  { title: "Receipt-Confirmed", body: "Orders confirmed after payment review." },
+                  { title: "Branch Support", body: "Adamawa, Yobe, and Borno." },
+                  { title: "Repair Services", body: "Professional computer diagnosis." },
+                ].map((card) => (
+                  <div key={card.title} className="rounded-xl bg-white p-4 text-slate-950 shadow-lg">
+                    <p className="text-sm font-black">{card.title}</p>
+                    <p className="mt-1.5 text-xs leading-5 text-slate-600">{card.body}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="border-b border-slate-200 bg-white/80 backdrop-blur">
+        {/* ── Search ────────────────────────────────────────────────────── */}
+        <section className="border-b border-slate-200 bg-white/90 backdrop-blur">
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-            <div className="mb-5 max-w-3xl">
-              <p className="text-sm font-bold uppercase text-emerald-700">Find computer products</p>
-              <h2 className="mt-1 text-2xl font-black text-slate-950">Search the marketplace</h2>
-            </div>
-            <ProductExplorer branches={catalogBranches} categories={catalogCategories} compact products={catalogProducts} />
+            <p className="section-eyebrow mb-1">Find computer products</p>
+            <h2 className="mb-5 text-2xl font-black text-slate-950">Search the marketplace</h2>
+            <ProductExplorer
+              branches={catalogBranches}
+              categories={catalogCategories}
+              compact
+              products={catalogProducts}
+            />
           </div>
         </section>
 
-        <section className="bg-slate-950 text-white">
-          <div className="mx-auto grid max-w-7xl gap-6 px-4 py-10 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
+        {/* ── Featured categories ───────────────────────────────────────── */}
+        <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
             <div>
-              <p className="text-sm font-bold uppercase text-emerald-300">Trust & Safety</p>
-              <h2 className="mt-1 text-2xl font-black text-white">Built for Safer Computer Buying</h2>
-              <p className="mt-4 leading-7 text-slate-300">
-                WAPTEK COMPUTER SERVICES is designed to reduce fake listings and payment confusion by adding review steps before orders move forward.
-              </p>
+              <p className="section-eyebrow mb-1">Shop by category</p>
+              <h2 className="text-2xl font-black text-slate-950">Computer products and services</h2>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {[
-                "Customers pay to the company account.",
-                "Customers upload payment receipts.",
-                "Cashiers confirm payment before order processing.",
-                "Vendors are verified before selling.",
-              ].map((item) => (
-                <div key={item} className="rounded-xl border border-white/10 bg-white/10 p-5 shadow-sm backdrop-blur">
-                  <p className="font-bold leading-6 text-white">{item}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-white">
-          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-            <div className="max-w-3xl">
-              <p className="text-sm font-bold uppercase text-emerald-700">Why choose us</p>
-              <h2 className="mt-1 text-2xl font-black text-slate-950">Why Choose WAPTEK COMPUTER SERVICES?</h2>
-            </div>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {reasons.map((reason) => (
-                <div key={reason} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                  <p className="font-bold text-slate-950">{reason}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-          <div className="mb-6 max-w-3xl">
-            <p className="text-sm font-bold uppercase text-emerald-700">Simple ordering</p>
-            <h2 className="mt-1 text-2xl font-black text-slate-950">How It Works</h2>
-          </div>
-          <div className="grid gap-4 md:grid-cols-3">
-            {steps.map((step, index) => (
-              <div key={step} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-sm font-black text-emerald-800">
-                  {index + 1}
-                </div>
-                <p className="mt-4 font-bold text-slate-950">{step}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="bg-slate-900 text-white">
-          <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-10 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-            <div className="max-w-3xl">
-              <p className="text-sm font-bold uppercase text-emerald-300">For vendors</p>
-              <h2 className="mt-1 text-2xl font-black">Sell Your Computer Products on WAPTEK COMPUTER SERVICES</h2>
-              <p className="mt-3 text-sm leading-6 text-slate-300">
-                Join our verified vendor network and reach customers looking for computers, accessories, and repair-related products.
-              </p>
-            </div>
-            <Link className="w-fit rounded-lg bg-emerald-500 px-6 py-3 text-sm font-black text-slate-950 hover:bg-emerald-400" href="/become-a-vendor">
-              Become a Vendor
+            <Link className="text-sm font-bold text-emerald-700 hover:text-emerald-900" href="/categories">
+              View all categories →
             </Link>
           </div>
-        </section>
-
-        <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <p className="text-sm font-bold uppercase text-emerald-700">Shop by category</p>
-              <h2 className="mt-1 text-2xl font-black text-slate-950">Computer products and services</h2>
-            </div>
-            <Link className="text-sm font-bold text-emerald-800" href="/categories">
-              View all categories
-            </Link>
-          </div>
-          <div className="grid gap-4 md:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
             {catalogCategories.map((category) => (
               <Link
                 key={category.id}
                 href={`/products?category=${category.id}`}
-                className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:border-emerald-300 hover:shadow-md"
+                className="wcs-card group flex flex-col gap-3 rounded-2xl p-5 hover:border-emerald-300 focus-visible:outline-emerald-600"
               >
-                <p className="font-bold text-slate-950">{category.name}</p>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{category.description}</p>
+                <span className="text-3xl" aria-hidden="true">
+                  {categoryIcons[category.name] ?? "📦"}
+                </span>
+                <div>
+                  <p className="font-black text-slate-950 group-hover:text-emerald-700">{category.name}</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-500">{category.description}</p>
+                </div>
               </Link>
             ))}
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <p className="text-sm font-bold uppercase text-emerald-700">Featured stock</p>
-              <h2 className="mt-1 text-2xl font-black text-slate-950">Ready-to-buy products</h2>
+        {/* ── Featured products ─────────────────────────────────────────── */}
+        {featuredProducts.length > 0 ? (
+          <section className="bg-slate-50">
+            <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+              <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <p className="section-eyebrow mb-1">Featured stock</p>
+                  <h2 className="text-2xl font-black text-slate-950">Ready-to-buy products</h2>
+                </div>
+                <Link className="text-sm font-bold text-emerald-700 hover:text-emerald-900" href="/products">
+                  View all products →
+                </Link>
+              </div>
+              <ProductGrid products={featuredProducts} />
             </div>
-            <Link className="text-sm font-bold text-emerald-800" href="/products">
-              View product listing
+          </section>
+        ) : null}
+
+        {/* ── New arrivals ──────────────────────────────────────────────── */}
+        <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="section-eyebrow mb-1">New arrivals</p>
+              <h2 className="text-2xl font-black text-slate-950">Latest marketplace listings</h2>
+            </div>
+            <Link className="text-sm font-bold text-emerald-700 hover:text-emerald-900" href="/products">
+              Browse all →
             </Link>
           </div>
-          <ProductGrid products={featuredProducts} />
+          <ProductGrid products={newArrivals} />
         </section>
 
+        {/* ── Why WAPTEK ───────────────────────────────────────────────── */}
+        <section className="bg-white">
+          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+            <div className="mb-8 max-w-2xl">
+              <p className="section-eyebrow mb-1">Why choose us</p>
+              <h2 className="text-2xl font-black text-slate-950">Why Shop with WAPTEK COMPUTER SERVICES?</h2>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {trustPoints.map((point) => (
+                <div key={point.title} className="wcs-card rounded-2xl p-5">
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-sm font-black text-emerald-800">
+                    {point.icon}
+                  </div>
+                  <p className="font-black text-slate-950">{point.title}</p>
+                  <p className="mt-1.5 text-sm leading-6 text-slate-600">{point.body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Repair services ───────────────────────────────────────────── */}
+        <section className="bg-slate-950 text-white">
+          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+            <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-center">
+              <div>
+                <p className="section-eyebrow mb-2 text-emerald-300">Repair services</p>
+                <h2 className="text-3xl font-black">Professional Computer Repair Support</h2>
+                <p className="mt-4 leading-7 text-slate-300">
+                  Bring your device to the nearest WAPTEK branch or submit a repair request online. Our technicians handle screen replacements, board repairs, software issues, and full diagnostics.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <Link
+                    href="/repairs"
+                    className="rounded-lg bg-emerald-500 px-6 py-3 text-sm font-black text-slate-950 transition hover:bg-emerald-400"
+                  >
+                    Request Repair
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="rounded-lg border border-white/25 px-6 py-3 text-sm font-black transition hover:bg-white/10"
+                  >
+                    Contact Support
+                  </Link>
+                </div>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {repairServices.map((service) => (
+                  <div key={service.title} className="rounded-xl border border-white/10 bg-white/8 p-5 backdrop-blur">
+                    <p className="font-black text-white">{service.title}</p>
+                    <p className="mt-1.5 text-sm leading-6 text-slate-300">{service.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── How it works ──────────────────────────────────────────────── */}
+        <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="mb-8 max-w-2xl">
+            <p className="section-eyebrow mb-1">Simple ordering</p>
+            <h2 className="text-2xl font-black text-slate-950">How It Works</h2>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {howItWorks.map((item) => (
+              <div key={item.step} className="wcs-card rounded-2xl p-5">
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-sm font-black text-emerald-800">
+                  {item.step}
+                </div>
+                <p className="font-black text-slate-950">{item.title}</p>
+                <p className="mt-1.5 text-sm leading-6 text-slate-600">{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Trust & safety ────────────────────────────────────────────── */}
+        <section className="bg-slate-50">
+          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+            <div className="mb-8 max-w-2xl">
+              <p className="section-eyebrow mb-1">Trust &amp; safety</p>
+              <h2 className="text-2xl font-black text-slate-950">Built for Safer Computer Buying</h2>
+              <p className="mt-3 leading-7 text-slate-600">
+                WAPTEK COMPUTER SERVICES adds review steps before orders move forward, reducing fake listings and payment confusion.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                "Customers pay to the company bank account.",
+                "Customers upload payment receipts.",
+                "Cashiers confirm payment before order processing.",
+                "Vendors are verified before selling.",
+              ].map((item) => (
+                <div key={item} className="wcs-card rounded-2xl p-5">
+                  <div className="mb-3 h-2 w-8 rounded-full bg-emerald-500" aria-hidden="true" />
+                  <p className="text-sm font-bold leading-6 text-slate-800">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Vendor CTA ────────────────────────────────────────────────── */}
+        <section className="bg-slate-900 text-white">
+          <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-12 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+            <div className="max-w-2xl">
+              <p className="section-eyebrow mb-2 text-emerald-300">For vendors</p>
+              <h2 className="text-2xl font-black">Sell Your Computer Products on WAPTEK COMPUTER SERVICES</h2>
+              <p className="mt-3 text-sm leading-7 text-slate-300">
+                Join our verified vendor network and reach customers looking for computers, accessories, and repair-related products across Adamawa, Yobe, and Borno.
+              </p>
+            </div>
+            <Link
+              href="/become-a-vendor"
+              className="w-fit shrink-0 rounded-lg bg-emerald-500 px-7 py-3.5 text-sm font-black text-slate-950 transition hover:bg-emerald-400"
+            >
+              Become a Vendor
+            </Link>
+          </div>
+        </section>
       </main>
+
       <PublicFooter />
     </div>
   );

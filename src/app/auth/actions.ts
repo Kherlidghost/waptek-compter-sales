@@ -26,6 +26,19 @@ function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+/**
+ * Server-side password strength check.
+ * Minimum 8 chars, at least one uppercase, one lowercase, one digit, one special char.
+ */
+function isStrongPassword(password: string): boolean {
+  if (password.length < 8) return false;
+  if (!/[A-Z]/.test(password)) return false;
+  if (!/[a-z]/.test(password)) return false;
+  if (!/[0-9]/.test(password)) return false;
+  if (!/[^A-Za-z0-9]/.test(password)) return false;
+  return true;
+}
+
 async function getOrigin() {
   const headerList = await headers();
   const origin = headerList.get("origin");
@@ -98,7 +111,7 @@ export async function signUpAction(formData: FormData) {
   if (!fullName) redirect(encodedMessage("error", "Full name is required.", next));
   if (!phone) redirect(encodedMessage("error", "Phone number is required.", next));
   if (!isValidEmail(email)) redirect(encodedMessage("error", "Enter a valid email address.", next));
-  if (password.length < 8) redirect(encodedMessage("error", "Password must be at least 8 characters.", next));
+  if (!isStrongPassword(password)) redirect(encodedMessage("error", "Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character.", next));
   if (password !== confirmPassword) redirect(encodedMessage("error", "Password and confirm password must match.", next));
 
   const supabase = await createClient();
@@ -153,6 +166,52 @@ export async function resendConfirmationAction(formData: FormData) {
   }
 
   redirect(encodedMessage("success", "Confirmation email sent. Please check your inbox.", next));
+}
+
+export async function forgotPasswordAction(formData: FormData) {
+  if (!isSupabaseConfigured()) {
+    redirect(encodedMessage("error", "Add Supabase environment variables before resetting passwords."));
+  }
+
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+
+  if (!isValidEmail(email)) {
+    redirect(encodedMessage("error", "Enter a valid email address."));
+  }
+
+  const supabase = await createClient();
+  const origin = await getOrigin();
+  const redirectTo = `${origin}/auth/reset-password`;
+
+  // Always redirect with success to avoid email enumeration.
+  await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+  redirect(encodedMessage("success", "If an account exists for that email, a password reset link has been sent."));
+}
+
+export async function resetPasswordAction(formData: FormData) {
+  if (!isSupabaseConfigured()) {
+    redirect("/login?error=Add%20Supabase%20environment%20variables%20before%20resetting%20passwords.");
+  }
+
+  const password = String(formData.get("password") ?? "");
+  const confirmPassword = String(formData.get("confirm_password") ?? "");
+
+  if (!isStrongPassword(password)) {
+    redirect("/auth/reset-password?error=Password%20must%20be%20at%20least%208%20characters%20and%20include%20uppercase%2C%20lowercase%2C%20a%20number%2C%20and%20a%20special%20character.");
+  }
+  if (password !== confirmPassword) {
+    redirect("/auth/reset-password?error=Passwords%20do%20not%20match.");
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.updateUser({ password });
+
+  if (error) {
+    redirect("/auth/reset-password?error=Could%20not%20update%20password.%20Your%20reset%20link%20may%20have%20expired.%20Request%20a%20new%20one.");
+  }
+
+  await supabase.auth.signOut();
+  redirect(encodedMessage("success", "Password updated. Please sign in with your new password."));
 }
 
 export async function logoutAction() {

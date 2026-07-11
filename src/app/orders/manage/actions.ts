@@ -3,8 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { canConfirmPayment, getAuthProfile, isAdmin, isCustomer, isManager, isSafeRedirect } from "@/lib/auth";
+import { paymentDecisionEmail, sendMarketplaceEmail } from "@/lib/email";
 import { supabaseConfig } from "@/lib/supabase-config";
 import { createClient } from "@/lib/supabase/server";
+import { writeAuditLog } from "@/lib/audit";
 import type { OrderStatus } from "@/lib/types";
 
 function cleanFileName(name: string) {
@@ -30,10 +32,10 @@ async function requireProfile() {
 async function getOrderForAction(supabase: Awaited<ReturnType<typeof createClient>>, orderId: string) {
   const { data } = await supabase
     .from("orders")
-    .select("id, order_number, profile_id, branch_id, status, total")
+    .select("id, order_number, profile_id, branch_id, status, total, customer_email")
     .eq("id", orderId)
     .maybeSingle();
-  return data as { id: string; order_number: string; profile_id: string | null; branch_id: string; status: OrderStatus; total: number | string } | null;
+  return data as { id: string; order_number: string; profile_id: string | null; branch_id: string; status: OrderStatus; total: number | string; customer_email: string | null } | null;
 }
 
 async function logOrderEvent(
@@ -113,6 +115,15 @@ export async function updateManagedOrderStatus(formData: FormData) {
   await supabase.from("orders").update({ status, support_note: note || null }).eq("id", orderId);
   await logOrderEvent(supabase, orderId, user.id, status, note);
   await notify(supabase, order.profile_id, `Order ${order.order_number} status updated to ${status.replaceAll("_", " ")}.`);
+  await writeAuditLog(supabase, {
+    actorId: user.id,
+    actorRole: profile.role,
+    action: "order_status_changed",
+    entityType: "order",
+    entityId: orderId,
+    branchId: order.branch_id,
+    metadata: { status, orderNumber: order.order_number },
+  });
   revalidateOrders();
   redirect(`${back}?success=Order%20status%20updated.`);
 }
@@ -127,6 +138,14 @@ export async function assignOrderBranch(formData: FormData) {
 
   await supabase.from("orders").update({ branch_id: branchId, assigned_manager_id: managerId }).eq("id", orderId);
   await logOrderEvent(supabase, orderId, user.id, "branch_assigned", "Branch or manager assignment updated.");
+  await writeAuditLog(supabase, {
+    actorId: user.id,
+    actorRole: profile.role,
+    action: "order_branch_assigned",
+    entityType: "order",
+    entityId: orderId,
+    branchId,
+  });
   revalidateOrders();
   redirect(`${back}?success=Order%20assignment%20updated.`);
 }
@@ -154,9 +173,27 @@ export async function reviewManagedPayment(formData: FormData) {
   await supabase.from("orders").update({ status: orderStatus, cashier_note: reviewNote }).eq("id", orderId);
   await logOrderEvent(supabase, orderId, user.id, orderStatus, reviewNote);
   await notify(supabase, order.profile_id, `Payment ${decision} for order ${order.order_number}.`);
+  if (order.customer_email) {
+    const email = paymentDecisionEmail(order.order_number, decision, reviewNote);
+    await sendMarketplaceEmail({
+      to: order.customer_email,
+      subject: email.subject,
+      html: email.html,
+      text: email.text,
+    });
+  }
   if (decision === "confirmed") {
     await notifyVendorsForOrder(supabase, orderId, `New paid order ${order.order_number} is ready for vendor processing.`);
   }
+  await writeAuditLog(supabase, {
+    actorId: user.id,
+    actorRole: profile.role,
+    action: decision === "confirmed" ? "payment_confirmed" : "payment_rejected",
+    entityType: "order",
+    entityId: orderId,
+    branchId: order.branch_id,
+    metadata: { orderNumber: order.order_number, receiptId },
+  });
   revalidateOrders();
   redirect(`${back}?success=Payment%20review%20saved.`);
 }

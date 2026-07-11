@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getAuthProfile, isAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { writeAuditLog } from "@/lib/audit";
 
 function text(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
@@ -67,7 +68,7 @@ async function requireAdmin() {
   if (!user) redirect("/login?next=/admin/users");
   const profile = await getAuthProfile(supabase, user.id);
   if (!isAdmin(profile)) redirect("/admin/settings?error=Only%20admin%20can%20manage%20staff%20users.");
-  return { user, profile };
+  return { supabase, user, profile: profile! };
 }
 
 function refreshUsers() {
@@ -76,7 +77,7 @@ function refreshUsers() {
 }
 
 export async function createStaffAccount(formData: FormData) {
-  await requireAdmin();
+  const { supabase, user, profile } = await requireAdmin();
 
   const fullName = text(formData, "full_name");
   const email = text(formData, "email").toLowerCase();
@@ -139,12 +140,20 @@ export async function createStaffAccount(formData: FormData) {
     redirect(`/admin/users?error=${encode(profileError.message || "Auth user was created but profile could not be saved.")}`);
   }
 
+  await writeAuditLog(supabase, {
+    actorId: user.id,
+    actorRole: profile.role,
+    action: "staff_account_created",
+    entityType: "profile",
+    entityId: authData.user.id,
+    metadata: { role, email },
+  });
   refreshUsers();
   redirect(`/admin/users?success=${encode(`${role === "manager" ? "Manager" : "Cashier"} account created. Staff can log in immediately.`)}`);
 }
 
 export async function updateStaffAccount(formData: FormData) {
-  await requireAdmin();
+  const { supabase, user, profile } = await requireAdmin();
 
   const profileId = text(formData, "profile_id");
   const role = text(formData, "role");
@@ -176,12 +185,20 @@ export async function updateStaffAccount(formData: FormData) {
 
   if (error) redirect(`/admin/users?error=${encode(error.message || "Could not update staff profile.")}`);
 
+  await writeAuditLog(supabase, {
+    actorId: user.id,
+    actorRole: profile.role,
+    action: "staff_account_updated",
+    entityType: "profile",
+    entityId: profileId,
+    metadata: { role, branchId },
+  });
   refreshUsers();
   redirect("/admin/users?success=User%20updated.");
 }
 
 export async function resetStaffPassword(formData: FormData) {
-  await requireAdmin();
+  const { supabase, user, profile } = await requireAdmin();
 
   const profileId = text(formData, "profile_id");
   const password = text(formData, "temporary_password");
@@ -208,6 +225,13 @@ export async function resetStaffPassword(formData: FormData) {
     );
   }
 
+  await writeAuditLog(supabase, {
+    actorId: user.id,
+    actorRole: profile.role,
+    action: "staff_password_reset",
+    entityType: "profile",
+    entityId: profileId,
+  });
   refreshUsers();
   redirect("/admin/users?success=Temporary%20password%20updated.");
 }

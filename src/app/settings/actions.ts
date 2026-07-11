@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getAuthProfile, isAdmin, isCashier, isManager, isSafeRedirect, isVendor } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { writeAuditLog } from "@/lib/audit";
 
 const settingsBucket = "settings-assets";
 const vendorBucket = "vendor-assets";
@@ -89,6 +90,13 @@ export async function updateCompanySettings(formData: FormData) {
   );
 
   if (error) redirect(`${back}?error=Could%20not%20save%20company%20settings.%20Run%20the%20settings%20SQL%20first.`);
+  await writeAuditLog(supabase, {
+    actorId: user.id,
+    actorRole: profile.role,
+    action: "company_settings_changed",
+    entityType: "company_settings",
+    entityId: "1",
+  });
   revalidateSettings();
   redirect(`${back}?success=Company%20settings%20saved.`);
 }
@@ -114,6 +122,13 @@ export async function updateMarketplaceSettings(formData: FormData) {
   );
 
   if (error) redirect(`${back}?error=Could%20not%20save%20marketplace%20settings.%20Run%20the%20settings%20SQL%20first.`);
+  await writeAuditLog(supabase, {
+    actorId: user.id,
+    actorRole: profile.role,
+    action: "marketplace_settings_changed",
+    entityType: "marketplace_settings",
+    entityId: "1",
+  });
   revalidateSettings();
   redirect(`${back}?success=Marketplace%20settings%20saved.`);
 }
@@ -145,6 +160,14 @@ export async function saveBranchSettings(formData: FormData) {
     : await supabase.from("branches").insert(payload);
 
   if (result.error) redirect(`${back}?error=Could%20not%20save%20branch.%20Run%20the%20settings%20SQL%20first.`);
+  await writeAuditLog(supabase, {
+    actorId: profile.id,
+    actorRole: profile.role,
+    action: "branch_settings_changed",
+    entityType: "branch",
+    entityId: branchId || undefined,
+    metadata: { isNewBranch },
+  });
   revalidateSettings();
   redirect(`${back}?success=Branch%20settings%20saved.`);
 }
@@ -155,6 +178,10 @@ export async function updateUserAdministration(formData: FormData) {
   if (!isAdmin(profile)) redirect(`${back}?error=Only%20admin%20can%20manage%20users.`);
 
   const userId = text(formData, "profile_id");
+  const role = text(formData, "role");
+  const allowedRoles = ["admin", "manager", "cashier", "vendor", "customer"];
+  if (!allowedRoles.includes(role)) redirect(`${back}?error=Invalid%20role%20value.`);
+
   const { error } = await supabase
     .from("profiles")
     .update({
@@ -167,6 +194,14 @@ export async function updateUserAdministration(formData: FormData) {
     .eq("id", userId);
 
   if (error) redirect(`${back}?error=Could%20not%20update%20user.%20Run%20the%20settings%20SQL%20first.`);
+  await writeAuditLog(supabase, {
+    actorId: profile.id,
+    actorRole: profile.role,
+    action: "user_administration_changed",
+    entityType: "profile",
+    entityId: userId,
+    metadata: { role },
+  });
   revalidateSettings();
   redirect(`${back}?success=User%20updated.`);
 }

@@ -225,7 +225,7 @@ export async function SettingsDashboard({ role, searchParams }: { role: Settings
               <Field label="Company name" name="company_name" defaultValue={company?.company_name ?? "WAPTEK COMPUTER SERVICES"} required />
               <Field label="Support email" name="support_email" type="email" defaultValue={company?.support_email} />
               <Field label="Support phone" name="support_phone" defaultValue={company?.support_phone} />
-              <Field label="WhatsApp placeholder" name="whatsapp_number" defaultValue={company?.whatsapp_number} />
+              <Field label="WhatsApp number (e.g. 2348012345678)" name="whatsapp_number" defaultValue={company?.whatsapp_number} />
               <TextArea label="Business address" name="business_address" defaultValue={company?.business_address} />
               <TextArea label="About text" name="about_text" defaultValue={company?.about_text} />
               <label className="grid gap-1 text-sm font-bold text-slate-700 md:col-span-2">
@@ -366,6 +366,14 @@ export async function SettingsDashboard({ role, searchParams }: { role: Settings
               <div className="rounded-md bg-slate-50 p-4"><strong>Email confirmation:</strong> keep Supabase email confirmation enabled for customers and staff.</div>
               <div className="rounded-md bg-slate-50 p-4"><strong>Password resets:</strong> use Supabase Auth password reset links from the dashboard or login flow.</div>
               <div className="rounded-md bg-slate-50 p-4"><strong>Staff accounts:</strong> use Admin Users to create manager and cashier accounts directly from the website.</div>
+            </div>
+            <div className="mt-4">
+              <a
+                href="/admin/audit-logs"
+                className="inline-block rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-900 hover:border-emerald-500"
+              >
+                View Audit Logs →
+              </a>
             </div>
           </Card>
         </>

@@ -3,12 +3,16 @@ import { notFound } from "next/navigation";
 import { reuploadOrderReceipt, cancelManagedOrder } from "@/app/orders/manage/actions";
 import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
+import { OrderTimeline } from "@/components/order-timeline";
 import { PrintInvoiceButton } from "@/components/PrintInvoiceButton";
 import { StatusBadge } from "@/components/StatusBadge";
+import { WhatsAppLink } from "@/components/WhatsAppLink";
 import { getAuthProfile, isAdmin, isCashier, isCustomer, isManager, isVendor, type AuthProfile } from "@/lib/auth";
 import { formatNaira, getBranch, products } from "@/lib/marketplace-data";
-import { getTrackedOrder, orderSteps } from "@/lib/customer-flow";
+import { getTrackedOrder } from "@/lib/customer-flow";
+import { isSupabaseConfigured } from "@/lib/supabase-config";
 import { createClient } from "@/lib/supabase/server";
+import { orderSupportMessage, resolveWhatsAppNumber } from "@/lib/whatsapp";
 import type { OrderStatus } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -53,6 +57,7 @@ type OrderView = {
   paymentMethod: string;
   createdAt: string;
   items: Array<{ productId: string; productName?: string; productSlug?: string; quantity: number; price: number }>;
+  events?: Array<{ event_type: string; note: string | null; created_at: string }>;
 };
 
 async function getOnlineOrder(id: string, profile: AuthProfile) {
@@ -103,6 +108,7 @@ async function getOnlineOrder(id: string, profile: AuthProfile) {
           price: Number(item.unit_price),
         };
       }),
+      events: order.order_events ?? [],
     };
   } catch {
     return null;
@@ -121,8 +127,24 @@ function normalizeFallbackOrder(order: ReturnType<typeof getTrackedOrder>): Orde
     deliveryMethod: "Pickup",
     paymentMethod: "Manual bank transfer",
     createdAt: order.createdAt,
-    items: order.items,
+        items: order.items,
+    events: [],
   };
+}
+
+async function getWhatsAppNumber(): Promise<string | null> {
+  try {
+    if (!isSupabaseConfigured()) return resolveWhatsAppNumber();
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("company_settings")
+      .select("whatsapp_number")
+      .eq("id", 1)
+      .maybeSingle();
+    return resolveWhatsAppNumber((data as { whatsapp_number?: string | null } | null)?.whatsapp_number);
+  } catch {
+    return resolveWhatsAppNumber();
+  }
 }
 
 export default async function OrderTrackingPage({ params }: { params: Promise<{ id: string }> }) {
@@ -146,7 +168,7 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
     notFound();
   }
 
-  const currentIndex = Math.max(0, orderSteps.findIndex((step) => step.key === order.status));
+  const [waNumber] = await Promise.all([getWhatsAppNumber()]);
   const branch = getBranch(order.branchId);
   const canReuploadReceipt = isCustomer(profile) && order.status === "payment_rejected" && Boolean(order.dbId);
   const canCancel = isCustomer(profile) && Boolean(order.dbId) && ["awaiting_receipt", "receipt_uploaded", "payment_rejected"].includes(order.status);
@@ -171,20 +193,7 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
           </div>
         </div>
 
-        <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="grid gap-4 md:grid-cols-5">
-            {orderSteps.map((step, index) => {
-              const isDone = index <= currentIndex;
-              return (
-                <div key={step.key} className="rounded-md border border-slate-200 p-4">
-                  <div className={`mb-3 size-8 rounded-full ${isDone ? "bg-emerald-600" : "bg-slate-200"}`} />
-                  <p className="font-bold text-slate-950">{step.label}</p>
-                  <p className="mt-1 text-xs text-slate-500">{isDone ? "Reached" : "Pending"}</p>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+        <OrderTimeline status={order.status} events={order.events} />
 
         <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_340px]">
           <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
@@ -224,6 +233,20 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
               <div><dt className="text-slate-500">Cashier note</dt><dd className="font-bold">{order.cashierNote ?? "No cashier note yet."}</dd></div>
               <div><dt className="text-slate-500">Support</dt><dd className="font-bold">In-app order notifications</dd></div>
             </dl>
+            {waNumber ? (
+              <div className="mt-5">
+                <WhatsAppLink
+                  number={waNumber}
+                  message={orderSupportMessage({
+                    orderRef: order.id,
+                    status: order.status.replaceAll("_", " "),
+                    total: formatNaira(order.total),
+                  })}
+                  label="Ask About This Order"
+                  className="w-full justify-center"
+                />
+              </div>
+            ) : null}
             {canReuploadReceipt ? (
               <form action={reuploadOrderReceipt} className="mt-5 grid gap-3 rounded-md border border-amber-200 bg-amber-50 p-4">
                 <input type="hidden" name="return_to" value={`/orders/${order.id}`} />

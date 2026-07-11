@@ -2,6 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { orderPlacedEmail, sendMarketplaceEmail } from "@/lib/email";
+import { formatNaira } from "@/lib/marketplace-data";
 import { supabaseConfig } from "@/lib/supabase-config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -17,6 +19,9 @@ type CheckoutProductRow = {
   discount_price: number | string | null;
   inventory: Array<{ quantity: number; status?: string }> | null;
 };
+
+const ALLOWED_RECEIPT_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "application/pdf"]);
+const MAX_RECEIPT_BYTES = 5 * 1024 * 1024; // 5 MB
 
 function cleanFileName(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9.]+/g, "-").replace(/^-|-$/g, "");
@@ -67,6 +72,12 @@ export async function createCheckoutOrder(formData: FormData) {
   if (!(receipt instanceof File) || receipt.size === 0) {
     redirect("/checkout?error=Upload%20a%20payment%20receipt%20before%20submitting.");
   }
+  if (!ALLOWED_RECEIPT_TYPES.has(receipt.type)) {
+    redirect("/checkout?error=Receipt%20must%20be%20a%20JPEG,%20PNG,%20WebP,%20or%20PDF%20file.");
+  }
+  if (receipt.size > MAX_RECEIPT_BYTES) {
+    redirect("/checkout?error=Receipt%20file%20must%20be%20under%205%20MB.");
+  }
 
   const branchState = String(formData.get("branch_state") ?? "Adamawa");
   const customerName = String(formData.get("customer_name") ?? "").trim();
@@ -74,7 +85,6 @@ export async function createCheckoutOrder(formData: FormData) {
   const customerEmail = String(formData.get("customer_email") ?? "").trim();
   const supportNote = String(formData.get("support_note") ?? "").trim();
   const cartItems = parseCartItems(formData.get("cart_items"));
-  console.log("[Checkout/action] user=", user.id, "cartItems=", cartItems);
 
   if (cartItems.length === 0) {
     redirect("/checkout?error=Your%20cart%20is%20empty.%20Add%20products%20before%20checkout.");
@@ -97,8 +107,6 @@ export async function createCheckoutOrder(formData: FormData) {
     .in("id", cartProductIds)
     .eq("status", "active");
 
-  console.log("[Checkout/action] cartProductIds=", cartProductIds, "dbProducts count=", dbProducts?.length ?? 0, "productsError=", productsError?.message);
-
   if (productsError || !dbProducts || dbProducts.length === 0) {
     // Detect seed-mode IDs (prod-1, prod-2, …) — these only exist in local seed data, not in the DB.
     const hasSeedIds = cartProductIds.some((id) => /^prod-\d+$/.test(id));
@@ -112,8 +120,6 @@ export async function createCheckoutOrder(formData: FormData) {
   const validCartItems = cartItems.filter((line) =>
     (dbProducts as CheckoutProductRow[]).some((p) => p.id === line.productId),
   );
-
-  console.log("[Checkout/action] validCartItems=", validCartItems);
 
   if (validCartItems.length === 0) {
     const hasSeedIds = cartProductIds.some((id) => /^prod-\d+$/.test(id));
@@ -141,7 +147,7 @@ export async function createCheckoutOrder(formData: FormData) {
     const product = productById.get(line.productId);
     return sum + Number(product?.discount_price ?? product?.price ?? 0) * line.quantity;
   }, 0);
-  const orderNumber = `ORD-${Date.now().toString().slice(-8)}`;
+  const orderNumber = `WAP-${new Date().getFullYear()}-${Date.now().toString().slice(-6)}`;
 
   const { data: order, error: orderError } = await supabase
     .from("orders")
@@ -241,6 +247,16 @@ export async function createCheckoutOrder(formData: FormData) {
     ],
     `New order ${order.order_number} was placed with receipt uploaded.`,
   );
+
+  if (customerEmail || user.email) {
+    const email = orderPlacedEmail(order.order_number, formatNaira(total));
+    await sendMarketplaceEmail({
+      to: customerEmail || user.email || "",
+      subject: email.subject,
+      html: email.html,
+      text: email.text,
+    });
+  }
 
   revalidatePath("/orders");
   revalidatePath("/cashier");

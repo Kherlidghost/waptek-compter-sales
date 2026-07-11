@@ -33,6 +33,16 @@ export function AuthForms({
   const [confirmPassword, setConfirmPassword] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const passwordMismatch = Boolean(confirmPassword && registerPassword !== confirmPassword);
+  const passwordWeak = Boolean(
+    registerPassword &&
+    (
+      registerPassword.length < 8 ||
+      !/[A-Z]/.test(registerPassword) ||
+      !/[a-z]/.test(registerPassword) ||
+      !/[0-9]/.test(registerPassword) ||
+      !/[^A-Za-z0-9]/.test(registerPassword)
+    ),
+  );
 
   return (
     <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[0.9fr_1.1fr]">
@@ -94,7 +104,7 @@ export function AuthForms({
                 <input className="size-4 rounded border-slate-300" name="remember" type="checkbox" />
                 Remember me on this device
               </label>
-              <Link className="font-bold text-emerald-800" href="/contact">
+              <Link className="font-bold text-emerald-800" href="/auth/forgot-password">
                 Forgot password?
               </Link>
             </div>
@@ -114,7 +124,7 @@ export function AuthForms({
             action={signUpAction}
             className="mt-6 grid gap-4"
             onSubmit={(event) => {
-              if (passwordMismatch) event.preventDefault();
+              if (passwordMismatch || passwordWeak) event.preventDefault();
             }}
           >
             <input type="hidden" name="next" value={next} />
@@ -136,7 +146,7 @@ export function AuthForms({
               <label className="grid gap-2 text-sm font-semibold text-slate-700">
                 Password
                 <div className="flex overflow-hidden rounded-md border border-slate-300">
-                  <input className="h-11 min-w-0 flex-1 px-3 font-normal outline-none" name="password" type={showRegisterPassword ? "text" : "password"} autoComplete="new-password" minLength={8} onChange={(event) => setRegisterPassword(event.target.value)} placeholder="Minimum 8 characters" required />
+                  <input className="h-11 min-w-0 flex-1 px-3 font-normal outline-none" name="password" type={showRegisterPassword ? "text" : "password"} autoComplete="new-password" minLength={8} onChange={(event) => setRegisterPassword(event.target.value)} placeholder="Min 8 chars, upper, lower, number, symbol" required />
                   <button className="border-l border-slate-300 px-3 text-xs font-bold text-slate-700" onClick={() => setShowRegisterPassword((current) => !current)} type="button">
                     {showRegisterPassword ? "Hide" : "Show"}
                   </button>
@@ -147,6 +157,7 @@ export function AuthForms({
                 <input className="h-11 rounded-md border border-slate-300 px-3 font-normal" name="confirm_password" type={showRegisterPassword ? "text" : "password"} autoComplete="new-password" minLength={8} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Repeat password" required />
               </label>
             </div>
+            {passwordWeak ? <p className="text-sm font-semibold text-amber-700">Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character.</p> : null}
             {passwordMismatch ? <p className="text-sm font-semibold text-red-700">Password and confirm password must match.</p> : null}
             <SubmitButton className="rounded-md bg-emerald-700 px-5 py-3 text-sm font-bold text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-slate-400" pendingText="Creating account...">
               Create account

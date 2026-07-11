@@ -1,18 +1,39 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ProductCustomerActions } from "@/components/CustomerActions";
 import { ProductGrid } from "@/components/ProductCard";
+import { ProductActions } from "@/components/product-actions";
 import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 import { ReviewSection } from "@/components/ReviewSection";
 import { getStorefrontProduct } from "@/lib/catalog";
 import { formatNaira } from "@/lib/marketplace-data";
+import { isSupabaseConfigured } from "@/lib/supabase-config";
+import { resolveWhatsAppNumber } from "@/lib/whatsapp";
 
 export const dynamic = "force-dynamic";
 
+async function getWhatsAppNumber(): Promise<string | null> {
+  try {
+    if (!isSupabaseConfigured()) return resolveWhatsAppNumber();
+    const { createClient } = await import("@/lib/supabase/server");
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("company_settings")
+      .select("whatsapp_number")
+      .eq("id", 1)
+      .maybeSingle();
+    return resolveWhatsAppNumber((data as { whatsapp_number?: string | null } | null)?.whatsapp_number);
+  } catch {
+    return resolveWhatsAppNumber();
+  }
+}
+
 export default async function ProductDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const { product, products, categories, branches } = await getStorefrontProduct(id);
+  const [{ product, products, categories, branches }, waNumber] = await Promise.all([
+    getStorefrontProduct(id),
+    getWhatsAppNumber(),
+  ]);
 
   if (!product) {
     notFound();
@@ -91,7 +112,13 @@ export default async function ProductDetailsPage({ params }: { params: Promise<{
             </Link>
           </p>
           <p className="mt-1 text-sm text-slate-600">Branch: {branch?.city ?? product.branchCity}, {branch?.state ?? product.branchState}</p>
-          <ProductCustomerActions product={product} />
+          <ProductActions
+            product={product}
+            whatsAppNumber={waNumber}
+            formattedPrice={formatNaira(product.price)}
+            location={`${branch?.name ?? product.branchName ?? ""}, ${branch?.state ?? product.branchState ?? ""}`}
+            productUrl={`${process.env.NEXT_PUBLIC_SITE_URL ?? "https://waptekcomputerservices.com"}/products/${product.slug}`}
+          />
         </aside>
       </div>
 

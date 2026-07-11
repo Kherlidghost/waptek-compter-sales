@@ -1,18 +1,26 @@
 import Link from "next/link";
 
-const quickLinks = [
-  { href: "/products", label: "Products" },
-  { href: "/categories", label: "Categories" },
-  { href: "/repairs", label: "Repairs" },
+const productLinks = [
+  { href: "/products?category=laptops", label: "Laptops" },
+  { href: "/products?category=desktops", label: "Desktop Computers" },
+  { href: "/products?category=printers", label: "Printers" },
+  { href: "/products?category=accessories", label: "Accessories" },
+  { href: "/products?category=networking-equipment", label: "Networking Equipment" },
+  { href: "/products?category=storage-devices", label: "Storage Devices" },
+];
+
+const serviceLinks = [
+  { href: "/repairs", label: "Request Repair" },
+  { href: "/repairs", label: "Repair Services" },
   { href: "/become-a-vendor", label: "Become a Vendor" },
-  { href: "/cart", label: "Cart" },
+  { href: "/cart", label: "Shopping Cart" },
+  { href: "/orders", label: "Order Tracking" },
 ];
 
 const supportLinks = [
   { href: "/contact", label: "Contact Us" },
-  { href: "/checkout", label: "Payment Confirmation" },
-  { href: "/orders", label: "Order Tracking" },
-  { href: "/repairs", label: "Repair Request" },
+  { href: "/about", label: "About WAPTEK" },
+  { href: "/checkout", label: "Payment Help" },
 ];
 
 const legalLinks = [
@@ -24,35 +32,56 @@ const legalLinks = [
 export function PublicFooter() {
   return (
     <footer className="border-t border-slate-200 bg-slate-950 text-white">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.2fr] lg:px-8">
-        <section>
-          <h2 className="text-lg font-black">About WAPTEK COMPUTER SERVICES</h2>
-          <p className="mt-3 text-sm leading-6 text-slate-300">
-            Sales of computers, accessories, spare parts, and professional repair services, with trusted vendor marketplace support.
-          </p>
-        </section>
-
-        <FooterLinks title="Quick Links" links={quickLinks} />
-        <FooterLinks title="Support" links={supportLinks} />
-        <FooterLinks title="Legal" links={legalLinks} />
-
-        <section>
-          <h2 className="text-sm font-black uppercase tracking-wide text-emerald-300">Contact</h2>
-          <div className="mt-3 space-y-2 text-sm text-slate-300">
-            <p>WhatsApp: +234 800 000 0000</p>
-            <p>Phone: +234 800 000 0001</p>
-            <p>
-              Email:{" "}
-              <a className="font-semibold text-white hover:text-emerald-300" href="mailto:support@waptekcomputerservices.com">
-                support@waptekcomputerservices.com
-              </a>
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr_1.2fr]">
+          {/* Brand */}
+          <section>
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500 text-xs font-black text-slate-950">
+                WCS
+              </span>
+              <div>
+                <p className="text-sm font-black leading-tight">WAPTEK COMPUTER SERVICES</p>
+                <p className="text-xs text-slate-400">Sales of Computers &amp; Repairs</p>
+              </div>
+            </div>
+            <p className="mt-4 text-sm leading-7 text-slate-400">
+              Verified computer vendors, genuine products, and professional repair services across Adamawa, Yobe, and Borno.
             </p>
-            <p>Locations: Adamawa, Yobe, Borno</p>
-          </div>
-        </section>
+          </section>
+
+          <FooterLinks title="Products" links={productLinks} />
+          <FooterLinks title="Services" links={serviceLinks} />
+          <FooterLinks title="Support &amp; Legal" links={[...supportLinks, ...legalLinks]} />
+
+          {/* Contact */}
+          <section>
+            <h2 className="mb-3 text-xs font-black uppercase tracking-widest text-emerald-400">Contact</h2>
+            <address className="not-italic space-y-2 text-sm text-slate-400">
+              <p>
+                <span className="font-semibold text-slate-300">WhatsApp:</span>{" "}
+                <a href="https://wa.me/2348000000000" className="hover:text-white">+234 800 000 0000</a>
+              </p>
+              <p>
+                <span className="font-semibold text-slate-300">Phone:</span>{" "}
+                <a href="tel:+2348000000001" className="hover:text-white">+234 800 000 0001</a>
+              </p>
+              <p>
+                <span className="font-semibold text-slate-300">Email:</span>{" "}
+                <a href="mailto:support@waptekcomputerservices.com" className="hover:text-white">
+                  support@waptekcomputerservices.com
+                </a>
+              </p>
+              <p>
+                <span className="font-semibold text-slate-300">Locations:</span> Adamawa, Yobe, Borno
+              </p>
+            </address>
+          </section>
+        </div>
       </div>
-      <div className="border-t border-white/10 px-4 py-4 text-center text-sm text-slate-400">
-        © 2026 WAPTEK COMPUTER SERVICES. All rights reserved.
+
+      <div className="border-t border-white/10 px-4 py-4 text-center text-xs text-slate-500">
+        © {new Date().getFullYear()} WAPTEK COMPUTER SERVICES. All rights reserved.
       </div>
     </footer>
   );
@@ -61,10 +90,13 @@ export function PublicFooter() {
 function FooterLinks({ title, links }: { title: string; links: { href: string; label: string }[] }) {
   return (
     <section>
-      <h2 className="text-sm font-black uppercase tracking-wide text-emerald-300">{title}</h2>
-      <nav className="mt-3 grid gap-2 text-sm">
+      <h2
+        className="mb-3 text-xs font-black uppercase tracking-widest text-emerald-400"
+        dangerouslySetInnerHTML={{ __html: title }}
+      />
+      <nav className="grid gap-2 text-sm">
         {links.map((link) => (
-          <Link key={link.href} className="text-slate-300 hover:text-white" href={link.href}>
+          <Link key={`${link.href}-${link.label}`} className="text-slate-400 hover:text-white" href={link.href}>
             {link.label}
           </Link>
         ))}

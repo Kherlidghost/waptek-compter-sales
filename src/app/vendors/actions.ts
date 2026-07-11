@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getAuthProfile, isAdmin, isSafeRedirect, isVendor } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { writeAuditLog } from "@/lib/audit";
 
 type VendorStatus = "pending" | "approved" | "rejected" | "suspended" | "inactive";
 
@@ -177,7 +178,18 @@ export async function updateVendorApprovalStatus(formData: FormData) {
       status: "queued",
     });
   }
-
+  const auditAction =
+    status === "approved" ? "vendor_approved" :
+    status === "rejected" ? "vendor_rejected" :
+    status === "suspended" ? "vendor_suspended" : "vendor_reactivated";
+  await writeAuditLog(supabase, {
+    actorId: user.id,
+    actorRole: profile.role,
+    action: auditAction,
+    entityType: "vendor",
+    entityId: vendorId,
+    metadata: { status, businessName: vendor?.business_name },
+  });
   revalidateVendorPages();
   redirect(`${back}?success=Vendor%20status%20updated.`);
 }

@@ -1,8 +1,16 @@
 @import "tailwindcss";
 
+/* ── Brand tokens ─────────────────────────────────────────────────────────── */
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
+  --navy: #0f172a;
+  --emerald: #10b981;
+  --emerald-dark: #059669;
+  --radius-card: 1rem;
+  --radius-btn: 0.5rem;
+  --shadow-card: 0 4px 24px rgba(15,23,42,0.07), 0 1px 3px rgba(15,23,42,0.04);
+  --shadow-card-hover: 0 8px 32px rgba(15,23,42,0.11), 0 2px 6px rgba(15,23,42,0.06);
 }
 
 @theme inline {
@@ -12,69 +20,189 @@
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
+/* ── Base ─────────────────────────────────────────────────────────────────── */
 body {
-  background:
-    radial-gradient(circle at top left, rgba(16, 185, 129, 0.08), transparent 32rem),
-    radial-gradient(circle at top right, rgba(15, 23, 42, 0.06), transparent 30rem),
-    linear-gradient(160deg, #f0fdf4 0%, #f8fafc 40%, #ffffff 70%, #f1f5f9 100%);
+  background: #f8fafc;
   color: var(--foreground);
   font-family: Inter, Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Dashboard pages — richer gradient with navy + emerald tint */
+/* ── Page shells ──────────────────────────────────────────────────────────── */
+.marketplace-shell {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(16,185,129,0.07), transparent 24rem),
+    radial-gradient(circle at 88% 8%, rgba(15,23,42,0.05), transparent 24rem),
+    linear-gradient(180deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
+}
+
 .dashboard-shell {
   min-height: 100vh;
   background:
-    radial-gradient(ellipse at 0% 0%, rgba(16, 185, 129, 0.13) 0%, transparent 45%),
-    radial-gradient(ellipse at 100% 0%, rgba(15, 23, 42, 0.10) 0%, transparent 40%),
-    radial-gradient(ellipse at 50% 100%, rgba(16, 185, 129, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 0% 0%, rgba(16,185,129,0.10) 0%, transparent 40%),
+    radial-gradient(ellipse at 100% 0%, rgba(15,23,42,0.07) 0%, transparent 36%),
     linear-gradient(160deg, #ecfdf5 0%, #f8fafc 30%, #ffffff 60%, #f0f9ff 100%);
 }
 
-/* Storefront pages */
-.marketplace-shell {
-  background:
-    radial-gradient(circle at 8% 0%, rgba(16, 185, 129, 0.09), transparent 26rem),
-    radial-gradient(circle at 88% 8%, rgba(15, 23, 42, 0.07), transparent 26rem),
-    linear-gradient(180deg, #f8fafc 0%, #ffffff 42%, #f1f5f9 100%);
+/* ── Cards ────────────────────────────────────────────────────────────────── */
+.wcs-card {
+  background: rgba(255,255,255,0.97);
+  border: 1px solid rgba(203,213,225,0.75);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
 
-/* Elevated card borders + shadows inside dashboard/marketplace shells */
-.dashboard-shell .rounded-lg.border,
-.marketplace-shell .rounded-lg.border {
-  border-color: rgba(203, 213, 225, 0.80);
-  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06), 0 1px 4px rgba(15, 23, 42, 0.04);
+.wcs-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  border-color: rgba(16,185,129,0.30);
+  transform: translateY(-1px);
 }
 
-/* Form inputs inside shells get a clean white background */
+.dashboard-card {
+  background: rgba(255,255,255,0.97);
+  border: 1px solid rgba(203,213,225,0.75);
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.dashboard-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  border-color: rgba(16,185,129,0.35);
+  transform: translateY(-1px);
+}
+
+/* ── Premium glass panel ──────────────────────────────────────────────────── */
+.premium-panel {
+  border: 1px solid rgba(203,213,225,0.85);
+  background: rgba(255,255,255,0.93);
+  box-shadow: 0 4px 32px rgba(15,23,42,0.08), 0 1px 4px rgba(15,23,42,0.04);
+  backdrop-filter: blur(16px);
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.75rem;
+  padding: 0 1.5rem;
+  border-radius: var(--radius-btn);
+  background: #10b981;
+  color: #0f172a;
+  font-size: 0.875rem;
+  font-weight: 800;
+  transition: background 0.15s ease;
+}
+.btn-primary:hover { background: #059669; color: #fff; }
+
+.btn-dark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.75rem;
+  padding: 0 1.5rem;
+  border-radius: var(--radius-btn);
+  background: #0f172a;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 800;
+  transition: background 0.15s ease;
+}
+.btn-dark:hover { background: #10b981; color: #0f172a; }
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.75rem;
+  padding: 0 1.5rem;
+  border-radius: var(--radius-btn);
+  border: 1.5px solid #cbd5e1;
+  background: #fff;
+  color: #0f172a;
+  font-size: 0.875rem;
+  font-weight: 700;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.btn-outline:hover { border-color: #10b981; background: #f0fdf4; }
+
+/* ── Inputs ───────────────────────────────────────────────────────────────── */
+.wcs-input {
+  height: 2.75rem;
+  width: 100%;
+  border-radius: var(--radius-btn);
+  border: 1.5px solid #cbd5e1;
+  padding: 0 0.875rem;
+  font-size: 0.875rem;
+  background: #fff;
+  color: #0f172a;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.wcs-input:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16,185,129,0.12);
+}
+
+/* ── Badges ───────────────────────────────────────────────────────────────── */
+.badge-new {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+/* ── Loading skeleton ─────────────────────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+  border-radius: 0.5rem;
+}
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Section heading utility ──────────────────────────────────────────────── */
+.section-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #059669;
+}
+
+/* ── Focus visible ────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+
+/* ── Form inputs inside shells ────────────────────────────────────────────── */
 .dashboard-shell input,
 .dashboard-shell select,
 .dashboard-shell textarea,
 .marketplace-shell input,
 .marketplace-shell select,
 .marketplace-shell textarea {
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255,255,255,0.97);
 }
 
-/* Premium glass header/panel */
-.premium-panel {
-  border: 1px solid rgba(203, 213, 225, 0.85);
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 4px 32px rgba(15, 23, 42, 0.08), 0 1px 4px rgba(15, 23, 42, 0.04);
-  backdrop-filter: blur(16px);
-}
-
-/* Reusable dashboard stat/action card */
-.dashboard-card {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(203, 213, 225, 0.75);
-  border-radius: 1.5rem;
-  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.07), 0 1px 3px rgba(15, 23, 42, 0.04);
-  transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
-}
-
-.dashboard-card:hover {
-  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.10), 0 2px 6px rgba(15, 23, 42, 0.06);
-  border-color: rgba(16, 185, 129, 0.35);
-  transform: translateY(-1px);
+/* ── Product image aspect ratio ───────────────────────────────────────────── */
+.product-img {
+  aspect-ratio: 4/3;
+  width: 100%;
+  object-fit: cover;
+  background-size: cover;
+  background-position: center;
 }
