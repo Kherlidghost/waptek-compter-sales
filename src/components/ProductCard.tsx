@@ -26,7 +26,7 @@ export function ProductCard({ product }: { product: Product }) {
   const imgSrc = product.image || FALLBACK_IMAGE;
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-950/5 transition hover:-translate-y-1 hover:border-emerald-200 hover:shadow-2xl hover:shadow-slate-950/10">
+    <article className="wcs-card group flex h-full flex-col overflow-hidden rounded-[1.5rem] transition hover:-translate-y-1">
       {/* Image */}
       <Link
         href={`/products/${product.slug}`}
@@ -45,7 +45,7 @@ export function ProductCard({ product }: { product: Product }) {
           />
         </div>
         {product.featured ? (
-          <span className="absolute left-3 top-3 rounded-full bg-emerald-400 px-3 py-1 text-xs font-black text-slate-950 shadow-sm">
+          <span className="badge-new absolute left-3 top-3">
             Featured
           </span>
         ) : null}
@@ -113,7 +113,7 @@ export function ProductCard({ product }: { product: Product }) {
           />
           <Link
             href={`/products/${product.slug}`}
-            className="rounded-xl border border-slate-300 px-3 py-2.5 text-center text-xs font-black text-slate-900 transition hover:border-emerald-500 hover:bg-emerald-50 hover:text-emerald-700 focus-visible:outline-emerald-600"
+            className="btn-outline w-full"
           >
             View Details
           </Link>

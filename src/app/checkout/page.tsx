@@ -1,4 +1,5 @@
 import { CheckoutForm } from "@/components/CheckoutForm";
+import { DesignSurface } from "@/components/DesignSurface";
 import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 import { WhatsAppLink } from "@/components/WhatsAppLink";
@@ -47,7 +48,7 @@ export default async function CheckoutPage({
       <PublicHeader />
       <main className="px-4 py-8">
         <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1fr_360px]">
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5">
+        <DesignSurface className="p-6">
           <p className="text-sm font-black uppercase text-emerald-700">Receipt-confirmed payment</p>
           <h1 className="text-3xl font-black text-slate-950">Manual bank transfer checkout</h1>
           <p className="mt-2 text-sm text-slate-600">Pay by manual bank transfer and upload your receipt for cashier confirmation.</p>
@@ -57,8 +58,8 @@ export default async function CheckoutPage({
             </div>
           ) : null}
           <CheckoutForm action={createCheckoutOrder} products={products} catalogSource={catalogSource} />
-        </section>
-        <aside className="h-fit rounded-2xl border border-slate-200 bg-slate-950 p-6 text-white shadow-xl shadow-slate-950/10">
+        </DesignSurface>
+        <DesignSurface className="h-fit bg-slate-950 p-6 text-white">
           <h2 className="text-lg font-black text-white">Company bank account</h2>
           {hasBankDetails ? (
             <dl className="mt-4 space-y-3 text-sm">
@@ -86,7 +87,7 @@ export default async function CheckoutPage({
               />
             </div>
           ) : null}
-        </aside>
+        </DesignSurface>
       </div>
     </main>
     <PublicFooter />

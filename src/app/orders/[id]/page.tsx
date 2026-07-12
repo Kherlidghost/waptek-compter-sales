@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { reuploadOrderReceipt, cancelManagedOrder } from "@/app/orders/manage/actions";
+import { DesignSurface } from "@/components/DesignSurface";
 import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 import { OrderTimeline } from "@/components/order-timeline";
@@ -177,26 +178,28 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <PublicHeader />
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="text-sm font-bold uppercase text-emerald-700">Tracking {order.id}</p>
-            <h1 className="mt-1 text-3xl font-black text-slate-950">Order status: {order.status.replaceAll("_", " ")}</h1>
-            <p className="mt-2 text-sm text-slate-600">
-              {branch?.name} · Receipt {order.receiptStatus} · {order.createdAt}
-            </p>
+        <DesignSurface className="mb-6 p-6">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-sm font-bold uppercase text-emerald-700">Tracking {order.id}</p>
+              <h1 className="mt-1 text-3xl font-black text-slate-950">Order status: {order.status.replaceAll("_", " ")}</h1>
+              <p className="mt-2 text-sm text-slate-600">
+                {branch?.name} · Receipt {order.receiptStatus} · {order.createdAt}
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <PrintInvoiceButton />
+              <Link className="btn-outline" href="/orders">
+                All orders
+              </Link>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <PrintInvoiceButton />
-            <Link className="rounded-md border border-slate-300 px-4 py-2 text-sm font-bold" href="/orders">
-              All orders
-            </Link>
-          </div>
-        </div>
+        </DesignSurface>
 
         <OrderTimeline status={order.status} events={order.events} />
 
         <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_340px]">
-          <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+          <DesignSurface className="overflow-hidden p-0">
             {order.items.map((item) => {
               const product = products.find((entry) => entry.id === item.productId);
               const onlineItem = item as typeof item & { productName?: string; productSlug?: string };
@@ -220,8 +223,8 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
                 </div>
               );
             })}
-          </div>
-          <aside className="h-fit rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+          </DesignSurface>
+          <DesignSurface className="h-fit p-6">
             <h2 className="text-lg font-black text-slate-950">Payment summary</h2>
             <dl className="mt-4 space-y-3 text-sm">
               <div><dt className="text-slate-500">Order total</dt><dd className="font-bold">{formatNaira(order.total)}</dd></div>
@@ -248,12 +251,12 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
               </div>
             ) : null}
             {canReuploadReceipt ? (
-              <form action={reuploadOrderReceipt} className="mt-5 grid gap-3 rounded-md border border-amber-200 bg-amber-50 p-4">
+              <form action={reuploadOrderReceipt} className="mt-5 grid gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4">
                 <input type="hidden" name="return_to" value={`/orders/${order.id}`} />
                 <input type="hidden" name="order_id" value={order.dbId ?? ""} />
                 <label className="text-sm font-bold text-slate-950" htmlFor="receipt">Upload another receipt</label>
-                <input id="receipt" name="receipt" type="file" accept="image/*,.pdf" className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm" required />
-                <button className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-bold text-white">Submit receipt</button>
+                <input id="receipt" name="receipt" type="file" accept="image/*,.pdf" className="wcs-input" required />
+                <button className="btn-primary">Submit receipt</button>
               </form>
             ) : null}
             {canCancel ? (
@@ -263,7 +266,7 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
                 <button className="rounded-md border border-red-300 px-4 py-2 text-sm font-bold text-red-700">Cancel order</button>
               </form>
             ) : null}
-          </aside>
+          </DesignSurface>
         </section>
       </main>
       <PublicFooter />

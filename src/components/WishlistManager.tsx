@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { DesignSurface } from "@/components/DesignSurface";
 import { ProductGrid } from "@/components/ProductCard";
 import { defaultWishlist, wishlistStorageKey } from "@/lib/customer-flow";
 import { products } from "@/lib/marketplace-data";
@@ -21,5 +22,9 @@ export function WishlistManager() {
 
   const wishlistProducts = products.filter((product) => wishlist.includes(product.id));
 
-  return <ProductGrid products={wishlistProducts} />;
+  return (
+    <DesignSurface>
+      <ProductGrid products={wishlistProducts} />
+    </DesignSurface>
+  );
 }

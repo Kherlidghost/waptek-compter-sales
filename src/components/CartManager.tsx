@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { DesignSurface } from "@/components/DesignSurface";
 import { cartStorageKey, defaultCart, type CartLine } from "@/lib/customer-flow";
 import { formatNaira } from "@/lib/marketplace-data";
 import type { Product } from "@/lib/types";
@@ -68,7 +69,7 @@ export function CartManager({ products }: { products: Product[] }) {
 
   if (lines.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center shadow-sm">
+      <DesignSurface className="p-12 text-center">
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-3xl">
           🛒
         </div>
@@ -76,18 +77,18 @@ export function CartManager({ products }: { products: Product[] }) {
         <p className="mt-2 text-sm text-slate-600">Browse products and add items before checkout.</p>
         <Link
           href="/products"
-          className="mt-5 inline-flex rounded-lg bg-emerald-700 px-6 py-3 text-sm font-black text-white hover:bg-emerald-800"
+          className="btn-primary mt-5"
         >
           Browse Products
         </Link>
-      </div>
+      </DesignSurface>
     );
   }
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
       {/* Line items */}
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-950/5">
+      <DesignSurface className="overflow-hidden p-0">
         {lines.map((line, index) => {
           const unitPrice = line.product.discountPrice ?? line.product.price;
           const hasDiscount = line.product.discountPrice != null && line.product.discountPrice < line.product.price;
@@ -171,10 +172,10 @@ export function CartManager({ products }: { products: Product[] }) {
             </div>
           );
         })}
-      </div>
+      </DesignSurface>
 
       {/* Summary */}
-      <aside className="h-fit rounded-2xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-950/5">
+      <DesignSurface className="h-fit p-5">
         <p className="text-sm font-black uppercase text-slate-500">Order summary</p>
         <div className="mt-4 space-y-2 text-sm">
           {lines.map((line) => (
@@ -193,13 +194,13 @@ export function CartManager({ products }: { products: Product[] }) {
         <div className="mt-5 grid gap-2">
           <Link
             href="/checkout"
-            className="rounded-lg bg-emerald-700 px-5 py-3 text-center text-sm font-black text-white shadow-sm hover:bg-emerald-800"
+            className="btn-primary w-full"
           >
             Proceed to Checkout
           </Link>
           <Link
             href="/products"
-            className="rounded-lg border border-slate-300 bg-white px-5 py-3 text-center text-sm font-black text-slate-900 hover:border-emerald-400"
+            className="btn-outline w-full"
           >
             Continue Shopping
           </Link>
@@ -207,7 +208,7 @@ export function CartManager({ products }: { products: Product[] }) {
         <p className="mt-4 text-center text-xs text-slate-500">
           Payment by manual bank transfer. Receipt upload required.
         </p>
-      </aside>
+      </DesignSurface>
     </div>
   );
 }

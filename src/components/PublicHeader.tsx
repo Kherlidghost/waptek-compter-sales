@@ -4,6 +4,7 @@ import { isSupabaseConfigured } from "@/lib/supabase-config";
 import { createClient } from "@/lib/supabase/server";
 import { NotificationBell } from "./notification-bell";
 import { SessionNavigation } from "./SessionNavigation";
+import { WaptekBrand } from "./WaptekBrand";
 
 const navItems = [
   { href: "/categories", label: "Categories" },
@@ -42,23 +43,7 @@ export async function PublicHeader() {
         </div>
       </div>
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
-        {/* Logo */}
-        <Link
-          href="/"
-          className="flex shrink-0 items-center gap-3 text-slate-950 focus-visible:outline-emerald-600"
-          aria-label="WAPTEK COMPUTER SERVICES — home"
-        >
-          <span
-            className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-xs font-black text-emerald-300 shadow-lg shadow-slate-950/20"
-            aria-hidden="true"
-          >
-            WCS
-          </span>
-          <span className="hidden text-base font-black leading-tight tracking-tight sm:block">
-            WAPTEK<br />
-            <span className="text-xs font-semibold text-slate-500">COMPUTER SERVICES</span>
-          </span>
-        </Link>
+        <WaptekBrand />
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-1 text-sm font-semibold md:flex" aria-label="Main navigation">

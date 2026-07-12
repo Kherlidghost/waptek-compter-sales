@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { DesignSurface } from "@/components/DesignSurface";
 import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -141,7 +142,7 @@ export default async function OrdersPage() {
               ["💰 Upload Receipt", firstPendingOrder ? `/orders/${firstPendingOrder.id}` : "/orders", "Send payment proof"],
               ["🛠 Request Repair", "/repair", "Ask for diagnosis or repair"],
             ].map(([label, href, description]) => (
-              <Link key={label} className="min-h-28 rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 shadow-xl shadow-slate-950/5 hover:border-emerald-300 hover:from-emerald-50 hover:to-white" href={href}>
+              <Link key={label} className="wcs-card min-h-28 rounded-2xl p-5 hover:border-emerald-300" href={href}>
                 <p className="font-black text-slate-950">{label}</p>
                 <p className="mt-1 text-sm text-slate-600">{description}</p>
               </Link>
@@ -163,10 +164,10 @@ export default async function OrdersPage() {
                 ["Paid / confirmed", paidOrders.toString()],
                 [rejectedOrders > 0 ? "Rejected payments" : "Order value", rejectedOrders > 0 ? rejectedOrders.toString() : formatNaira(totalValue)],
               ]).map(([label, value]) => (
-            <div key={label} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5">
+            <DesignSurface key={label} className="p-6">
               <p className="text-sm text-slate-500">{label}</p>
               <p className="mt-2 text-3xl font-black text-slate-950">{value}</p>
-            </div>
+            </DesignSurface>
           ))}
         </section>
 
@@ -177,16 +178,16 @@ export default async function OrdersPage() {
 
         <div className="grid gap-4">
           {displayedOrders.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center shadow-xl shadow-slate-950/5">
+            <DesignSurface className="p-8 text-center">
               <p className="text-lg font-bold text-slate-950">No orders yet.</p>
               <p className="mt-2 text-sm text-slate-600">Place an order and upload a receipt to see it here.</p>
-              <Link className="mt-4 inline-flex rounded-md bg-emerald-700 px-4 py-2 text-sm font-bold text-white" href="/products">
+              <Link className="btn-primary mt-4" href="/products">
                 Continue shopping
               </Link>
-            </div>
+            </DesignSurface>
           ) : (
             displayedOrders.map((order) => (
-              <article key={order.id} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5">
+              <DesignSurface key={order.id} className="p-6">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
                     <p className="text-lg font-black text-slate-950">{order.id}</p>
@@ -200,15 +201,15 @@ export default async function OrdersPage() {
                   </div>
                 </div>
                 <div className="mt-4 flex flex-wrap gap-3">
-                  <Link className="rounded-md bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700" href={`/orders/${order.id}`}>
+                  <Link className="btn-dark" href={`/orders/${order.id}`}>
                     Track order
                   </Link>
-                  <Link className="rounded-md border border-slate-300 px-4 py-2 text-sm font-bold" href="/products">
+                  <Link className="btn-outline" href="/products">
                     Buy again
                   </Link>
                 </div>
                 {isCustomerAccount ? <OrderTimeline status={order.status} /> : null}
-              </article>
+              </DesignSurface>
             ))
           )}
         </div>

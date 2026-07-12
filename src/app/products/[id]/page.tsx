@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { DesignSurface } from "@/components/DesignSurface";
 import { ProductGrid } from "@/components/ProductCard";
 import { ProductActions } from "@/components/product-actions";
 import { PublicFooter } from "@/components/PublicFooter";
@@ -56,7 +57,7 @@ export default async function ProductDetailsPage({ params }: { params: Promise<{
       </div>
 
       <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1fr_420px]">
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-950/5">
+        <DesignSurface className="overflow-hidden p-0">
           <div
             className="h-80 bg-cover bg-center"
             style={{ backgroundImage: `url(${product.image})` }}
@@ -101,8 +102,8 @@ export default async function ProductDetailsPage({ params }: { params: Promise<{
               ))}
             </div>
           </div>
-        </div>
-        <aside className="h-fit rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5">
+        </DesignSurface>
+        <DesignSurface className="h-fit p-6">
           <p className="text-3xl font-black text-slate-950">{formatNaira(product.price)}</p>
           <p className="mt-2 text-sm text-slate-600">{product.condition} · {product.stock} in stock</p>
           <p className="mt-4 text-sm text-slate-600">
@@ -119,7 +120,7 @@ export default async function ProductDetailsPage({ params }: { params: Promise<{
             location={`${branch?.name ?? product.branchName ?? ""}, ${branch?.state ?? product.branchState ?? ""}`}
             productUrl={`${process.env.NEXT_PUBLIC_SITE_URL ?? "https://waptekcomputerservices.com"}/products/${product.slug}`}
           />
-        </aside>
+        </DesignSurface>
       </div>
 
       <ReviewSection product={product} />

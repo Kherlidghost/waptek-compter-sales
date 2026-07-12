@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { UserRole } from "@/lib/types";
 import { NotificationBell } from "./notification-bell";
 import { SessionNavigation } from "./SessionNavigation";
+import { WaptekBrand } from "./WaptekBrand";
 
 const roleLabel: Record<UserRole, string> = {
   admin: "Admin Workspace",
@@ -47,19 +48,7 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
       {/* Brand + user identity row */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-800 px-4 py-4 text-white sm:px-6">
         <div className="flex items-center gap-3">
-          <Link
-            href="/"
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-400 text-sm font-black text-slate-950 shadow-md shadow-slate-950/20"
-            aria-label="WAPTEK COMPUTER SERVICES home"
-          >
-            WCS
-          </Link>
-          <div>
-            <Link href="/" className="block text-base font-black leading-tight text-white hover:text-emerald-200">
-              WAPTEK COMPUTER SERVICES
-            </Link>
-            <p className="text-xs font-medium leading-tight text-slate-300">Sales of Computers &amp; Repairs</p>
-          </div>
+          <WaptekBrand theme="dark" className="items-center gap-3" />
         </div>
 
         {userSummary ? (

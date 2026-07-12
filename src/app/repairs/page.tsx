@@ -1,3 +1,4 @@
+import { DesignSurface } from "@/components/DesignSurface";
 import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 import { RepairRequestForm } from "@/components/RepairRequestForm";
@@ -104,14 +105,14 @@ export default async function RepairsPage() {
         {/* Request form */}
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-[1fr_420px]">
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5">
+            <DesignSurface className="p-6">
               <p className="section-eyebrow mb-1">Submit a request</p>
               <h2 className="text-2xl font-black text-slate-950">Repair Request Form</h2>
               <p className="mt-2 text-sm text-slate-600">
                 Fill in your details and describe the fault. A technician will follow up from your chosen branch.
               </p>
               <RepairRequestForm />
-            </div>
+            </DesignSurface>
 
             <aside className="h-fit space-y-4">
               {waNumber ? (
@@ -129,7 +130,7 @@ export default async function RepairsPage() {
                 </div>
               ) : null}
 
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <DesignSurface className="p-5">
                 <p className="font-black text-slate-950">Branch locations</p>
                 <div className="mt-3 grid gap-2 text-sm text-slate-600">
                   {[
@@ -143,7 +144,7 @@ export default async function RepairsPage() {
                     </div>
                   ))}
                 </div>
-              </div>
+              </DesignSurface>
             </aside>
           </div>
         </section>

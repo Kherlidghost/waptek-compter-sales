@@ -32,7 +32,7 @@ export function AddToCartButton({ productId, productName, disabled }: { productI
   return (
     <div>
       <button
-        className="w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-black text-white shadow-sm shadow-emerald-900/10 hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+        className="btn-primary w-full"
         disabled={disabled}
         onClick={addToCart}
         type="button"

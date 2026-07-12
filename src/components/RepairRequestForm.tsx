@@ -44,25 +44,25 @@ export function RepairRequestForm() {
   return (
     <form onSubmit={submitRepairRequest} className="mt-6 grid gap-4">
       <input
-        className="h-11 rounded-md border border-slate-300 px-3"
+        className="wcs-input"
         onChange={(event) => setForm((current) => ({ ...current, customerName: event.target.value }))}
         placeholder="Customer name"
         value={form.customerName}
       />
       <input
-        className="h-11 rounded-md border border-slate-300 px-3"
+        className="wcs-input"
         onChange={(event) => setForm((current) => ({ ...current, customerPhone: event.target.value }))}
         placeholder="Phone number"
         value={form.customerPhone}
       />
       <input
-        className="h-11 rounded-md border border-slate-300 px-3"
+        className="wcs-input"
         onChange={(event) => setForm((current) => ({ ...current, deviceModel: event.target.value }))}
         placeholder="Device model"
         value={form.deviceModel}
       />
       <select
-        className="h-11 rounded-md border border-slate-300 px-3"
+        className="wcs-input"
         onChange={(event) => setForm((current) => ({ ...current, branchId: event.target.value }))}
         value={form.branchId}
       >
@@ -73,12 +73,12 @@ export function RepairRequestForm() {
         ))}
       </select>
       <textarea
-        className="min-h-32 rounded-md border border-slate-300 p-3"
+        className="wcs-input min-h-32 rounded-2xl p-3"
         onChange={(event) => setForm((current) => ({ ...current, faultDescription: event.target.value }))}
         placeholder="Describe the fault"
         value={form.faultDescription}
       />
-      <button className="rounded-md bg-emerald-700 px-5 py-3 text-sm font-bold text-white" type="submit">
+      <button className="btn-primary" type="submit">
         Create repair request
       </button>
       {createdRequest ? (

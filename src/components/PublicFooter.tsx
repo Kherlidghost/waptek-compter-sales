@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { WaptekBrand } from "./WaptekBrand";
 
 const productLinks = [
   { href: "/products?category=laptops", label: "Laptops" },
@@ -36,15 +37,7 @@ export function PublicFooter() {
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr_1.2fr]">
           {/* Brand */}
           <section>
-            <div className="flex items-center gap-2.5">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500 text-xs font-black text-slate-950">
-                WCS
-              </span>
-              <div>
-                <p className="text-sm font-black leading-tight">WAPTEK COMPUTER SERVICES</p>
-                <p className="text-xs text-slate-400">Sales of Computers &amp; Repairs</p>
-              </div>
-            </div>
+            <WaptekBrand theme="dark" className="items-center gap-2.5" />
             <p className="mt-4 text-sm leading-7 text-slate-400">
               Verified computer vendors, genuine products, and professional repair services across Adamawa, Yobe, and Borno.
             </p>

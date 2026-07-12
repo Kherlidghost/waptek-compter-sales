@@ -1,3 +1,4 @@
+import { DesignSurface } from "@/components/DesignSurface";
 import { StatusBadge } from "@/components/StatusBadge";
 import { orderSteps } from "@/lib/customer-flow";
 
@@ -12,7 +13,7 @@ export function OrderTimeline({ status, events = [] }: { status: string; events?
   const eventByType = new Map(events.map((event) => [event.event_type, event]));
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+    <DesignSurface className="mt-5 p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-xl font-black text-slate-950">Order timeline</h2>
@@ -38,7 +39,7 @@ export function OrderTimeline({ status, events = [] }: { status: string; events?
           );
         })}
       </div>
-    </section>
+    </DesignSurface>
   );
 }
 

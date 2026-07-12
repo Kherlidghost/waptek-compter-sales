@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { DesignSurface } from "@/components/DesignSurface";
 import { cartStorageKey, type CartLine } from "@/lib/customer-flow";
 import { branches, formatNaira } from "@/lib/marketplace-data";
 import type { Product } from "@/lib/types";
@@ -72,23 +73,23 @@ export function CheckoutForm({
 
   if (!hasCartItems) {
     return (
-      <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-8 text-center">
+      <DesignSurface className="mt-6 p-8 text-center">
         <p className="font-bold text-slate-950">Your cart is empty.</p>
         <p className="mt-2 text-sm text-slate-600">Add products before checkout.</p>
         <Link
           href="/products"
-          className="mt-4 inline-block rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-800"
+          className="btn-primary mt-4"
         >
           Browse Products
         </Link>
-      </div>
+      </DesignSurface>
     );
   }
 
   return (
     <div className="mt-6 grid gap-6">
       {/* Cart summary */}
-      <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+      <DesignSurface className="p-4">
         <p className="text-sm font-black uppercase text-slate-500">Order summary</p>
         <ul className="mt-3 divide-y divide-slate-200">
           {lines.map((line) => (
@@ -103,30 +104,30 @@ export function CheckoutForm({
           <span className="font-black text-slate-950">Total</span>
           <span className="text-xl font-black text-emerald-700">{formatNaira(total)}</span>
         </div>
-      </div>
+      </DesignSurface>
 
       <form onSubmit={onSubmit} className="grid gap-4">
         <input name="cart_items" type="hidden" value={cartItems} />
         <input
-          className="h-11 rounded-md border border-slate-300 px-3"
+          className="wcs-input"
           name="customer_name"
           placeholder="Full name"
           required
         />
         <input
-          className="h-11 rounded-md border border-slate-300 px-3"
+          className="wcs-input"
           name="customer_phone"
           placeholder="Phone number"
           required
         />
         <input
-          className="h-11 rounded-md border border-slate-300 px-3"
+          className="wcs-input"
           name="customer_email"
           placeholder="Email address"
           type="email"
         />
         <select
-          className="h-11 rounded-md border border-slate-300 px-3"
+          className="wcs-input"
           name="branch_state"
           defaultValue={branches[0].state}
         >
@@ -137,11 +138,11 @@ export function CheckoutForm({
           ))}
         </select>
         <textarea
-          className="min-h-24 rounded-md border border-slate-300 p-3"
+          className="wcs-input min-h-24 rounded-2xl p-3"
           name="support_note"
           placeholder="Delivery or pickup note"
         />
-        <label className="rounded-md border border-dashed border-slate-300 p-5 text-sm text-slate-600">
+        <label className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5 text-sm text-slate-600">
           Upload receipt image/PDF
           <input
             className="mt-3 block w-full text-sm"
@@ -153,7 +154,7 @@ export function CheckoutForm({
         </label>
         <button
           type="submit"
-          className="rounded-md bg-slate-950 px-5 py-3 text-center text-sm font-bold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+          className="btn-primary w-full"
         >
           Submit receipt for confirmation
         </button>

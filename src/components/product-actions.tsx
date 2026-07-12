@@ -95,7 +95,7 @@ export function ProductActions({
 
   return (
     <div className="mt-6 grid gap-3">
-      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+      <div className="wcs-card p-3">
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-xs font-black uppercase tracking-wide text-slate-500">Quantity</p>
@@ -138,7 +138,7 @@ export function ProductActions({
       </div>
       <button
         onClick={addToCart}
-        className="rounded-xl bg-slate-950 px-4 py-3.5 text-center text-sm font-black text-white shadow-sm hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+        className="btn-dark w-full"
         type="button"
         disabled={outOfStock}
       >
@@ -146,7 +146,7 @@ export function ProductActions({
       </button>
       <button
         onClick={buyNow}
-        className="rounded-xl bg-emerald-700 px-4 py-3.5 text-center text-sm font-black text-white shadow-sm shadow-emerald-950/10 hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+        className="btn-primary w-full"
         type="button"
         disabled={outOfStock}
       >
@@ -154,17 +154,17 @@ export function ProductActions({
       </button>
       <button
         onClick={toggleWishlist}
-        className="rounded-xl border border-slate-300 px-4 py-3 text-center text-sm font-black hover:bg-slate-100"
+        className="btn-outline w-full"
         type="button"
       >
         {inWishlist ? "Remove from Wishlist" : "Save to Wishlist"}
       </button>
-      <Link className="rounded-xl border border-slate-300 px-4 py-3 text-center text-sm font-black hover:bg-slate-100" href="/login?next=/checkout">
+      <Link className="btn-outline w-full" href="/login?next=/checkout">
         Pay by Bank Transfer
       </Link>
       {whatsAppUrl ? (
         <a
-          className="rounded-xl border border-emerald-700 px-4 py-3 text-center text-sm font-black text-emerald-800 hover:bg-emerald-50"
+          className="btn-outline w-full border-emerald-700 text-emerald-800 hover:bg-emerald-50"
           href={whatsAppUrl}
           target="_blank"
           rel="noopener noreferrer"

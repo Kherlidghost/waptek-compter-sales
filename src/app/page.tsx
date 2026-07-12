@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DesignSurface } from "@/components/DesignSurface";
 import { ProductGrid } from "@/components/ProductCard";
 import { ProductExplorer } from "@/components/ProductExplorer";
 import { PublicFooter } from "@/components/PublicFooter";
@@ -155,12 +156,14 @@ export default async function Home({
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <p className="section-eyebrow mb-1">Find computer products</p>
             <h2 className="mb-5 text-2xl font-black text-slate-950">Search the marketplace</h2>
-            <ProductExplorer
-              branches={catalogBranches}
-              categories={catalogCategories}
-              compact
-              products={catalogProducts}
-            />
+            <DesignSurface className="p-4 sm:p-5">
+              <ProductExplorer
+                branches={catalogBranches}
+                categories={catalogCategories}
+                compact
+                products={catalogProducts}
+              />
+            </DesignSurface>
           </div>
         </section>
 
@@ -182,7 +185,7 @@ export default async function Home({
                 href={`/products?category=${category.id}`}
                 className="wcs-card group flex flex-col gap-3 rounded-2xl p-5 hover:border-emerald-300 focus-visible:outline-emerald-600"
               >
-                <span className="text-3xl" aria-hidden="true">
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-2xl" aria-hidden="true">
                   {categoryIcons[category.name] ?? "📦"}
                 </span>
                 <div>

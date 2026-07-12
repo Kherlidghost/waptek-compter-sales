@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { DesignSurface } from "@/components/DesignSurface";
 import { ProductGrid } from "@/components/ProductCard";
 import { branches as seedBranches, categories as seedCategories, products as seedProducts } from "@/lib/marketplace-data";
 import type { Branch, Category, Product } from "@/lib/types";
@@ -88,7 +89,7 @@ export function ProductExplorer({
 
   return (
     <section className={compact ? "w-full" : "mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8"}>
-      <div className="reference-shell p-4 sm:p-5">
+      <DesignSurface>
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">Marketplace search</p>
@@ -101,7 +102,7 @@ export function ProductExplorer({
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search laptops, desktops, accessories, repair tools…"
-          className="h-[52px] rounded-2xl border border-slate-300 px-4 text-sm font-semibold outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+          className="wcs-input h-[52px] rounded-2xl"
         />
         <select
           value={categoryId}
@@ -109,7 +110,7 @@ export function ProductExplorer({
             setCategoryId(event.target.value);
             setCategoryChip("");
           }}
-          className="h-[52px] rounded-2xl border border-slate-300 px-3 text-sm font-semibold"
+          className="wcs-input h-[52px] rounded-2xl px-3"
         >
           <option value="all">All categories</option>
           {categories.map((category) => (
@@ -121,7 +122,7 @@ export function ProductExplorer({
         <select
           value={branchId}
           onChange={(event) => setBranchId(event.target.value)}
-          className="h-[52px] rounded-2xl border border-slate-300 px-3 text-sm font-semibold"
+          className="wcs-input h-[52px] rounded-2xl px-3"
         >
           <option value="all">All branches</option>
           {branches.map((branch) => (
@@ -135,7 +136,7 @@ export function ProductExplorer({
           <select
             value={condition}
             onChange={(event) => setCondition(event.target.value)}
-            className="h-12 rounded-2xl border border-slate-300 px-3 text-sm font-semibold"
+            className="wcs-input h-12 rounded-2xl px-3"
           >
             <option value="all">All conditions</option>
             {conditions.map((item) => (
@@ -149,19 +150,19 @@ export function ProductExplorer({
             onChange={(event) => setMaxPrice(event.target.value)}
             inputMode="numeric"
             placeholder="Max price"
-            className="h-12 rounded-2xl border border-slate-300 px-4 text-sm font-semibold outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+            className="wcs-input h-12 rounded-2xl"
           />
           <select
             value={sort}
             onChange={(event) => setSort(event.target.value as SortOption)}
-            className="h-12 rounded-2xl border border-slate-300 px-3 text-sm font-semibold"
+            className="wcs-input h-12 rounded-2xl px-3"
           >
             <option value="featured">Featured first</option>
             <option value="price-low">Price: low to high</option>
             <option value="price-high">Price: high to low</option>
             <option value="stock-high">Stock: high to low</option>
           </select>
-          <label className="flex h-12 items-center gap-2 rounded-2xl border border-slate-300 px-3 text-sm font-semibold">
+          <label className="flex h-12 items-center gap-2 rounded-2xl border border-slate-300 bg-white px-3 text-sm font-semibold">
             <input
               checked={inStockOnly}
               onChange={(event) => setInStockOnly(event.target.checked)}
@@ -190,7 +191,7 @@ export function ProductExplorer({
             </button>
           ))}
         </div>
-      </div>
+      </DesignSurface>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-600">
         <p>
