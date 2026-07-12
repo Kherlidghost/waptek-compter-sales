@@ -34,7 +34,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col">
+      <body className="flex min-h-full flex-col">
         {children}
         {waNumber ? <WhatsAppFloatingButtonGuard number={waNumber} /> : null}
       </body>

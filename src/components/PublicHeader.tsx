@@ -35,20 +35,26 @@ export async function PublicHeader() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 shadow-sm backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+      <div className="top-announcement">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-2 text-xs font-bold sm:px-6 lg:px-8">
+          <p>Sales of Computers & Repairs across Adamawa, Yobe, and Borno</p>
+          <p className="text-emerald-100">Receipt-confirmed payments • Verified vendors • Branch support</p>
+        </div>
+      </div>
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-2.5 text-slate-950 focus-visible:outline-emerald-600"
+          className="flex shrink-0 items-center gap-3 text-slate-950 focus-visible:outline-emerald-600"
           aria-label="WAPTEK COMPUTER SERVICES — home"
         >
           <span
-            className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-950 text-xs font-black text-emerald-300 shadow-md shadow-slate-950/20"
+            className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-xs font-black text-emerald-300 shadow-lg shadow-slate-950/20"
             aria-hidden="true"
           >
             WCS
           </span>
-          <span className="hidden text-base font-black leading-tight sm:block">
+          <span className="hidden text-base font-black leading-tight tracking-tight sm:block">
             WAPTEK<br />
             <span className="text-xs font-semibold text-slate-500">COMPUTER SERVICES</span>
           </span>
@@ -59,7 +65,7 @@ export async function PublicHeader() {
           {navItems.map((item) => (
             <Link
               key={item.href}
-              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white focus-visible:outline-emerald-600"
+              className="rounded-xl px-3.5 py-2.5 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white focus-visible:outline-emerald-600"
               href={item.href}
             >
               {item.label}
@@ -72,7 +78,7 @@ export async function PublicHeader() {
           {userSummary ? <NotificationBell /> : null}
           <Link
             href="/cart"
-            className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-emerald-400 hover:text-emerald-700 focus-visible:outline-emerald-600"
+            className="relative flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-emerald-400 hover:text-emerald-700 focus-visible:outline-emerald-600"
             aria-label="Shopping cart"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
@@ -87,7 +93,7 @@ export async function PublicHeader() {
           {userSummary ? <NotificationBell /> : null}
           <Link
             href="/cart"
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm"
+            className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm"
             aria-label="Cart"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
@@ -95,12 +101,12 @@ export async function PublicHeader() {
             </svg>
           </Link>
           <details className="relative">
-            <summary className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-xl border border-slate-200 bg-white shadow-sm" aria-label="Open menu">
+            <summary className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm" aria-label="Open menu">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </summary>
-            <div className="absolute right-0 top-12 z-50 w-64 rounded-2xl border border-slate-200 bg-white p-3 shadow-2xl shadow-slate-950/10">
+            <div className="absolute right-0 top-12 z-50 w-72 rounded-3xl border border-slate-200 bg-white p-3 shadow-2xl shadow-slate-950/10">
               <nav className="grid gap-1 text-sm" aria-label="Mobile navigation">
                 {navItems.map((item) => (
                   <Link

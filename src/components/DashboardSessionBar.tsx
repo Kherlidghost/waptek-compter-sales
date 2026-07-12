@@ -43,34 +43,34 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
   }
 
   return (
-    <header className="mx-auto max-w-7xl overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-lg shadow-slate-950/8 backdrop-blur-sm">
+    <header className="mx-auto max-w-7xl overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 shadow-2xl shadow-slate-950/10 backdrop-blur-sm">
       {/* Brand + user identity row */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-3 sm:px-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-800 px-4 py-4 text-white sm:px-6">
         <div className="flex items-center gap-3">
           <Link
             href="/"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-950 text-sm font-black text-emerald-300 shadow-md shadow-slate-950/20"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-400 text-sm font-black text-slate-950 shadow-md shadow-slate-950/20"
             aria-label="WAPTEK COMPUTER SERVICES home"
           >
             WCS
           </Link>
           <div>
-            <Link href="/" className="block text-base font-black leading-tight text-slate-950 hover:text-emerald-700">
+            <Link href="/" className="block text-base font-black leading-tight text-white hover:text-emerald-200">
               WAPTEK COMPUTER SERVICES
             </Link>
-            <p className="text-xs font-medium leading-tight text-slate-400">Sales of Computers &amp; Repairs</p>
+            <p className="text-xs font-medium leading-tight text-slate-300">Sales of Computers &amp; Repairs</p>
           </div>
         </div>
 
         {userSummary ? (
           <div className="flex items-center gap-3">
             <div className="hidden text-right sm:block">
-              <p className="text-xs font-black uppercase tracking-wide text-emerald-700">
+              <p className="text-xs font-black uppercase tracking-wide text-emerald-200">
                 {roleLabel[userSummary.role as UserRole] ?? userSummary.role}
               </p>
-              <p className="max-w-52 truncate text-xs text-slate-500">{userSummary.email}</p>
+              <p className="max-w-52 truncate text-xs text-slate-300">{userSummary.email}</p>
             </div>
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-700 text-xs font-black text-white shadow-sm">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white text-xs font-black text-slate-950 shadow-sm">
               {userSummary.email.charAt(0).toUpperCase()}
             </div>
           </div>
@@ -78,7 +78,7 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
       </div>
 
       {/* Navigation + logout row */}
-      <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2 sm:px-6">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 sm:px-6">
         <nav className="flex flex-wrap gap-1 text-sm font-semibold" aria-label="Dashboard navigation">
           <Link
             className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"

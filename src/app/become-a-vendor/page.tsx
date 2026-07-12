@@ -18,10 +18,10 @@ export default async function BecomeVendorPage({
   const { data: branches } = await supabase.from("branches").select("id, name, state, city").order("state");
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen marketplace-shell text-slate-900">
       <PublicHeader />
       <main className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:px-8">
-        <section className="space-y-5">
+        <section className="space-y-5 rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-xl shadow-slate-950/5">
           <p className="text-sm font-bold uppercase text-emerald-700">Vendor onboarding</p>
           <h1 className="text-4xl font-black text-slate-950">Sell Your Computer Products on WAPTEK COMPUTER SERVICES</h1>
           <p className="text-base leading-7 text-slate-600">
@@ -39,32 +39,32 @@ export default async function BecomeVendorPage({
           ) : null}
         </section>
 
-        <form action={submitVendorApplication} className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <input type="hidden" name="return_to" value="/become-a-vendor" />
+        <form action={submitVendorApplication} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl shadow-slate-950/8">
+          <input type="hidden" name="return_to" value="/vendor/register" />
           <h2 className="text-2xl font-black text-slate-950">Vendor registration form</h2>
           <p className="mt-2 text-sm text-slate-600">Your application will be saved as Pending Approval until an admin reviews it.</p>
           {params.error ? <p className="mt-4 rounded-md bg-red-50 p-3 text-sm font-semibold text-red-800">{params.error}</p> : null}
           {params.success ? <p className="mt-4 rounded-md bg-emerald-50 p-3 text-sm font-semibold text-emerald-800">{params.success}</p> : null}
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            <input className="h-11 rounded-md border border-slate-300 px-3" name="business_name" placeholder="Business Name" required />
-            <input className="h-11 rounded-md border border-slate-300 px-3" name="owner_name" placeholder="Owner Full Name" required />
-            <input className="h-11 rounded-md border border-slate-300 px-3" name="business_email" type="email" placeholder="Email" defaultValue={user?.email ?? ""} required />
-            <input className="h-11 rounded-md border border-slate-300 px-3" name="phone" placeholder="Phone Number" required />
-            <input className="h-11 rounded-md border border-slate-300 px-3 sm:col-span-2" name="business_address" placeholder="Business Address" required />
-            <select className="h-11 rounded-md border border-slate-300 px-3" name="state" required>
+            <input className="wcs-input" name="business_name" placeholder="Business Name" required />
+            <input className="wcs-input" name="owner_name" placeholder="Owner Full Name" required />
+            <input className="wcs-input" name="business_email" type="email" placeholder="Email" defaultValue={user?.email ?? ""} required />
+            <input className="wcs-input" name="phone" placeholder="Phone Number" required />
+            <input className="wcs-input sm:col-span-2" name="business_address" placeholder="Business Address" required />
+            <select className="wcs-input" name="state" required>
               <option value="">State</option>
               {(branches ?? []).map((branch) => <option key={branch.id} value={branch.state}>{branch.state}</option>)}
             </select>
-            <input className="h-11 rounded-md border border-slate-300 px-3" name="city" placeholder="City" required />
-            <select className="h-11 rounded-md border border-slate-300 px-3" name="business_type" required>
+            <input className="wcs-input" name="city" placeholder="City" required />
+            <select className="wcs-input" name="business_type" required>
               <option value="">Business Type</option>
               <option>Computer Sales</option>
               <option>Accessories Sales</option>
               <option>Repair Services</option>
               <option>Components Supplier</option>
             </select>
-            <input className="h-11 rounded-md border border-slate-300 px-3" name="national_id_or_cac" placeholder="National ID or CAC Number (optional)" />
+            <input className="wcs-input" name="national_id_or_cac" placeholder="National ID or CAC Number (optional)" />
             <label className="grid gap-2 text-sm font-semibold text-slate-700">
               Profile Photo (optional)
               <input className="rounded-md border border-slate-300 px-3 py-2" name="profile_photo" type="file" accept="image/*" />
@@ -78,7 +78,7 @@ export default async function BecomeVendorPage({
             <input name="agreement" type="checkbox" required />
             I agree to the Marketplace Terms.
           </label>
-          <button className="mt-6 rounded-md bg-emerald-700 px-5 py-3 text-sm font-bold text-white" type="submit">
+          <button className="mt-6 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-black text-white shadow-sm shadow-emerald-950/10 hover:bg-emerald-800" type="submit">
             Submit Vendor Application
           </button>
         </form>

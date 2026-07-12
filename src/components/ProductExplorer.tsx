@@ -88,13 +88,20 @@ export function ProductExplorer({
 
   return (
     <section className={compact ? "w-full" : "mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8"}>
-      <div className="rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-xl shadow-slate-950/5 backdrop-blur">
+      <div className="reference-shell p-4 sm:p-5">
+        <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">Marketplace search</p>
+            <h2 className="mt-1 text-xl font-black text-slate-950">{compact ? "What are you looking for?" : "Find the right computer product"}</h2>
+          </div>
+          <p className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">Live catalogue filters</p>
+        </div>
         <div className="grid gap-3 md:grid-cols-[1fr_190px_190px]">
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search laptops, desktops, accessories, repair tools…"
-          className="h-12 rounded-lg border border-slate-300 px-4 text-sm font-medium outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+          className="h-[52px] rounded-2xl border border-slate-300 px-4 text-sm font-semibold outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
         />
         <select
           value={categoryId}
@@ -102,7 +109,7 @@ export function ProductExplorer({
             setCategoryId(event.target.value);
             setCategoryChip("");
           }}
-          className="h-12 rounded-lg border border-slate-300 px-3 text-sm font-medium"
+          className="h-[52px] rounded-2xl border border-slate-300 px-3 text-sm font-semibold"
         >
           <option value="all">All categories</option>
           {categories.map((category) => (
@@ -114,7 +121,7 @@ export function ProductExplorer({
         <select
           value={branchId}
           onChange={(event) => setBranchId(event.target.value)}
-          className="h-12 rounded-lg border border-slate-300 px-3 text-sm font-medium"
+          className="h-[52px] rounded-2xl border border-slate-300 px-3 text-sm font-semibold"
         >
           <option value="all">All branches</option>
           {branches.map((branch) => (
@@ -128,7 +135,7 @@ export function ProductExplorer({
           <select
             value={condition}
             onChange={(event) => setCondition(event.target.value)}
-            className="h-12 rounded-lg border border-slate-300 px-3 text-sm font-medium"
+            className="h-12 rounded-2xl border border-slate-300 px-3 text-sm font-semibold"
           >
             <option value="all">All conditions</option>
             {conditions.map((item) => (
@@ -142,19 +149,19 @@ export function ProductExplorer({
             onChange={(event) => setMaxPrice(event.target.value)}
             inputMode="numeric"
             placeholder="Max price"
-            className="h-12 rounded-lg border border-slate-300 px-4 text-sm font-medium outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+            className="h-12 rounded-2xl border border-slate-300 px-4 text-sm font-semibold outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
           />
           <select
             value={sort}
             onChange={(event) => setSort(event.target.value as SortOption)}
-            className="h-12 rounded-lg border border-slate-300 px-3 text-sm font-medium"
+            className="h-12 rounded-2xl border border-slate-300 px-3 text-sm font-semibold"
           >
             <option value="featured">Featured first</option>
             <option value="price-low">Price: low to high</option>
             <option value="price-high">Price: high to low</option>
             <option value="stock-high">Stock: high to low</option>
           </select>
-          <label className="flex h-12 items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm font-medium">
+          <label className="flex h-12 items-center gap-2 rounded-2xl border border-slate-300 px-3 text-sm font-semibold">
             <input
               checked={inStockOnly}
               onChange={(event) => setInStockOnly(event.target.checked)}
@@ -168,7 +175,7 @@ export function ProductExplorer({
           {categoryChips.map((chip) => (
             <button
               key={chip}
-              className={`rounded-full border px-4 py-2 text-sm font-bold shadow-sm ${
+              className={`rounded-full border px-4 py-2 text-sm font-black shadow-sm ${
                 categoryChip === chip
                   ? "border-emerald-700 bg-emerald-50 text-emerald-800"
                   : "border-slate-300 text-slate-700 hover:border-emerald-500 hover:text-emerald-700"
@@ -200,7 +207,7 @@ export function ProductExplorer({
             setInStockOnly(false);
             setSort("featured");
           }}
-          className="rounded-lg border border-slate-300 bg-white/80 px-4 py-2 font-bold hover:bg-white"
+          className="rounded-xl border border-slate-300 bg-white/80 px-4 py-2 font-black hover:bg-white"
           type="button"
         >
           Reset filters

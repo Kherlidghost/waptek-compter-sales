@@ -37,7 +37,9 @@ export function ProductActions({
 }) {
   const [message, setMessage] = useState("");
   const [inWishlist, setInWishlist] = useState(false);
+  const [quantity, setQuantity] = useState(1);
   const outOfStock = product.stock <= 0;
+  const maxQuantity = Math.max(1, product.stock);
 
   useEffect(() => {
     setInWishlist(readJson(wishlistStorageKey, defaultWishlist).includes(product.id));
@@ -51,12 +53,13 @@ export function ProductActions({
 
     const cart = readJson<CartLine[]>(cartStorageKey, defaultCart);
     const existing = cart.find((line) => line.productId === product.id);
+    const safeQuantity = Math.min(maxQuantity, Math.max(1, quantity));
     const nextCart = existing
-      ? cart.map((line) => (line.productId === product.id ? { ...line, quantity: line.quantity + 1 } : line))
-      : [...cart, { productId: product.id, quantity: 1 }];
+      ? cart.map((line) => (line.productId === product.id ? { ...line, quantity: Math.min(maxQuantity, line.quantity + safeQuantity) } : line))
+      : [...cart, { productId: product.id, quantity: safeQuantity }];
 
     writeJson(cartStorageKey, nextCart);
-    setMessage(`${product.name} added to cart.`);
+    setMessage(`${safeQuantity} × ${product.name} added to cart.`);
     return true;
   }
 
@@ -92,9 +95,50 @@ export function ProductActions({
 
   return (
     <div className="mt-6 grid gap-3">
+      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-xs font-black uppercase tracking-wide text-slate-500">Quantity</p>
+            <p className="mt-1 text-sm font-semibold text-slate-700">{product.stock} available</p>
+          </div>
+          <div className="flex items-center overflow-hidden rounded-xl border border-slate-300 bg-white">
+            <button
+              aria-label="Reduce quantity"
+              className="h-10 w-10 text-lg font-black text-slate-700 hover:bg-slate-100 disabled:text-slate-300"
+              disabled={quantity <= 1 || outOfStock}
+              onClick={() => setQuantity((current) => Math.max(1, current - 1))}
+              type="button"
+            >
+              −
+            </button>
+            <input
+              aria-label="Quantity"
+              className="h-10 w-14 border-x border-slate-200 text-center text-sm font-black outline-none"
+              max={maxQuantity}
+              min={1}
+              onChange={(event) => {
+                const next = Math.floor(Number(event.target.value));
+                setQuantity(Number.isFinite(next) ? Math.min(maxQuantity, Math.max(1, next)) : 1);
+              }}
+              type="number"
+              value={quantity}
+              disabled={outOfStock}
+            />
+            <button
+              aria-label="Increase quantity"
+              className="h-10 w-10 text-lg font-black text-slate-700 hover:bg-slate-100 disabled:text-slate-300"
+              disabled={quantity >= maxQuantity || outOfStock}
+              onClick={() => setQuantity((current) => Math.min(maxQuantity, current + 1))}
+              type="button"
+            >
+              +
+            </button>
+          </div>
+        </div>
+      </div>
       <button
         onClick={addToCart}
-        className="rounded-lg bg-slate-950 px-4 py-3 text-center text-sm font-black text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+        className="rounded-xl bg-slate-950 px-4 py-3.5 text-center text-sm font-black text-white shadow-sm hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-400"
         type="button"
         disabled={outOfStock}
       >
@@ -102,7 +146,7 @@ export function ProductActions({
       </button>
       <button
         onClick={buyNow}
-        className="rounded-lg bg-emerald-700 px-4 py-3 text-center text-sm font-black text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+        className="rounded-xl bg-emerald-700 px-4 py-3.5 text-center text-sm font-black text-white shadow-sm shadow-emerald-950/10 hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-slate-400"
         type="button"
         disabled={outOfStock}
       >
@@ -110,17 +154,17 @@ export function ProductActions({
       </button>
       <button
         onClick={toggleWishlist}
-        className="rounded-lg border border-slate-300 px-4 py-3 text-center text-sm font-black hover:bg-slate-100"
+        className="rounded-xl border border-slate-300 px-4 py-3 text-center text-sm font-black hover:bg-slate-100"
         type="button"
       >
         {inWishlist ? "Remove from Wishlist" : "Save to Wishlist"}
       </button>
-      <Link className="rounded-lg border border-slate-300 px-4 py-3 text-center text-sm font-black hover:bg-slate-100" href="/login?next=/checkout">
+      <Link className="rounded-xl border border-slate-300 px-4 py-3 text-center text-sm font-black hover:bg-slate-100" href="/login?next=/checkout">
         Pay by Bank Transfer
       </Link>
       {whatsAppUrl ? (
         <a
-          className="rounded-lg border border-emerald-700 px-4 py-3 text-center text-sm font-black text-emerald-800 hover:bg-emerald-50"
+          className="rounded-xl border border-emerald-700 px-4 py-3 text-center text-sm font-black text-emerald-800 hover:bg-emerald-50"
           href={whatsAppUrl}
           target="_blank"
           rel="noopener noreferrer"
@@ -132,4 +176,3 @@ export function ProductActions({
     </div>
   );
 }
-

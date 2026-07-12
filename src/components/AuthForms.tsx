@@ -46,7 +46,9 @@ export function AuthForms({
 
   return (
     <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-      <section className="rounded-lg border border-slate-200 bg-slate-950 p-6 text-white shadow-sm">
+      <section className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 p-8 text-white shadow-2xl shadow-slate-950/15">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(16,185,129,0.24),transparent_22rem)]" aria-hidden="true" />
+        <div className="relative">
         <p className="text-sm font-bold uppercase text-emerald-300">WAPTEK COMPUTER SERVICES</p>
         <h1 className="mt-3 text-3xl font-black">Sales of Computers & Repairs</h1>
         <p className="mt-3 text-sm leading-6 text-slate-300">
@@ -63,10 +65,11 @@ export function AuthForms({
             </div>
           ))}
         </div>
+        </div>
       </section>
 
       <section className="grid gap-6">
-        <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5">
           <div>
             <p className="text-sm font-bold uppercase text-emerald-700">Sign in</p>
             <h2 className="mt-2 text-3xl font-black text-slate-950">Welcome back</h2>
@@ -88,11 +91,11 @@ export function AuthForms({
             <input type="hidden" name="next" value={next} />
             <label className="grid gap-2 text-sm font-semibold text-slate-700">
               Email address
-              <input className="h-11 rounded-md border border-slate-300 px-3 font-normal" name="email" type="email" autoComplete="email" placeholder="you@example.com" required />
+              <input className="wcs-input font-normal" name="email" type="email" autoComplete="email" placeholder="you@example.com" required />
             </label>
             <label className="grid gap-2 text-sm font-semibold text-slate-700">
               Password
-              <div className="flex overflow-hidden rounded-md border border-slate-300">
+              <div className="flex overflow-hidden rounded-xl border border-slate-300">
                 <input className="h-11 min-w-0 flex-1 px-3 font-normal outline-none" name="password" type={showLoginPassword ? "text" : "password"} autoComplete="current-password" placeholder="Enter password" required />
                 <button className="border-l border-slate-300 px-3 text-xs font-bold text-slate-700" onClick={() => setShowLoginPassword((current) => !current)} type="button">
                   {showLoginPassword ? "Hide" : "Show"}
@@ -108,13 +111,13 @@ export function AuthForms({
                 Forgot password?
               </Link>
             </div>
-            <SubmitButton className="rounded-md bg-slate-950 px-5 py-3 text-sm font-bold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-400" pendingText="Signing in...">
+            <SubmitButton className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-400" pendingText="Signing in...">
               Sign in securely
             </SubmitButton>
           </form>
         </div>
 
-        <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5">
           <p className="text-sm font-bold uppercase text-emerald-700">Customer registration</p>
           <h2 className="mt-2 text-3xl font-black text-slate-950">Create your account</h2>
           <p className="mt-2 text-sm leading-6 text-slate-600">
@@ -131,21 +134,21 @@ export function AuthForms({
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="grid gap-2 text-sm font-semibold text-slate-700">
                 Full name
-                <input className="h-11 rounded-md border border-slate-300 px-3 font-normal" name="full_name" placeholder="Full name" required />
+                <input className="wcs-input font-normal" name="full_name" placeholder="Full name" required />
               </label>
               <label className="grid gap-2 text-sm font-semibold text-slate-700">
                 Phone number
-                <input className="h-11 rounded-md border border-slate-300 px-3 font-normal" name="phone" placeholder="+234..." required />
+                <input className="wcs-input font-normal" name="phone" placeholder="+234..." required />
               </label>
             </div>
             <label className="grid gap-2 text-sm font-semibold text-slate-700">
               Email address
-              <input className="h-11 rounded-md border border-slate-300 px-3 font-normal" name="email" type="email" autoComplete="email" placeholder="you@example.com" onChange={(event) => setRegisterEmail(event.target.value)} required />
+              <input className="wcs-input font-normal" name="email" type="email" autoComplete="email" placeholder="you@example.com" onChange={(event) => setRegisterEmail(event.target.value)} required />
             </label>
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="grid gap-2 text-sm font-semibold text-slate-700">
                 Password
-                <div className="flex overflow-hidden rounded-md border border-slate-300">
+                <div className="flex overflow-hidden rounded-xl border border-slate-300">
                   <input className="h-11 min-w-0 flex-1 px-3 font-normal outline-none" name="password" type={showRegisterPassword ? "text" : "password"} autoComplete="new-password" minLength={8} onChange={(event) => setRegisterPassword(event.target.value)} placeholder="Min 8 chars, upper, lower, number, symbol" required />
                   <button className="border-l border-slate-300 px-3 text-xs font-bold text-slate-700" onClick={() => setShowRegisterPassword((current) => !current)} type="button">
                     {showRegisterPassword ? "Hide" : "Show"}
@@ -154,12 +157,12 @@ export function AuthForms({
               </label>
               <label className="grid gap-2 text-sm font-semibold text-slate-700">
                 Confirm password
-                <input className="h-11 rounded-md border border-slate-300 px-3 font-normal" name="confirm_password" type={showRegisterPassword ? "text" : "password"} autoComplete="new-password" minLength={8} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Repeat password" required />
+                <input className="wcs-input font-normal" name="confirm_password" type={showRegisterPassword ? "text" : "password"} autoComplete="new-password" minLength={8} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Repeat password" required />
               </label>
             </div>
             {passwordWeak ? <p className="text-sm font-semibold text-amber-700">Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character.</p> : null}
             {passwordMismatch ? <p className="text-sm font-semibold text-red-700">Password and confirm password must match.</p> : null}
-            <SubmitButton className="rounded-md bg-emerald-700 px-5 py-3 text-sm font-bold text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-slate-400" pendingText="Creating account...">
+            <SubmitButton className="rounded-xl bg-emerald-700 px-5 py-3 text-sm font-bold text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-slate-400" pendingText="Creating account...">
               Create account
             </SubmitButton>
           </form>

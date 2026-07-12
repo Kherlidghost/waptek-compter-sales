@@ -26,7 +26,7 @@ export function ProductCard({ product }: { product: Product }) {
   const imgSrc = product.image || FALLBACK_IMAGE;
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-xl hover:shadow-slate-950/10">
+    <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-950/5 transition hover:-translate-y-1 hover:border-emerald-200 hover:shadow-2xl hover:shadow-slate-950/10">
       {/* Image */}
       <Link
         href={`/products/${product.slug}`}
@@ -34,7 +34,7 @@ export function ProductCard({ product }: { product: Product }) {
         aria-label={`View ${product.name}`}
         tabIndex={-1}
       >
-        <div className="relative h-48 w-full overflow-hidden bg-slate-100">
+        <div className="relative h-52 w-full overflow-hidden bg-slate-100">
           <Image
             src={imgSrc}
             alt={product.name}
@@ -45,19 +45,19 @@ export function ProductCard({ product }: { product: Product }) {
           />
         </div>
         {product.featured ? (
-          <span className="absolute left-3 top-3 rounded-full bg-emerald-500 px-2.5 py-0.5 text-xs font-black text-slate-950">
+          <span className="absolute left-3 top-3 rounded-full bg-emerald-400 px-3 py-1 text-xs font-black text-slate-950 shadow-sm">
             Featured
           </span>
         ) : null}
       </Link>
 
       {/* Body */}
-      <div className="flex flex-1 flex-col gap-3 p-4">
+      <div className="flex flex-1 flex-col gap-3 p-5">
         <div>
           <p className="text-xs font-bold uppercase tracking-wide text-emerald-700">{categoryName}</p>
           <Link
             href={`/products/${product.slug}`}
-            className="mt-1 block text-base font-black leading-snug text-slate-950 hover:text-emerald-700 focus-visible:outline-emerald-600"
+            className="mt-1 block text-lg font-black leading-snug text-slate-950 hover:text-emerald-700 focus-visible:outline-emerald-600"
           >
             {product.name}
           </Link>
@@ -113,7 +113,7 @@ export function ProductCard({ product }: { product: Product }) {
           />
           <Link
             href={`/products/${product.slug}`}
-            className="rounded-lg border border-slate-300 px-3 py-2.5 text-center text-xs font-bold text-slate-900 transition hover:border-emerald-500 hover:text-emerald-700 focus-visible:outline-emerald-600"
+            className="rounded-xl border border-slate-300 px-3 py-2.5 text-center text-xs font-black text-slate-900 transition hover:border-emerald-500 hover:bg-emerald-50 hover:text-emerald-700 focus-visible:outline-emerald-600"
           >
             View Details
           </Link>
@@ -132,7 +132,7 @@ export function ProductGrid({
 }) {
   if (products.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-slate-300 bg-white/90 p-10 text-center shadow-sm">
+      <div className="rounded-3xl border border-dashed border-slate-300 bg-white/90 p-10 text-center shadow-xl shadow-slate-950/5">
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-2xl">
           📦
         </div>
