@@ -72,7 +72,7 @@ export default async function VendorDashboardPage({
           <p className="text-sm font-bold uppercase text-emerald-700">Vendor onboarding required</p>
           <h1 className="mt-2 text-3xl font-black text-slate-950">Submit your vendor application</h1>
           <p className="mt-2 text-sm text-slate-600">Vendor tools become available after you submit the registration form and admin approves your business.</p>
-          <Link className="mt-5 inline-flex rounded-md bg-emerald-700 px-4 py-2 text-sm font-bold text-white" href="/become-a-vendor">Become a Vendor</Link>
+          <Link className="btn btn-primary mt-5" href="/become-a-vendor">Become a Vendor</Link>
         </section>
       ) : vendor.status !== "approved" ? (
         <section className="mx-auto max-w-5xl rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
@@ -95,18 +95,18 @@ export default async function VendorDashboardPage({
           {vendor.rejection_reason || vendor.suspension_reason ? (
             <p className="mt-5 rounded-md bg-amber-50 p-4 text-sm font-semibold text-amber-900">{vendor.rejection_reason ?? vendor.suspension_reason}</p>
           ) : null}
-          <Link className="mt-5 inline-flex rounded-md border border-slate-300 px-4 py-2 text-sm font-bold" href="/contact">Contact Support</Link>
+          <Link className="btn btn-outline mt-5" href="/contact">Contact Support</Link>
         </section>
       ) : (
         <>
-          <section className="mx-auto max-w-7xl rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <section className="mx-auto max-w-7xl wcs-card p-5">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-bold uppercase text-emerald-700">Approved vendor profile</p>
                 <h1 className="mt-1 text-3xl font-black text-slate-950">{vendor.business_name}</h1>
                 <p className="mt-2 text-sm text-slate-600">Approved {vendor.approved_at ? new Date(vendor.approved_at).toLocaleDateString("en-NG") : "for marketplace selling"}.</p>
               </div>
-              <Link className="rounded-md border border-slate-300 px-4 py-2 text-sm font-bold" href={`/vendors/${vendor.id}`}>View public profile</Link>
+              <Link className="btn btn-outline" href={`/vendors/${vendor.id}`}>View public profile</Link>
             </div>
             {params.error ? <p className="mt-4 rounded-md bg-red-50 p-3 text-sm font-semibold text-red-800">{params.error}</p> : null}
             {params.success ? <p className="mt-4 rounded-md bg-emerald-50 p-3 text-sm font-semibold text-emerald-800">{params.success}</p> : null}
@@ -114,14 +114,14 @@ export default async function VendorDashboardPage({
               <summary className="cursor-pointer text-sm font-black text-slate-950">Edit vendor profile</summary>
               <form action={updateVendorProfile} className="mt-4 grid gap-3 sm:grid-cols-2">
                 <input type="hidden" name="return_to" value="/vendor" />
-                <input className="h-11 rounded-md border border-slate-300 px-3" name="business_name" defaultValue={vendor.business_name} placeholder="Business Name" />
-                <input className="h-11 rounded-md border border-slate-300 px-3" name="owner_name" defaultValue={vendor.owner_name ?? ""} placeholder="Owner Full Name" />
-                <input className="h-11 rounded-md border border-slate-300 px-3" name="business_email" defaultValue={vendor.business_email ?? ""} placeholder="Email" />
-                <input className="h-11 rounded-md border border-slate-300 px-3" name="phone" defaultValue={vendor.business_phone ?? ""} placeholder="Phone" />
-                <input className="h-11 rounded-md border border-slate-300 px-3 sm:col-span-2" name="business_address" defaultValue={vendor.business_address ?? ""} placeholder="Business Address" />
-                <input className="h-11 rounded-md border border-slate-300 px-3" name="city" defaultValue={vendor.city ?? ""} placeholder="City" />
-                <input className="h-11 rounded-md border border-slate-300 px-3" name="business_type" defaultValue={vendor.business_type ?? ""} placeholder="Business Type" />
-                <button className="rounded-md bg-slate-950 px-4 py-2 text-sm font-bold text-white">Save profile</button>
+                <input className="wcs-input h-11" name="business_name" defaultValue={vendor.business_name} placeholder="Business Name" />
+                <input className="wcs-input h-11" name="owner_name" defaultValue={vendor.owner_name ?? ""} placeholder="Owner Full Name" />
+                <input className="wcs-input h-11" name="business_email" defaultValue={vendor.business_email ?? ""} placeholder="Email" />
+                <input className="wcs-input h-11" name="phone" defaultValue={vendor.business_phone ?? ""} placeholder="Phone" />
+                <input className="wcs-input h-11 sm:col-span-2" name="business_address" defaultValue={vendor.business_address ?? ""} placeholder="Business Address" />
+                <input className="wcs-input h-11" name="city" defaultValue={vendor.city ?? ""} placeholder="City" />
+                <input className="wcs-input h-11" name="business_type" defaultValue={vendor.business_type ?? ""} placeholder="Business Type" />
+                <button className="btn btn-primary">Save profile</button>
               </form>
             </details>
           </section>

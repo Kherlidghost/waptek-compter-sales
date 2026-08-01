@@ -134,28 +134,28 @@ export function VendorDashboard() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-8">
-      <header className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 p-6 text-white shadow-2xl shadow-slate-950/15">
+    <div className="mx-auto max-w-7xl space-y-6">
+      <header className="overflow-hidden rounded-[28px] border border-slate-200/80 bg-slate-950 p-6 text-white shadow-[0_20px_60px_-30px_rgba(15,23,42,0.35)]">
         <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
           <p className="w-fit rounded-full border border-emerald-300/30 bg-emerald-300/10 px-4 py-2 text-sm font-black uppercase text-emerald-200">Selling tools</p>
           <h1 className="mt-4 text-3xl font-black text-white sm:text-4xl">Welcome back, Vendor</h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">Focus on the next selling task: add products, update stock, or check customer orders.</p>
         </div>
-        <Link className="rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-black text-white hover:bg-white/20" href="/products">
+        <Link className="btn btn-outline border-white/20 bg-white/10 px-5 py-3 text-sm font-black text-white hover:bg-white/20" href="/products">
           View public listing
         </Link>
         </div>
       </header>
 
-      <section className="rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-xl shadow-slate-950/5">
+      <section className="wcs-card p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-sm font-black uppercase text-emerald-700">Next best actions</p>
             <h2 className="mt-1 text-2xl font-black text-slate-950">What can I do here?</h2>
             <p className="mt-1 text-sm text-slate-600">Choose the selling task you want to handle now.</p>
           </div>
-          <Link className="rounded-xl bg-emerald-700 px-5 py-3 text-sm font-black text-white shadow-sm shadow-emerald-950/10" href="#add-product">
+          <Link className="btn btn-primary" href="#add-product">
             Add Product
           </Link>
         </div>
@@ -166,7 +166,7 @@ export function VendorDashboard() {
             ["⚙ Update Stock", `${lowStockCount} low-stock items`, "#vendor-inventory"],
             ["🧾 View Orders", "Orders for your products", "#vendor-orders"],
           ].map(([label, description, href]) => (
-            <Link key={label} className="min-h-28 rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 shadow-sm hover:border-emerald-300 hover:from-emerald-50 hover:to-white" href={href}>
+            <Link key={label} className="min-h-28 rounded-[24px] border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 shadow-sm hover:border-emerald-300 hover:from-emerald-50 hover:to-white" href={href}>
               <p className="font-black text-slate-950">{label}</p>
               <p className="mt-1 text-sm text-slate-600">{description}</p>
             </Link>
@@ -181,7 +181,7 @@ export function VendorDashboard() {
           ["Paid orders", paidOrderCount.toString(), paidOrderCount ? "Confirmed customer orders." : "No paid orders yet.", "View"],
           ["Low stock products", lowStockCount.toString(), lowStockCount ? "Products need stock attention." : "Everything looks good.", "Manage"],
         ].map(([label, value, description, action]) => (
-          <div key={label} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5">
+          <div key={label} className="wcs-card p-6">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-2xl">{String(label).toLowerCase().includes("product") ? "📦" : String(label).toLowerCase().includes("paid") ? "💰" : String(label).toLowerCase().includes("waiting") || String(label).toLowerCase().includes("order") ? "🧾" : "📋"}</div>
             <p className="text-sm font-semibold text-slate-500">{label}</p>
             <p className="mt-2 text-3xl font-black text-slate-950">{value}</p>
@@ -192,7 +192,7 @@ export function VendorDashboard() {
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-xl shadow-slate-950/5">
+        <div className="wcs-card p-6">
           <h2 className="text-2xl font-black text-slate-950">Recent activity</h2>
           <div className="mt-4 grid gap-3">
             {vendorProducts.length === 0 && vendorOrders.length === 0 ? (
@@ -214,13 +214,13 @@ export function VendorDashboard() {
       </section>
 
       <section id="vendor-products" className="grid scroll-mt-24 gap-8 lg:grid-cols-[420px_1fr]">
-        <form onSubmit={submitProduct} className="h-fit rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <form onSubmit={submitProduct} className="h-fit wcs-card p-6">
           <p className="text-sm font-bold uppercase text-emerald-700">{form.id ? "Edit stock plan item" : "Stock planner"}</p>
           <h2 className="mt-1 text-2xl font-black text-slate-950">{form.id ? "Update stock plan item" : "Add to stock plan"}</h2>
           <p className="mt-2 text-sm leading-6 text-slate-600">
             Use this planner to organize vendor stock ideas. Use the online upload form above to publish products to the marketplace.
           </p>
-          <Link className="mt-4 inline-flex rounded-md bg-emerald-700 px-4 py-2 text-sm font-bold text-white" href="#add-product">
+          <Link className="btn btn-primary mt-4" href="#add-product">
             Go to live product upload
           </Link>
           <div className="mt-6 grid gap-4">
@@ -292,18 +292,18 @@ export function VendorDashboard() {
               value={form.specs}
             />
             <textarea
-              className="min-h-28 rounded-md border border-slate-300 p-3"
+              className="wcs-input min-h-28"
               onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
               placeholder="Description"
               value={form.description}
             />
             <div className="flex flex-wrap gap-3">
-              <button className="rounded-md bg-emerald-700 px-5 py-3 text-sm font-bold text-white" type="submit">
+              <button className="btn btn-primary" type="submit">
                 {form.id ? "Save planner changes" : "Add planner item"}
               </button>
               {form.id ? (
                 <button
-                  className="rounded-md border border-slate-300 px-5 py-3 text-sm font-bold"
+                  className="btn btn-outline"
                   onClick={() => {
                     setForm(emptyForm);
                     setNotice("");
@@ -323,7 +323,7 @@ export function VendorDashboard() {
             <h2 className="text-xl font-black text-slate-950">Own products and inventory</h2>
             <p className="mt-1 text-sm text-slate-600">Only products for the active approved vendor are shown here.</p>
           </div>
-          <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+          <div className="overflow-hidden rounded-[24px] border border-slate-200/80 bg-white shadow-[0_20px_60px_-30px_rgba(15,23,42,0.2)]">
             <table className="w-full min-w-[820px] text-left text-sm">
               <thead className="bg-slate-100 text-xs uppercase text-slate-500">
                 <tr>
@@ -357,7 +357,7 @@ export function VendorDashboard() {
                       </td>
                       <td className="px-4 py-3 font-semibold">{formatNaira(product.price)}</td>
                       <td className="px-4 py-3">
-                        <button className="rounded-md border border-slate-300 px-3 py-2 text-xs font-bold" onClick={() => editProduct(product)}>
+                        <button className="btn btn-outline h-10 px-3 py-2 text-xs" onClick={() => editProduct(product)}>
                           Edit
                         </button>
                       </td>
@@ -385,7 +385,7 @@ export function VendorDashboard() {
                     <p className="font-bold text-slate-950">{product.name}</p>
                     <p className="text-slate-600">{product.stock} units · {getBranch(product.branchId)?.state}</p>
                   </div>
-                  <button className="rounded-md border border-slate-300 px-3 py-2 text-xs font-bold" onClick={() => editProduct(product)} type="button">
+                  <button className="btn btn-outline h-10 px-3 py-2 text-xs" onClick={() => editProduct(product)} type="button">
                     Update inventory
                   </button>
                   <StatusBadge status={status.status} label={status.label} />

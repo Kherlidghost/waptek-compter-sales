@@ -68,7 +68,7 @@ export async function OnlineOrderStatusPanel({ role }: { role: Role }) {
   const rows = await getRows(role);
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <section className="wcs-card p-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-sm font-bold uppercase text-emerald-700">Live Supabase orders</p>

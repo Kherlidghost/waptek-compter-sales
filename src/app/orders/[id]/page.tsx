@@ -178,7 +178,7 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <PublicHeader />
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-        <DesignSurface className="mb-6 p-6">
+        <section className="wcs-card mb-6 p-6">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <p className="text-sm font-bold uppercase text-emerald-700">Tracking {order.id}</p>
@@ -189,17 +189,17 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
             </div>
             <div className="flex flex-wrap gap-2">
               <PrintInvoiceButton />
-              <Link className="btn-outline" href="/orders">
+              <Link className="btn btn-outline" href="/orders">
                 All orders
               </Link>
             </div>
           </div>
-        </DesignSurface>
+        </section>
 
         <OrderTimeline status={order.status} events={order.events} />
 
         <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_340px]">
-          <DesignSurface className="overflow-hidden p-0">
+          <section className="wcs-card overflow-hidden p-0">
             {order.items.map((item) => {
               const product = products.find((entry) => entry.id === item.productId);
               const onlineItem = item as typeof item & { productName?: string; productSlug?: string };
@@ -223,8 +223,8 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
                 </div>
               );
             })}
-          </DesignSurface>
-          <DesignSurface className="h-fit p-6">
+          </section>
+          <section className="wcs-card h-fit p-6">
             <h2 className="text-lg font-black text-slate-950">Payment summary</h2>
             <dl className="mt-4 space-y-3 text-sm">
               <div><dt className="text-slate-500">Order total</dt><dd className="font-bold">{formatNaira(order.total)}</dd></div>
@@ -256,7 +256,7 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
                 <input type="hidden" name="order_id" value={order.dbId ?? ""} />
                 <label className="text-sm font-bold text-slate-950" htmlFor="receipt">Upload another receipt</label>
                 <input id="receipt" name="receipt" type="file" accept="image/*,.pdf" className="wcs-input" required />
-                <button className="btn-primary">Submit receipt</button>
+                <button className="btn btn-primary">Submit receipt</button>
               </form>
             ) : null}
             {canCancel ? (
@@ -266,7 +266,7 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
                 <button className="rounded-md border border-red-300 px-4 py-2 text-sm font-bold text-red-700">Cancel order</button>
               </form>
             ) : null}
-          </DesignSurface>
+          </section>
         </section>
       </main>
       <PublicFooter />
