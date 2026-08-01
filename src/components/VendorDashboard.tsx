@@ -135,7 +135,7 @@ export function VendorDashboard() {
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
-      <header className="overflow-hidden rounded-[28px] border border-slate-200/80 bg-slate-950 p-6 text-white shadow-[0_20px_60px_-30px_rgba(15,23,42,0.35)]">
+      <header className="overflow-hidden rounded-[28px] border border-slate-200/80 bg-primary-900 p-6 text-white shadow-[0_20px_60px_-30px_rgba(15,23,42,0.35)]">
         <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
           <p className="w-fit rounded-full border border-emerald-300/30 bg-emerald-300/10 px-4 py-2 text-sm font-black uppercase text-emerald-200">Selling tools</p>

@@ -56,7 +56,7 @@ export function DashboardTopbar({ showNotificationDot = true }: DashboardTopbarP
   });
 
   return (
-    <header className="sticky top-0 z-30 flex min-h-[88px] items-center justify-between gap-6 border-b border-slate-200/80 bg-white/95 px-6 py-4 backdrop-blur xl:px-10">
+    <header className="sticky top-0 z-30 flex min-h-[88px] items-center justify-between gap-6 border-b border-slate-200/80 bg-surface/95 px-6 py-4 backdrop-blur xl:px-10">
       <div className="flex items-center gap-4">
         <button
           className="rounded-xl border border-slate-200 bg-surface p-2 text-slate-700 shadow-sm lg:hidden"

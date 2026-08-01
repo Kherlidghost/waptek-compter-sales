@@ -55,7 +55,7 @@ export function ProductCustomerActions({ product }: { product: Product }) {
     <div className="mt-6 grid gap-3">
       <button
         onClick={addToCart}
-        className="rounded-md bg-slate-950 px-4 py-3 text-center text-sm font-bold text-white hover:bg-emerald-700"
+        className="rounded-md bg-emerald-600 px-4 py-3 text-center text-sm font-bold text-white hover:bg-emerald-700"
         type="button"
       >
         Add to cart

@@ -196,7 +196,7 @@ export function DashboardSidebar({ role, userName, userRoleLabel, userInitials }
       {/* Mobile overlay */}
       {isOpen ? (
         <div
-          className="fixed inset-0 z-40 bg-slate-900/30 backdrop-blur-sm transition-opacity lg:hidden"
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity lg:hidden"
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
         />

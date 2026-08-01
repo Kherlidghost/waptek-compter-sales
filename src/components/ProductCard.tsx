@@ -132,7 +132,7 @@ export function ProductGrid({
 }) {
   if (products.length === 0) {
     return (
-      <div className="rounded-3xl border border-dashed border-ink-300 bg-white/90 p-10 text-center shadow-xl shadow-ink-950/5">
+      <div className="rounded-3xl border border-dashed border-ink-300 bg-surface/90 p-10 text-center shadow-xl shadow-ink-950/5">
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-ink-100 text-2xl">
           📦
         </div>

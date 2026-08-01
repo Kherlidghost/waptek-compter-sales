@@ -44,9 +44,9 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
   }
 
   return (
-    <header className="mx-auto max-w-7xl overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 shadow-2xl shadow-slate-950/10 backdrop-blur-sm">
+    <header className="mx-auto max-w-7xl overflow-hidden rounded-3xl border border-slate-200/80 bg-surface/95 shadow-2xl shadow-slate-950/10 backdrop-blur-sm">
       {/* Brand + user identity row */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-800 px-4 py-4 text-white sm:px-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-gradient-to-r from-primary-900 via-primary-800 to-primary-900 px-4 py-4 text-white sm:px-6">
         <div className="flex items-center gap-3">
           <WaptekBrand theme="dark" className="items-center gap-3" />
         </div>
@@ -70,7 +70,7 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
       <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 sm:px-6">
         <nav className="flex flex-wrap gap-1 text-sm font-semibold" aria-label="Dashboard navigation">
           <Link
-            className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+            className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-primary-700 hover:text-surface"
             href={roleHome[role]}
           >
             Dashboard
@@ -78,7 +78,7 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
 
           {role === "admin" || role === "manager" || role === "vendor" ? (
             <Link
-              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-primary-700 hover:text-surface"
               href={`/${role}/products`}
             >
               📦 Products
@@ -87,7 +87,7 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
 
           {role === "admin" ? (
             <Link
-              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-primary-700 hover:text-surface"
               href="/admin/vendors"
             >
               👥 Vendors
@@ -96,7 +96,7 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
 
           {role === "admin" ? (
             <Link
-              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-primary-700 hover:text-surface"
               href="/admin/users"
             >
               ⚙ Users
@@ -105,7 +105,7 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
 
           {role === "admin" || role === "manager" || role === "vendor" ? (
             <Link
-              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-primary-700 hover:text-surface"
               href={`/${role}/inventory`}
             >
               🏪 Inventory
@@ -113,7 +113,7 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
           ) : null}
 
           <Link
-            className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+            className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-primary-700 hover:text-surface"
             href={roleOrderHref}
           >
             🧾 Orders
@@ -121,7 +121,7 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
 
           {role === "cashier" ? (
             <Link
-              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-primary-700 hover:text-surface"
               href="/cashier"
             >
               💰 Payments
@@ -130,7 +130,7 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
 
           {role === "admin" || role === "manager" || role === "cashier" || role === "vendor" ? (
             <Link
-              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-primary-700 hover:text-surface"
               href={`/${role}/reports`}
             >
               📊 Reports
@@ -139,7 +139,7 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
 
           {role === "admin" || role === "manager" || role === "cashier" || role === "vendor" ? (
             <Link
-              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-primary-700 hover:text-surface"
               href={`/${role}/settings`}
             >
               ⚙ Settings
@@ -148,7 +148,7 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
 
           {role === "admin" ? (
             <Link
-              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-primary-700 hover:text-surface"
               href="/admin/audit-logs"
             >
               🔐 Audit Logs
@@ -157,7 +157,7 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
 
           {role === "admin" ? (
             <Link
-              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-primary-700 hover:text-surface"
               href="/admin/inventory/movements"
             >
               📋 Stock Movements

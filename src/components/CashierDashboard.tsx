@@ -150,7 +150,7 @@ export function CashierDashboard({
       </div>
       {isPending ? <p className="rounded-md bg-warm-100 p-3 text-sm font-semibold text-warm-600">Saving payment review online...</p> : null}
 
-      <section className="rounded-3xl border border-ink-200 bg-white/95 p-6 shadow-xl shadow-ink-950/5">
+      <section className="rounded-3xl border border-ink-200 bg-surface/95 p-6 shadow-xl shadow-ink-950/5">
         <p className="text-sm font-black uppercase text-accent-700">Next best actions</p>
         <h2 className="mt-1 text-2xl font-black text-ink-950">What can I do here?</h2>
         <p className="mt-1 text-sm text-ink-600">Choose the payment task you want to handle now.</p>
@@ -191,7 +191,7 @@ export function CashierDashboard({
         ))}
       </section>
 
-      <section className="rounded-3xl border border-ink-200 bg-white/95 p-6 shadow-xl shadow-ink-950/5">
+      <section className="rounded-3xl border border-ink-200 bg-surface/95 p-6 shadow-xl shadow-ink-950/5">
         <h2 className="text-2xl font-black text-ink-950">Recent activity</h2>
         <div className="mt-4 grid gap-3">
           {reviewedOrders.length === 0 ? (

@@ -101,7 +101,7 @@ export default async function AdminAuditLogsPage({
               Immutable record of sensitive staff and admin actions. Logs cannot be edited or deleted.
             </p>
           </div>
-          <a className="rounded-lg border border-slate-300 bg-white/80 px-4 py-3 text-sm font-black text-slate-900 hover:border-emerald-500" href="/admin/settings">
+          <a className="rounded-lg border border-slate-300 bg-surface/80 px-4 py-3 text-sm font-black text-slate-900 hover:border-emerald-500" href="/admin/settings">
             Back to Settings
           </a>
         </div>
@@ -122,7 +122,7 @@ export default async function AdminAuditLogsPage({
               ))}
             </select>
           </label>
-          <button className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-black text-white hover:bg-slate-700">
+          <button className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-black text-white hover:bg-emerald-700">
             Filter
           </button>
           {actionFilter && (

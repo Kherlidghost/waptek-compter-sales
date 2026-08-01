@@ -249,7 +249,7 @@ export function AdminManagerDashboard({ role, branchScopeId }: { role: Dashboard
     <div className="space-y-8">
       {notice ? <p className="rounded-xl border border-accent-300/30 bg-accent-100 px-4 py-3 text-sm font-semibold text-accent-700">{notice}</p> : null}
 
-      <nav className="flex gap-2 overflow-x-auto rounded-2xl border border-ink-200 bg-white/90 p-2 shadow-xl shadow-ink-950/5 backdrop-blur">
+      <nav className="flex gap-2 overflow-x-auto rounded-2xl border border-ink-200 bg-surface/90 p-2 shadow-xl shadow-ink-950/5 backdrop-blur">
         {visibleSections.map((section) => (
           <button
             key={section.id}
@@ -503,7 +503,7 @@ function DataTable({ headers, rows }: { headers: string[]; rows: Array<Array<Rea
 
 function QuickActions({ actions, onSelect }: { actions: DashboardAction[]; onSelect: (section: Section) => void }) {
   return (
-    <section className="rounded-3xl border border-ink-200 bg-white/95 p-6 shadow-xl shadow-ink-950/5 backdrop-blur">
+    <section className="rounded-3xl border border-ink-200 bg-surface/95 p-6 shadow-xl shadow-ink-950/5 backdrop-blur">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-sm font-black uppercase text-accent-700">Next best actions</p>
@@ -583,7 +583,7 @@ function cardIcon(title: string) {
 
 function RecentActivityPanel({ rows }: { rows: Array<{ title: string; detail: string; status: string }> }) {
   return (
-    <section className="rounded-3xl border border-ink-200 bg-white/95 p-6 shadow-xl shadow-ink-950/5">
+    <section className="rounded-3xl border border-ink-200 bg-surface/95 p-6 shadow-xl shadow-ink-950/5">
       <h2 className="text-2xl font-black text-ink-950">Recent activity</h2>
       <p className="mt-1 text-sm text-ink-600">What happened recently.</p>
       <div className="mt-4 grid gap-3">

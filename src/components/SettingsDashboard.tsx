@@ -90,7 +90,7 @@ function logoUrl(bucket: string, path?: string | null) {
 
 function Card({ title, description, children }: { title: string; description: string; children: ReactNode }) {
   return (
-    <section className="rounded-[24px] border border-slate-200/80 bg-white/95 p-6 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)] backdrop-blur">
+    <section className="rounded-[24px] border border-slate-200/80 bg-surface/95 p-6 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)] backdrop-blur">
       <div className="mb-5">
         <h2 className="text-lg font-black text-slate-950">{title}</h2>
         <p className="mt-1 text-sm leading-6 text-slate-600">{description}</p>
@@ -192,7 +192,7 @@ export async function SettingsDashboard({ role, searchParams }: { role: Settings
 
   return (
     <div className="grid gap-6">
-      <section className="rounded-[28px] border border-slate-200/80 bg-white/90 p-6 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)] backdrop-blur">
+      <section className="rounded-[28px] border border-slate-200/80 bg-surface/90 p-6 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)] backdrop-blur">
         <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-700">Administration settings</p>
         <h1 className="mt-2 text-3xl font-black text-slate-950">
           {role === "admin" ? "Company Settings" : role === "manager" ? "Branch Settings" : role === "vendor" ? "Vendor Settings" : "Cashier Settings"}

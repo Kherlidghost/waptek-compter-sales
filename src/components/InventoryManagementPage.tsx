@@ -277,7 +277,7 @@ export async function InventoryManagementPage({
               </select>
               <input className="h-11 rounded-md border border-slate-300 px-3" name="quantity" inputMode="numeric" placeholder="Quantity" required />
               <input className="h-11 rounded-md border border-slate-300 px-3" name="reason" placeholder="Transfer reason" />
-              <button className="rounded-md bg-slate-950 px-4 py-2 text-sm font-bold text-white">Transfer</button>
+              <button className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-bold text-white">Transfer</button>
             </div>
           </form>
         ) : null}
@@ -309,7 +309,7 @@ export async function InventoryManagementPage({
             <option value="damaged">Damaged</option>
             <option value="archived">Archived</option>
           </select>
-          <button className="rounded-md bg-slate-950 px-4 py-2 text-sm font-bold text-white">Apply filters</button>
+          <button className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-bold text-white">Apply filters</button>
           {role === "admin" ? <a className="rounded-md border border-slate-300 px-4 py-3 text-center text-sm font-bold" href={`data:text/csv;charset=utf-8,${encodeURIComponent(allRows.map((row) => `${first(row.products)?.name},${first(row.branches)?.state},${row.quantity},${stockStatus(row)}`).join("\n"))}`} download="inventory.csv">Export</a> : null}
         </form>
       </section>
@@ -415,7 +415,7 @@ function InventoryActions({ row, returnTo }: { row: InventoryRow; returnTo: stri
         <input className="h-9 rounded-md border border-slate-300 px-2 text-xs" name="quantity" inputMode="numeric" placeholder="Quantity" defaultValue="1" />
         <input className="h-9 rounded-md border border-slate-300 px-2 text-xs" name="reorder_level" inputMode="numeric" placeholder="Low stock threshold" defaultValue={row.reorder_level} />
         <input className="h-9 rounded-md border border-slate-300 px-2 text-xs" name="reason" placeholder="Reason" />
-        <button className="rounded-md bg-slate-950 px-3 py-2 text-xs font-bold text-white">Save movement</button>
+        <button className="rounded-md bg-emerald-600 px-3 py-2 text-xs font-bold text-white">Save movement</button>
       </form>
     </details>
   );

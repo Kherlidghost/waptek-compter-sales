@@ -237,7 +237,7 @@ export async function ProductManagementPage({
             <option value="low">Low Stock</option>
             <option value="out">Out of Stock</option>
           </select>
-          <button className="rounded-md bg-slate-950 px-4 py-2 text-sm font-bold text-white">Apply filters</button>
+          <button className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-bold text-white">Apply filters</button>
         </form>
       </section>
 
@@ -371,7 +371,7 @@ function ProductActions({
           <input type="hidden" name="return_to" value={returnTo} />
           <input className="h-9 rounded-md border border-slate-300 px-2" name="quantity" defaultValue={quantity} placeholder="Quantity" />
           <input className="h-9 rounded-md border border-slate-300 px-2" name="reorder_level" defaultValue={reorderLevel} placeholder="Low stock threshold" />
-          <button className="rounded-md bg-slate-950 px-3 py-2 text-xs font-bold text-white">Update stock</button>
+          <button className="rounded-md bg-emerald-600 px-3 py-2 text-xs font-bold text-white">Update stock</button>
         </form>
       </details>
       <div className="flex flex-wrap gap-2">

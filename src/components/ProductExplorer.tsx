@@ -208,7 +208,7 @@ export function ProductExplorer({
             setInStockOnly(false);
             setSort("featured");
           }}
-          className="rounded-xl border border-ink-300 bg-white/80 px-4 py-2 font-black hover:bg-surface"
+          className="rounded-xl border border-ink-300 bg-surface/80 px-4 py-2 font-black hover:bg-surface"
           type="button"
         >
           Reset filters

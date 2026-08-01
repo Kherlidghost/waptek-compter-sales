@@ -35,11 +35,11 @@ export async function PublicHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 shadow-[0_10px_30px_-20px_rgba(15,23,42,0.35)] backdrop-blur">
-      <div className="bg-gradient-to-r from-slate-950 via-primary-900 to-accent-700 text-white">
+    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-surface/95 shadow-[0_10px_30px_-20px_rgba(15,23,42,0.35)] backdrop-blur">
+      <div className="border-b border-primary-100 bg-gradient-to-r from-primary-900 via-primary-800 to-primary-900 text-primary-700">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] sm:px-6 lg:px-8">
           <p>Sales of Computers & Repairs across Adamawa, Yobe, and Borno</p>
-          <p className="text-slate-200">Receipt-confirmed payments • Verified vendors • Branch support</p>
+          <p className="text-ink-500">Receipt-confirmed payments • Verified vendors • Branch support</p>
         </div>
       </div>
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
@@ -88,7 +88,7 @@ export async function PublicHeader() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </summary>
-            <div className="absolute right-0 top-12 z-50 w-72 rounded-3xl border border-slate-200 bg-white/95 p-3 shadow-2xl shadow-slate-900/10">
+            <div className="absolute right-0 top-12 z-50 w-72 rounded-3xl border border-slate-200 bg-surface/95 p-3 shadow-2xl shadow-slate-900/10">
               <nav className="grid gap-1 text-sm" aria-label="Mobile navigation">
                 {navItems.map((item) => (
                   <Link

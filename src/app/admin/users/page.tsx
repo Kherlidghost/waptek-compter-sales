@@ -146,7 +146,7 @@ export default async function AdminUsersPage({
     <main className="min-h-screen space-y-6 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.08),transparent_28%),linear-gradient(135deg,#f8fbff_0%,#f3f7fb_100%)] px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
       <DashboardSessionBar role="admin" />
 
-      <section className="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-4 rounded-[28px] border border-slate-200/80 bg-white/90 p-6 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)] backdrop-blur">
+      <section className="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-4 rounded-[28px] border border-slate-200/80 bg-surface/90 p-6 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)] backdrop-blur">
         <div>
           <p className="text-sm font-black uppercase tracking-[0.24em] text-emerald-700">Admin Staff Management</p>
           <h1 className="mt-2 text-3xl font-black text-slate-950">Manage Users</h1>
@@ -172,7 +172,7 @@ export default async function AdminUsersPage({
       ) : null}
 
       <section className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[420px_1fr]">
-        <form action={createStaffAccount} className="h-fit rounded-[28px] border border-slate-200/80 bg-white/95 p-6 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)] backdrop-blur">
+        <form action={createStaffAccount} className="h-fit rounded-[28px] border border-slate-200/80 bg-surface/95 p-6 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)] backdrop-blur">
           <p className="text-sm font-black uppercase tracking-[0.24em] text-emerald-700">Add Staff</p>
           <h2 className="mt-1 text-2xl font-black text-slate-950">Create Manager or Cashier</h2>
           <p className="mt-2 text-sm leading-6 text-slate-600">Staff can log in immediately with the temporary password.</p>
@@ -206,7 +206,7 @@ export default async function AdminUsersPage({
           </div>
         </form>
 
-        <section className="overflow-hidden rounded-[28px] border border-slate-200/80 bg-white/95 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)] backdrop-blur">
+        <section className="overflow-hidden rounded-[28px] border border-slate-200/80 bg-surface/95 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)] backdrop-blur">
           <div className="border-b border-slate-200 bg-slate-50/80 p-5">
             <h2 className="text-2xl font-black text-slate-950">All Users</h2>
             <p className="mt-1 text-sm text-slate-600">Emails are read securely from Supabase Auth on the server.</p>

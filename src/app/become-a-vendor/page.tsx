@@ -21,7 +21,7 @@ export default async function BecomeVendorPage({
     <div className="min-h-screen marketplace-shell text-slate-900">
       <PublicHeader />
       <main className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:px-8">
-        <section className="space-y-5 rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-xl shadow-slate-950/5">
+        <section className="space-y-5 rounded-3xl border border-slate-200 bg-surface/80 p-6 shadow-xl shadow-slate-950/5">
           <p className="text-sm font-bold uppercase text-emerald-700">Vendor onboarding</p>
           <h1 className="text-4xl font-black text-slate-950">Sell Your Computer Products on WAPTEK COMPUTER SERVICES</h1>
           <p className="text-base leading-7 text-slate-600">

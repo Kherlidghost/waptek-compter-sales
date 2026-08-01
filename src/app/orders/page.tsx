@@ -123,7 +123,7 @@ export default async function OrdersPage() {
     <div className="min-h-screen marketplace-shell text-slate-900">
       <PublicHeader />
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-        <section className="mb-6 overflow-hidden rounded-[28px] border border-slate-200/80 bg-slate-900 p-6 text-white shadow-[0_20px_60px_-30px_rgba(15,23,42,0.35)]">
+        <section className="mb-6 overflow-hidden rounded-[28px] border border-slate-200/80 bg-primary-900 p-6 text-white shadow-[0_20px_60px_-30px_rgba(15,23,42,0.35)]">
           <p className="w-fit rounded-full border border-accent-300/30 bg-accent-300/10 px-4 py-2 text-sm font-black uppercase text-accent-200">{isCustomerAccount ? "Customer account" : `${profile.role} orders`}</p>
           <h1 className="mt-4 text-3xl font-black text-white sm:text-4xl">{isCustomerAccount ? "Welcome to My Account" : "Order tracking"}</h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">

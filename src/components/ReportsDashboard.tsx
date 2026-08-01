@@ -371,7 +371,7 @@ export async function ReportsDashboard({ role, searchParams }: { role: ReportsRo
               <option value="cancelled">Cancelled</option>
             </select>
           ) : null}
-          <button className="rounded-md bg-slate-950 px-4 py-2 text-sm font-bold text-white">Apply filters</button>
+          <button className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-bold text-white">Apply filters</button>
         </form>
       </section>
 

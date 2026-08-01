@@ -121,7 +121,7 @@ export function SessionNavigation({ user, className = "", mode = "desktop" }: Se
       <summary className="cursor-pointer list-none rounded-full border border-slate-200 bg-surface px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-primary-300 hover:text-primary-700">
         {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
       </summary>
-      <div className="absolute right-0 z-40 mt-2 w-72 rounded-3xl border border-slate-200 bg-white/95 p-3 text-sm shadow-2xl shadow-slate-900/10">
+      <div className="absolute right-0 z-40 mt-2 w-72 rounded-3xl border border-slate-200 bg-surface/95 p-3 text-sm shadow-2xl shadow-slate-900/10">
         <p className="font-bold text-slate-950">{user.email}</p>
         <p className="mt-1 capitalize text-slate-500">{user.role}</p>
         <Link className="mt-3 block rounded-2xl px-3 py-2 font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-950" href={user.home}>

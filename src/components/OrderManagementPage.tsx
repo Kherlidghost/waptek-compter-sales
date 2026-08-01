@@ -182,7 +182,7 @@ export async function OrderManagementPage({ role, searchParams }: { role: OrderM
             <option value="week">This Week</option>
             <option value="month">This Month</option>
           </select>
-          <button className="rounded-md bg-slate-950 px-4 py-2 text-sm font-bold text-white">Apply filters</button>
+          <button className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-bold text-white">Apply filters</button>
           {role === "admin" ? <a className="rounded-md border border-slate-300 px-4 py-3 text-center text-sm font-bold" href={`data:text/csv;charset=utf-8,${encodeURIComponent(orders.map((order) => `${order.order_number},${order.customer_name},${order.status},${order.total}`).join("\n"))}`} download="orders.csv">Export orders</a> : null}
         </form>
       </section>
@@ -292,7 +292,7 @@ function OrderRowActions({ order, role, receiptUrl, receiptId, returnTo }: { ord
               {role === "admin" ? <option value="cancelled">Cancelled</option> : null}
             </select>
             <input className="h-9 rounded-md border border-slate-300 px-2 text-xs" name="note" placeholder="Status note" />
-            <button className="rounded-md bg-slate-950 px-3 py-2 text-xs font-bold text-white">Update</button>
+            <button className="rounded-md bg-emerald-600 px-3 py-2 text-xs font-bold text-white">Update</button>
           </form>
         </details>
       ) : null}

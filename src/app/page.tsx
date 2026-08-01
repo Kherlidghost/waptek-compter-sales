@@ -143,7 +143,7 @@ export default async function Home({
         </section>
 
         {/* ── Search ────────────────────────────────────────────────────── */}
-        <section className="border-b border-ink-200 bg-white/90 backdrop-blur">
+        <section className="border-b border-ink-200 bg-surface/90 backdrop-blur">
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <p className="section-eyebrow mb-1">Find computer products</p>
             <h2 className="mb-5 text-2xl font-black text-ink-950">Search the marketplace</h2>
