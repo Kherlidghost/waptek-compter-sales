@@ -47,7 +47,7 @@ export async function DashboardLayout({ role, children }: DashboardLayoutProps) 
   }
 
   return (
-    <div className="flex min-h-screen bg-[#f4f6f9]">
+    <div className="flex min-h-screen bg-[#f4f6f9] dashboard-shell">
       <DashboardSidebar
         role={role}
         userName={userName}

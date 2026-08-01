@@ -213,8 +213,9 @@ export default async function Home({
         </section>
 
         {/* ── Why WAPTEK ───────────────────────────────────────────────── */}
-        <section className="bg-white">
-          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <section className="relative overflow-hidden bg-white">
+          <div className="absolute inset-0 bg-dot-grid opacity-60" aria-hidden="true" />
+          <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
             <div className="mb-8 max-w-2xl">
               <p className="section-eyebrow mb-1">Why choose us</p>
               <h2 className="text-2xl font-black text-ink-950">Why Shop with WAPTEK COMPUTER SERVICES?</h2>
@@ -271,27 +272,31 @@ export default async function Home({
         </section>
 
         {/* ── How it works ──────────────────────────────────────────────── */}
-        <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="mb-8 max-w-2xl">
-            <p className="section-eyebrow mb-1">Simple ordering</p>
-            <h2 className="text-2xl font-black text-ink-950">How It Works</h2>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {howItWorks.map((item) => (
-              <div key={item.step} className="wcs-card rounded-2xl p-5">
-                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accent-100 text-sm font-black text-accent-700">
-                  {item.step}
+        <section className="relative overflow-hidden bg-ink-50">
+          <div className="absolute inset-0 bg-line-grid opacity-50" aria-hidden="true" />
+          <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+            <div className="mb-8 max-w-2xl">
+              <p className="section-eyebrow mb-1">Simple ordering</p>
+              <h2 className="text-2xl font-black text-ink-950">How It Works</h2>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {howItWorks.map((item) => (
+                <div key={item.step} className="wcs-card rounded-2xl p-5">
+                  <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accent-100 text-sm font-black text-accent-700">
+                    {item.step}
+                  </div>
+                  <p className="font-black text-ink-950">{item.title}</p>
+                  <p className="mt-1.5 text-sm leading-6 text-ink-600">{item.body}</p>
                 </div>
-                <p className="font-black text-ink-950">{item.title}</p>
-                <p className="mt-1.5 text-sm leading-6 text-ink-600">{item.body}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </section>
 
         {/* ── Trust & safety ────────────────────────────────────────────── */}
-        <section className="bg-ink-50">
-          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <section className="relative overflow-hidden bg-white">
+          <div className="absolute inset-0 bg-dot-grid opacity-40" aria-hidden="true" />
+          <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
             <div className="mb-8 max-w-2xl">
               <p className="section-eyebrow mb-1">Trust & safety</p>
               <h2 className="text-2xl font-black text-ink-950">Built for Safer Computer Buying</h2>

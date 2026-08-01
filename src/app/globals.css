@@ -57,7 +57,7 @@
 
   /* ── Surfaces ────────────────────────────────────────────────────────────── */
   --surface-page:     oklch(97% 0.004 245);
-  --surface-store:    oklch(97.5% 0.003 245);
+  --surface-store:    oklch(98% 0.003 245);
   --surface-elevated: oklch(100% 0.001 245);
 
   /* ── Semantic ────────────────────────────────────────────────────────────── */
@@ -180,8 +180,36 @@ body {
 .tnum { font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; }
 
 /* ── Page shells ───────────────────────────────────────────────────────────── */
-.marketplace-shell { background: var(--surface-store); }
-.dashboard-shell   { min-height: 100vh; background: var(--surface-page); }
+.marketplace-shell {
+  background-color: var(--surface-store);
+  background-image:
+    radial-gradient(ellipse 60rem 40rem at 0% 0%, oklch(96% 0.02 160 / 0.55), transparent 60%),
+    radial-gradient(ellipse 50rem 36rem at 100% 8%, oklch(94% 0.025 245 / 0.5), transparent 55%),
+    radial-gradient(ellipse 40rem 30rem at 50% 100%, oklch(95% 0.015 55 / 0.3), transparent 60%);
+  background-attachment: fixed;
+}
+.dashboard-shell {
+  min-height: 100vh;
+  background-color: var(--surface-page);
+  background-image:
+    radial-gradient(ellipse 48rem 32rem at 0% 0%, oklch(95% 0.02 245 / 0.4), transparent 55%),
+    radial-gradient(ellipse 40rem 28rem at 100% 100%, oklch(96% 0.018 160 / 0.3), transparent 55%);
+  background-attachment: fixed;
+}
+
+/* Subtle dot-grid texture overlay — used on hero and feature sections */
+.bg-dot-grid {
+  background-image: radial-gradient(circle, oklch(100% 0.001 245 / 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Subtle grid lines texture */
+.bg-line-grid {
+  background-image:
+    linear-gradient(to right, oklch(100% 0.001 245 / 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(100% 0.001 245 / 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
 
 /* ═══ CARDS & PANELS ═══════════════════════════════════════════════════════ */
 /* Base surface: no resting shadow — elevation appears on hover only. */
@@ -785,16 +813,34 @@ select.wcs-input {
   color: var(--accent-100);
 }
 
-/* Home page hero background — vibrant layered gradients */
+/* Home page hero background — deep layered gradients with ambient glow */
 .home-hero-bg {
   background-color: var(--primary-900);
-  background-image: 
-    radial-gradient(circle at 18% 12%, oklch(58% 0.16 160 / 0.18), transparent 28rem),
-    radial-gradient(circle at 82% 0%, oklch(52% 0.14 245 / 0.12), transparent 24rem),
-    linear-gradient(180deg, var(--primary-700), var(--primary-900));
+  background-image:
+    radial-gradient(ellipse 50rem 30rem at 15% 10%, oklch(55% 0.16 160 / 0.22), transparent 55%),
+    radial-gradient(ellipse 44rem 28rem at 85% 5%, oklch(48% 0.14 245 / 0.16), transparent 50%),
+    radial-gradient(ellipse 60rem 40rem at 50% 100%, oklch(30% 0.10 245 / 0.5), transparent 60%),
+    linear-gradient(165deg, var(--primary-800) 0%, var(--primary-900) 55%, oklch(20% 0.06 245) 100%);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  position: relative;
+}
+.home-hero-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, oklch(100% 0.001 245 / 0.05) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+/* Footer ambient background — layered glow on dark base */
+.footer-ambient-bg {
+  background-color: var(--primary-900);
+  background-image:
+    radial-gradient(ellipse 40rem 20rem at 10% 0%, oklch(45% 0.14 160 / 0.12), transparent 55%),
+    radial-gradient(ellipse 36rem 18rem at 90% 100%, oklch(40% 0.12 245 / 0.1), transparent 50%);
 }
 
 /* Load-bearing for text-overflow rows inside flex containers. */

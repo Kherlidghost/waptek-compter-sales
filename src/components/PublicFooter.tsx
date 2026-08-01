@@ -32,7 +32,7 @@ const legalLinks = [
 
 export function PublicFooter() {
   return (
-    <footer className="border-t border-ink-200 bg-primary-900 text-white">
+    <footer className="footer-ambient-bg border-t border-white/10 text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr_1.2fr]">
           {/* Brand */}
