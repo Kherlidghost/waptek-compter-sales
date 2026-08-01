@@ -33,6 +33,7 @@ export function AuthForms({
   const [registerPassword, setRegisterPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
+  const [activeTab, setActiveTab] = useState<"signin" | "signup">("signin");
   const passwordMismatch = Boolean(confirmPassword && registerPassword !== confirmPassword);
   const passwordWeak = Boolean(
     registerPassword &&
@@ -47,7 +48,7 @@ export function AuthForms({
 
   return (
     <div className="min-h-screen mx-auto grid max-w-7xl gap-6 lg:grid-cols-[1fr_0.96fr] items-center">
-      <section className="relative overflow-hidden rounded-[32px] border border-primary-800/60 bg-gradient-to-br from-primary-950 via-primary-800 to-primary-700 p-8 text-white shadow-[0_24px_80px_-24px_rgba(2,8,23,0.45)] lg:min-h-[720px]">
+      <section className="relative hidden overflow-hidden rounded-[32px] border border-primary-800/60 bg-gradient-to-br from-primary-950 via-primary-800 to-primary-700 p-8 text-white shadow-[0_24px_80px_-24px_rgba(2,8,23,0.45)] lg:block lg:min-h-[720px]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.3),transparent_28rem)]" aria-hidden="true" />
         <div className="relative flex h-full flex-col">
           <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-100">
@@ -100,13 +101,13 @@ export function AuthForms({
       </section>
 
       <section className="grid gap-6">
-        <div className="rounded-[28px] border border-slate-200/80 bg-white/95 p-6 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)] backdrop-blur">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-[0.24em] text-accent-700">Sign in</p>
-              <h2 className="mt-2 text-3xl font-black text-slate-950">Welcome back</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                Use your confirmed email and password. Staff accounts must exist in Supabase Auth and must have a matching profile role.
+        <div className="rounded-[28px] border border-slate-200/80 bg-white/95 p-6 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)] backdrop-blur sm:p-8">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+            <div className="max-w-xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-accent-700">Secure login</p>
+              <h2 className="mt-3 text-3xl font-black text-slate-950 sm:text-4xl">Access your WAPTEK account</h2>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                Sign in or create your account to continue with orders, receipts, and role-based dashboards.
               </p>
             </div>
             <div className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700">
@@ -114,121 +115,130 @@ export function AuthForms({
             </div>
           </div>
 
+          <div className="grid gap-3 rounded-[24px] bg-slate-100 p-1.5 sm:grid-cols-[1fr_1fr]">
+            <button
+              type="button"
+              onClick={() => setActiveTab("signin")}
+              className={`rounded-[20px] px-4 py-3 text-sm font-semibold transition ${activeTab === "signin" ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("signup")}
+              className={`rounded-[20px] px-4 py-3 text-sm font-semibold transition ${activeTab === "signup" ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+            >
+              Create Account
+            </button>
+          </div>
+
           {!isConfigured ? (
-            <div className="mt-5 rounded-2xl border border-amber-300/40 bg-amber-50 p-4 text-sm text-amber-700">
+            <div className="mt-6 rounded-2xl border border-amber-300/40 bg-amber-50 p-4 text-sm text-amber-700">
               Supabase env vars are not configured yet. Add <span className="font-semibold">NEXT_PUBLIC_SUPABASE_URL</span> and <span className="font-semibold">NEXT_PUBLIC_SUPABASE_ANON_KEY</span>.
             </div>
           ) : null}
 
-          {errorMessage ? <div className="mt-5 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{errorMessage}</div> : null}
-          {successMessage ? <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">{successMessage}</div> : null}
+          {errorMessage ? <div className="mt-6 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{errorMessage}</div> : null}
+          {successMessage ? <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">{successMessage}</div> : null}
 
-          <form action={loginAction} className="mt-6 grid gap-4">
-            <input type="hidden" name="next" value={next} />
-            <label className="grid gap-2 text-sm font-semibold text-slate-700">
-              Email address
-              <div className="relative">
-                <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                <input className="wcs-input h-12 pl-11 font-normal" name="email" type="email" autoComplete="email" placeholder="you@example.com" required />
-              </div>
-            </label>
-            <label className="grid gap-2 text-sm font-semibold text-slate-700">
-              Password
-              <div className="relative">
-                <LockKeyhole className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                <input className="wcs-input h-12 pl-11 pr-14 font-normal" name="password" type={showLoginPassword ? "text" : "password"} autoComplete="current-password" placeholder="Enter password" required />
-                <button className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700" onClick={() => setShowLoginPassword((current) => !current)} type="button" aria-label={showLoginPassword ? "Hide password" : "Show password"}>
-                  {showLoginPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-            </label>
-            <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
-              <label className="flex items-center gap-2 text-slate-600">
-                <input className="size-4 rounded border-slate-300" name="remember" type="checkbox" />
-                Remember me on this device
-              </label>
-              <Link className="font-semibold text-accent-700 transition hover:text-accent-600" href="/auth/forgot-password">
-                Forgot password?
-              </Link>
-            </div>
-            <SubmitButton className="btn btn-primary h-12 justify-center rounded-2xl" pendingText="Signing in...">
-              <span>Sign in securely</span>
-              <ArrowRight className="h-4 w-4" />
-            </SubmitButton>
-          </form>
-        </div>
-
-        <div className="rounded-[28px] border border-slate-200/80 bg-white/95 p-6 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)] backdrop-blur">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-[0.24em] text-accent-700">Customer registration</p>
-              <h2 className="mt-2 text-3xl font-black text-slate-950">Create your account</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                Customer accounts require email confirmation before checkout, receipt upload, or order tracking.
-              </p>
-            </div>
-            <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-sm font-semibold text-slate-600">
-              Fast setup
-            </div>
-          </div>
-          <form
-            action={signUpAction}
-            className="mt-6 grid gap-4"
-            onSubmit={(event) => {
-              if (passwordMismatch || passwordWeak) event.preventDefault();
-            }}
-          >
-            <input type="hidden" name="next" value={next} />
-            <div className="grid gap-4 sm:grid-cols-2">
-              <label className="grid gap-2 text-sm font-semibold text-slate-700">
-                Full name
-                <input className="wcs-input h-12 font-normal" name="full_name" placeholder="Full name" required />
-              </label>
-              <label className="grid gap-2 text-sm font-semibold text-slate-700">
-                Phone number
-                <input className="wcs-input h-12 font-normal" name="phone" placeholder="+234..." required />
-              </label>
-            </div>
-            <label className="grid gap-2 text-sm font-semibold text-slate-700">
-              Email address
-              <div className="relative">
-                <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                <input className="wcs-input h-12 pl-11 font-normal" name="email" type="email" autoComplete="email" placeholder="you@example.com" onChange={(event) => setRegisterEmail(event.target.value)} required />
-              </div>
-            </label>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <label className="grid gap-2 text-sm font-semibold text-slate-700">
-                Password
-                <div className="relative">
-                  <LockKeyhole className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                  <input className="wcs-input h-12 pl-11 pr-14 font-normal" name="password" type={showRegisterPassword ? "text" : "password"} autoComplete="new-password" minLength={8} onChange={(event) => setRegisterPassword(event.target.value)} placeholder="Min 8 chars, upper, lower, number, symbol" required />
-                  <button className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700" onClick={() => setShowRegisterPassword((current) => !current)} type="button" aria-label={showRegisterPassword ? "Hide password" : "Show password"}>
-                    {showRegisterPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
+          <div className="mt-6">
+            <div className={activeTab !== "signin" ? "hidden" : "grid gap-4"}>
+              <form action={loginAction} className="grid gap-4">
+                <input type="hidden" name="next" value={next} />
+                <label className="grid gap-2 text-sm font-semibold text-slate-700">
+                  Email address
+                  <div className="relative">
+                    <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <input className="wcs-input h-12 pl-11 font-normal" name="email" type="email" autoComplete="email" placeholder="you@example.com" required />
+                  </div>
+                </label>
+                <label className="grid gap-2 text-sm font-semibold text-slate-700">
+                  Password
+                  <div className="relative">
+                    <LockKeyhole className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <input className="wcs-input h-12 pl-11 pr-14 font-normal" name="password" type={showLoginPassword ? "text" : "password"} autoComplete="current-password" placeholder="Enter your password" required />
+                    <button className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700" onClick={() => setShowLoginPassword((current) => !current)} type="button" aria-label={showLoginPassword ? "Hide password" : "Show password"}>
+                      {showLoginPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </label>
+                <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
+                  <label className="flex items-center gap-2 text-slate-600">
+                    <input className="size-4 rounded border-slate-300" name="remember" type="checkbox" />
+                    Remember me
+                  </label>
+                  <Link className="font-semibold text-accent-700 transition hover:text-accent-600" href="/auth/forgot-password">
+                    Forgot password?
+                  </Link>
                 </div>
-              </label>
-              <label className="grid gap-2 text-sm font-semibold text-slate-700">
-                Confirm password
-                <input className="wcs-input h-12 font-normal" name="confirm_password" type={showRegisterPassword ? "text" : "password"} autoComplete="new-password" minLength={8} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Repeat password" required />
-              </label>
+                <SubmitButton className="btn btn-primary h-12 justify-center rounded-2xl" pendingText="Signing in...">
+                  <span>Sign in securely</span>
+                  <ArrowRight className="h-4 w-4" />
+                </SubmitButton>
+              </form>
             </div>
-            {passwordWeak ? <p className="text-sm font-semibold text-amber-600">Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character.</p> : null}
-            {passwordMismatch ? <p className="text-sm font-semibold text-rose-600">Password and confirm password must match.</p> : null}
-            <SubmitButton className="btn btn-accent h-12 justify-center rounded-2xl" pendingText="Creating account...">
-              <span>Create account</span>
-              <BadgeCheck className="h-4 w-4" />
-            </SubmitButton>
-          </form>
 
-          <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-sm font-bold text-slate-950">Check your email to confirm your account.</p>
-            <form action={resendConfirmationAction} className="mt-3 flex flex-col gap-3 sm:flex-row">
-              <input type="hidden" name="next" value={next} />
-              <input className="h-10 flex-1 rounded-xl border border-slate-300 px-3 text-sm" name="email" type="email" placeholder="Email for confirmation resend" defaultValue={registerEmail} required />
-              <SubmitButton className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-800 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:text-slate-400" pendingText="Sending...">
-                Resend confirmation email
-              </SubmitButton>
-            </form>
+            <div className={activeTab !== "signup" ? "hidden" : "grid gap-4"}>
+              <form
+                action={signUpAction}
+                className="grid gap-4"
+                onSubmit={(event) => {
+                  if (passwordMismatch || passwordWeak) event.preventDefault();
+                }}
+              >
+                <input type="hidden" name="next" value={next} />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label className="grid gap-2 text-sm font-semibold text-slate-700">
+                    Full name
+                    <input className="wcs-input h-12 font-normal" name="full_name" placeholder="Full name" required />
+                  </label>
+                  <label className="grid gap-2 text-sm font-semibold text-slate-700">
+                    Phone number
+                    <input className="wcs-input h-12 font-normal" name="phone" placeholder="+234..." required />
+                  </label>
+                </div>
+                <label className="grid gap-2 text-sm font-semibold text-slate-700">
+                  Email address
+                  <div className="relative">
+                    <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <input className="wcs-input h-12 pl-11 font-normal" name="email" type="email" autoComplete="email" placeholder="you@example.com" onChange={(event) => setRegisterEmail(event.target.value)} required />
+                  </div>
+                </label>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label className="grid gap-2 text-sm font-semibold text-slate-700">
+                    Password
+                    <div className="relative">
+                      <LockKeyhole className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                      <input className="wcs-input h-12 pl-11 pr-14 font-normal" name="password" type={showRegisterPassword ? "text" : "password"} autoComplete="new-password" minLength={8} onChange={(event) => setRegisterPassword(event.target.value)} placeholder="Min 8 chars, upper, lower, number, symbol" required />
+                      <button className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700" onClick={() => setShowRegisterPassword((current) => !current)} type="button" aria-label={showRegisterPassword ? "Hide password" : "Show password"}>
+                        {showRegisterPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </label>
+                  <label className="grid gap-2 text-sm font-semibold text-slate-700">
+                    Confirm password
+                    <input className="wcs-input h-12 font-normal" name="confirm_password" type={showRegisterPassword ? "text" : "password"} autoComplete="new-password" minLength={8} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Repeat password" required />
+                  </label>
+                </div>
+                {passwordWeak ? <p className="text-sm font-semibold text-amber-600">Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character.</p> : null}
+                {passwordMismatch ? <p className="text-sm font-semibold text-rose-600">Password and confirm password must match.</p> : null}
+                <SubmitButton className="btn btn-accent h-12 justify-center rounded-2xl" pendingText="Creating account...">
+                  <span>Create account</span>
+                  <BadgeCheck className="h-4 w-4" />
+                </SubmitButton>
+              </form>
+
+              <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-sm font-bold text-slate-950">Check your email to confirm your account.</p>
+                <form action={resendConfirmationAction} className="mt-3 flex flex-col gap-3 sm:flex-row">
+                  <input type="hidden" name="next" value={next} />
+                  <input className="h-10 flex-1 rounded-xl border border-slate-300 px-3 text-sm" name="email" type="email" placeholder="Email for confirmation resend" defaultValue={registerEmail} required />
+                  <SubmitButton className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-800 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:text-slate-400" pendingText="Sending...">
+                    Resend confirmation email
+                  </SubmitButton>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
       </section>
