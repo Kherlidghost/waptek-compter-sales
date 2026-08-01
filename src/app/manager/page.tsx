@@ -1,5 +1,5 @@
 import { AdminManagerDashboard } from "@/components/AdminManagerDashboard";
-import { DashboardSessionBar } from "@/components/DashboardSessionBar";
+import { DashboardLayout } from "@/components/DashboardLayout";
 import { OnlineOrderStatusPanel } from "@/components/OnlineOrderStatusPanel";
 import { OnlineVendorProductForm } from "@/components/OnlineVendorProductForm";
 import { getAuthProfile } from "@/lib/auth";
@@ -72,20 +72,21 @@ export default async function ManagerDashboardPage({
   const params = await searchParams;
 
   return (
-    <main className="min-h-screen space-y-6 dashboard-shell px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
-      <DashboardSessionBar role="manager" />
-      <AdminManagerDashboard branchLabel={branch?.name ?? "Assigned branch"} branchScopeId={stateToId(branch?.state)} role="manager" />
-      <OnlineVendorProductForm
-        branches={productBranches}
-        categories={productCategories}
-        error={params.error}
-        lockedBranchId={branch?.id ?? null}
-        returnTo="/manager"
-        role="manager"
-        success={params.success}
-        vendors={approvedVendors}
-      />
-      <OnlineOrderStatusPanel role="manager" />
-    </main>
+    <DashboardLayout role="manager" title="Dashboard">
+      <div className="space-y-8">
+        <AdminManagerDashboard branchLabel={branch?.name ?? "Assigned branch"} branchScopeId={stateToId(branch?.state)} role="manager" />
+        <OnlineVendorProductForm
+          branches={productBranches}
+          categories={productCategories}
+          error={params.error}
+          lockedBranchId={branch?.id ?? null}
+          returnTo="/manager"
+          role="manager"
+          success={params.success}
+          vendors={approvedVendors}
+        />
+        <OnlineOrderStatusPanel role="manager" />
+      </div>
+    </DashboardLayout>
   );
 }

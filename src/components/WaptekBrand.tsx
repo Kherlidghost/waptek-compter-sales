@@ -12,14 +12,14 @@ export function WaptekBrand({ compact = false, theme = "light", className = "" }
   return (
     <Link
       href="/"
-      className={`flex shrink-0 items-center gap-3 focus-visible:outline-emerald-600 ${className}`}
+      className={`flex shrink-0 items-center gap-3 focus-visible:outline-primary-400 ${className}`}
       aria-label="WAPTEK COMPUTER SERVICES — home"
     >
       <span
         className={`flex h-11 w-11 items-center justify-center rounded-2xl text-xs font-black shadow-lg ${
           isDark
-            ? "bg-emerald-400 text-slate-950 shadow-emerald-950/20"
-            : "bg-slate-950 text-emerald-300 shadow-slate-950/20"
+            ? "bg-accent-400 text-primary-950 shadow-accent-950/20"
+            : "bg-primary-700 text-white shadow-primary-950/20"
         }`}
         aria-hidden="true"
       >
@@ -29,12 +29,12 @@ export function WaptekBrand({ compact = false, theme = "light", className = "" }
       {!compact ? (
         <span
           className={`hidden text-base font-black leading-tight tracking-tight sm:block ${
-            isDark ? "text-white" : "text-slate-950"
+            isDark ? "text-white" : "text-primary-900"
           }`}
         >
           WAPTEK
           <br />
-          <span className={`text-xs font-semibold ${isDark ? "text-slate-300" : "text-slate-500"}`}>
+          <span className={`text-xs font-semibold ${isDark ? "text-slate-300" : "text-ink-500"}`}>
             COMPUTER SERVICES
           </span>
         </span>

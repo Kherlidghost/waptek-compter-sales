@@ -92,10 +92,10 @@ export function ProductExplorer({
       <DesignSurface>
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">Marketplace search</p>
-            <h2 className="mt-1 text-xl font-black text-slate-950">{compact ? "What are you looking for?" : "Find the right computer product"}</h2>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-accent-700">Marketplace search</p>
+            <h2 className="mt-1 text-xl font-black text-ink-950">{compact ? "What are you looking for?" : "Find the right computer product"}</h2>
           </div>
-          <p className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">Live catalogue filters</p>
+          <p className="rounded-full bg-ink-100 px-3 py-1 text-xs font-bold text-ink-600">Live catalogue filters</p>
         </div>
         <div className="grid gap-3 md:grid-cols-[1fr_190px_190px]">
         <input
@@ -162,12 +162,12 @@ export function ProductExplorer({
             <option value="price-high">Price: high to low</option>
             <option value="stock-high">Stock: high to low</option>
           </select>
-          <label className="flex h-12 items-center gap-2 rounded-2xl border border-slate-300 bg-white px-3 text-sm font-semibold">
+          <label className="flex h-12 items-center gap-2 rounded-2xl border border-ink-300 bg-white px-3 text-sm font-semibold">
             <input
               checked={inStockOnly}
               onChange={(event) => setInStockOnly(event.target.checked)}
               type="checkbox"
-              className="size-4 accent-emerald-700"
+              className="size-4 accent-accent-600"
             />
             In stock only
           </label>
@@ -178,8 +178,8 @@ export function ProductExplorer({
               key={chip}
               className={`rounded-full border px-4 py-2 text-sm font-black shadow-sm ${
                 categoryChip === chip
-                  ? "border-emerald-700 bg-emerald-50 text-emerald-800"
-                  : "border-slate-300 text-slate-700 hover:border-emerald-500 hover:text-emerald-700"
+                  ? "border-accent-600 bg-accent-100 text-accent-700"
+                  : "border-ink-300 text-ink-700 hover:border-accent-500 hover:text-accent-700"
               }`}
               onClick={() => {
                 setCategoryChip(categoryChip === chip ? "" : chip);
@@ -193,9 +193,9 @@ export function ProductExplorer({
         </div>
       </DesignSurface>
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-600">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-ink-600">
         <p>
-          Showing <span className="font-bold text-slate-950">{filteredProducts.length}</span> of {products.length} products
+          Showing <span className="font-bold text-ink-950">{filteredProducts.length}</span> of {products.length} products
         </p>
         <button
           onClick={() => {
@@ -208,7 +208,7 @@ export function ProductExplorer({
             setInStockOnly(false);
             setSort("featured");
           }}
-          className="rounded-xl border border-slate-300 bg-white/80 px-4 py-2 font-black hover:bg-white"
+          className="rounded-xl border border-ink-300 bg-white/80 px-4 py-2 font-black hover:bg-white"
           type="button"
         >
           Reset filters

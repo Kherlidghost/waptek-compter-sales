@@ -124,8 +124,8 @@ export default async function OrdersPage() {
     <div className="min-h-screen marketplace-shell text-slate-900">
       <PublicHeader />
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-        <section className="mb-6 overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 p-6 text-white shadow-2xl shadow-slate-950/15">
-          <p className="w-fit rounded-full border border-emerald-300/30 bg-emerald-300/10 px-4 py-2 text-sm font-black uppercase text-emerald-200">{isCustomerAccount ? "Customer account" : `${profile.role} orders`}</p>
+        <section className="mb-6 overflow-hidden rounded-3xl border border-primary-800 bg-primary-900 p-6 text-white shadow-2xl shadow-primary-950/15">
+          <p className="w-fit rounded-full border border-accent-300/30 bg-accent-300/10 px-4 py-2 text-sm font-black uppercase text-accent-200">{isCustomerAccount ? "Customer account" : `${profile.role} orders`}</p>
           <h1 className="mt-4 text-3xl font-black text-white sm:text-4xl">{isCustomerAccount ? "Welcome to My Account" : "Order tracking"}</h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
             {isCustomerAccount
@@ -142,9 +142,9 @@ export default async function OrdersPage() {
               ["💰 Upload Receipt", firstPendingOrder ? `/orders/${firstPendingOrder.id}` : "/orders", "Send payment proof"],
               ["🛠 Request Repair", "/repair", "Ask for diagnosis or repair"],
             ].map(([label, href, description]) => (
-              <Link key={label} className="wcs-card min-h-28 rounded-2xl p-5 hover:border-emerald-300" href={href}>
-                <p className="font-black text-slate-950">{label}</p>
-                <p className="mt-1 text-sm text-slate-600">{description}</p>
+              <Link key={label} className="wcs-card min-h-28 rounded-2xl p-5 hover:border-accent-300" href={href}>
+                <p className="font-black text-ink-950">{label}</p>
+                <p className="mt-1 text-sm text-ink-600">{description}</p>
               </Link>
             ))}
           </section>
@@ -165,22 +165,22 @@ export default async function OrdersPage() {
                 [rejectedOrders > 0 ? "Rejected payments" : "Order value", rejectedOrders > 0 ? rejectedOrders.toString() : formatNaira(totalValue)],
               ]).map(([label, value]) => (
             <DesignSurface key={label} className="p-6">
-              <p className="text-sm text-slate-500">{label}</p>
-              <p className="mt-2 text-3xl font-black text-slate-950">{value}</p>
+              <p className="text-sm text-ink-500">{label}</p>
+              <p className="mt-2 text-3xl font-black text-ink-950">{value}</p>
             </DesignSurface>
           ))}
         </section>
 
         <section className="mb-4">
-          <h2 className="text-xl font-black text-slate-950">Recent activity</h2>
-          <p className="mt-1 text-sm text-slate-600">{isCustomerAccount ? "Recent order updates for your account." : "Recent order updates for your permitted dashboard scope."}</p>
+          <h2 className="text-xl font-black text-ink-950">Recent activity</h2>
+          <p className="mt-1 text-sm text-ink-600">{isCustomerAccount ? "Recent order updates for your account." : "Recent order updates for your permitted dashboard scope."}</p>
         </section>
 
         <div className="grid gap-4">
           {displayedOrders.length === 0 ? (
             <DesignSurface className="p-8 text-center">
-              <p className="text-lg font-bold text-slate-950">No orders yet.</p>
-              <p className="mt-2 text-sm text-slate-600">Place an order and upload a receipt to see it here.</p>
+              <p className="text-lg font-bold text-ink-950">No orders yet.</p>
+              <p className="mt-2 text-sm text-ink-600">Place an order and upload a receipt to see it here.</p>
               <Link className="btn-primary mt-4" href="/products">
                 Continue shopping
               </Link>
@@ -190,13 +190,13 @@ export default async function OrdersPage() {
               <DesignSurface key={order.id} className="p-6">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
-                    <p className="text-lg font-black text-slate-950">{order.id}</p>
-                    <p className="mt-1 text-sm text-slate-600">
+                    <p className="text-lg font-black text-ink-950">{order.id}</p>
+                    <p className="mt-1 text-sm text-ink-600">
                       {order.customerName} · {getBranch(order.branchId)?.state} · {order.createdAt}
                     </p>
                   </div>
                   <div className="text-left md:text-right">
-                    <p className="text-lg font-black text-slate-950">{formatNaira(order.total)}</p>
+                    <p className="text-lg font-black text-ink-950">{formatNaira(order.total)}</p>
                     <p className="mt-1"><StatusBadge status={order.status} /></p>
                   </div>
                 </div>
@@ -234,7 +234,7 @@ function OrderTimeline({ status }: { status: string }) {
       {steps.map(([label, activeStatuses]) => {
         const isActive = (activeStatuses as readonly string[]).includes(status);
         return (
-          <div key={label} className={`rounded-md border px-3 py-2 text-xs font-bold ${isActive ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-slate-200 bg-slate-50 text-slate-500"}`}>
+          <div key={label} className={`rounded-md border px-3 py-2 text-xs font-bold ${isActive ? "border-accent-200 bg-accent-100 text-accent-700" : "border-ink-200 bg-ink-50 text-ink-500"}`}>
             {label}
           </div>
         );

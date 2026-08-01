@@ -47,9 +47,9 @@ export default async function RepairsPage() {
       <PublicHeader />
       <main>
         {/* Hero */}
-        <section className="border-b border-slate-200 bg-slate-950 text-white">
+        <section className="border-b border-ink-200 bg-primary-900 text-white">
           <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-            <p className="section-eyebrow mb-2 text-emerald-300">Repair services</p>
+            <p className="section-eyebrow mb-2 text-accent-300">Repair services</p>
             <h1 className="text-4xl font-black leading-tight sm:text-5xl">
               Professional Computer Repair Support
             </h1>
@@ -71,31 +71,31 @@ export default async function RepairsPage() {
         {/* Services */}
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <p className="section-eyebrow mb-1">What we fix</p>
-          <h2 className="mb-6 text-2xl font-black text-slate-950">Common Repair Services</h2>
+          <h2 className="mb-6 text-2xl font-black text-ink-950">Common Repair Services</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {repairServices.map((service) => (
               <div key={service.title} className="wcs-card rounded-2xl p-5">
                 <span className="mb-3 block text-3xl" aria-hidden="true">{service.icon}</span>
-                <p className="font-black text-slate-950">{service.title}</p>
-                <p className="mt-1.5 text-sm leading-6 text-slate-600">{service.desc}</p>
+                <p className="font-black text-ink-950">{service.title}</p>
+                <p className="mt-1.5 text-sm leading-6 text-ink-600">{service.desc}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* How it works */}
-        <section className="bg-slate-50">
+        <section className="bg-ink-50">
           <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
             <p className="section-eyebrow mb-1">Simple process</p>
-            <h2 className="mb-6 text-2xl font-black text-slate-950">How Repair Requests Work</h2>
+            <h2 className="mb-6 text-2xl font-black text-ink-950">How Repair Requests Work</h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
               {repairSteps.map((item) => (
                 <div key={item.step} className="wcs-card rounded-2xl p-5">
-                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-sm font-black text-emerald-800">
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-accent-100 text-sm font-black text-accent-700">
                     {item.step}
                   </div>
-                  <p className="font-black text-slate-950">{item.title}</p>
-                  <p className="mt-1.5 text-xs leading-5 text-slate-600">{item.body}</p>
+                  <p className="font-black text-ink-950">{item.title}</p>
+                  <p className="mt-1.5 text-xs leading-5 text-ink-600">{item.body}</p>
                 </div>
               ))}
             </div>
@@ -107,8 +107,8 @@ export default async function RepairsPage() {
           <div className="grid gap-8 lg:grid-cols-[1fr_420px]">
             <DesignSurface className="p-6">
               <p className="section-eyebrow mb-1">Submit a request</p>
-              <h2 className="text-2xl font-black text-slate-950">Repair Request Form</h2>
-              <p className="mt-2 text-sm text-slate-600">
+              <h2 className="text-2xl font-black text-ink-950">Repair Request Form</h2>
+              <p className="mt-2 text-sm text-ink-600">
                 Fill in your details and describe the fault. A technician will follow up from your chosen branch.
               </p>
               <RepairRequestForm />
@@ -117,8 +117,8 @@ export default async function RepairsPage() {
             <aside className="h-fit space-y-4">
               {waNumber ? (
                 <div className="rounded-2xl border border-[#25D366]/30 bg-[#25D366]/5 p-5">
-                  <p className="font-black text-slate-950">Prefer to chat first?</p>
-                  <p className="mt-1 text-sm text-slate-600">Describe your device issue directly on WhatsApp.</p>
+                  <p className="font-black text-ink-950">Prefer to chat first?</p>
+                  <p className="mt-1 text-sm text-ink-600">Describe your device issue directly on WhatsApp.</p>
                   <div className="mt-4">
                     <WhatsAppLink
                       number={waNumber}
@@ -131,16 +131,16 @@ export default async function RepairsPage() {
               ) : null}
 
               <DesignSurface className="p-5">
-                <p className="font-black text-slate-950">Branch locations</p>
-                <div className="mt-3 grid gap-2 text-sm text-slate-600">
+                <p className="font-black text-ink-950">Branch locations</p>
+                <div className="mt-3 grid gap-2 text-sm text-ink-600">
                   {[
                     ["Yola Main Branch", "Adamawa — Jimeta commercial area"],
                     ["Damaturu Service Hub", "Yobe — Central business district"],
                     ["Maiduguri Sales Office", "Borno — Post Office area"],
                   ].map(([name, address]) => (
-                    <div key={name} className="rounded-xl bg-slate-50 p-3">
-                      <p className="font-bold text-slate-800">{name}</p>
-                      <p className="text-xs text-slate-500">{address}</p>
+                    <div key={name} className="rounded-xl bg-ink-50 p-3">
+                      <p className="font-bold text-ink-800">{name}</p>
+                      <p className="text-xs text-ink-500">{address}</p>
                     </div>
                   ))}
                 </div>

@@ -18,10 +18,10 @@ export default async function ProductsPage({
     <div className="min-h-screen marketplace-shell text-slate-900">
       <PublicHeader />
       <main>
-        <section className="relative overflow-hidden border-b border-slate-200 bg-slate-950 text-white">
+        <section className="relative overflow-hidden border-b border-ink-200 bg-primary-900 text-white">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(16,185,129,0.25),transparent_24rem)]" aria-hidden="true" />
           <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-            <p className="section-eyebrow mb-2 text-emerald-300">
+            <p className="section-eyebrow mb-2 text-accent-300">
               {category ? category.name : "All products"}
             </p>
             <h1 className="max-w-3xl text-4xl font-black tracking-tight text-white">

@@ -1,5 +1,5 @@
 import { AdminManagerDashboard } from "@/components/AdminManagerDashboard";
-import { DashboardSessionBar } from "@/components/DashboardSessionBar";
+import { DashboardLayout } from "@/components/DashboardLayout";
 import { OnlineOrderStatusPanel } from "@/components/OnlineOrderStatusPanel";
 import { OnlineVendorProductForm } from "@/components/OnlineVendorProductForm";
 import { isSupabaseConfigured } from "@/lib/supabase-config";
@@ -52,19 +52,20 @@ export default async function AdminDashboardPage({
   const [params, options] = await Promise.all([searchParams, getAdminProductFormOptions()]);
 
   return (
-    <main className="min-h-screen space-y-6 dashboard-shell px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
-      <DashboardSessionBar role="admin" />
-      <AdminManagerDashboard role="admin" />
-      <OnlineVendorProductForm
-        branches={options.branches}
-        categories={options.categories}
-        error={params.error}
-        returnTo="/admin"
-        role="admin"
-        success={params.success}
-        vendors={options.approvedVendors}
-      />
-      <OnlineOrderStatusPanel role="admin" />
-    </main>
+    <DashboardLayout role="admin" title="Dashboard">
+      <div className="space-y-8">
+        <AdminManagerDashboard role="admin" />
+        <OnlineVendorProductForm
+          branches={options.branches}
+          categories={options.categories}
+          error={params.error}
+          returnTo="/admin"
+          role="admin"
+          success={params.success}
+          vendors={options.approvedVendors}
+        />
+        <OnlineOrderStatusPanel role="admin" />
+      </div>
+    </DashboardLayout>
   );
 }

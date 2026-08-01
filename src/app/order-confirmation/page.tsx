@@ -18,9 +18,9 @@ export default async function OrderConfirmationPage({
       <PublicHeader />
       <main className="grid min-h-[calc(100vh-73px)] place-items-center px-4">
       <DesignSurface className="max-w-xl p-8 text-center">
-        <p className="text-sm font-bold uppercase text-emerald-700">Receipt uploaded</p>
-        <h1 className="mt-3 text-3xl font-black text-slate-950">Order {orderNumber} is awaiting cashier confirmation.</h1>
-        <p className="mt-4 leading-7 text-slate-600">
+        <p className="text-sm font-bold uppercase text-accent-700">Receipt uploaded</p>
+        <h1 className="mt-3 text-3xl font-black text-ink-950">Order {orderNumber} is awaiting cashier confirmation.</h1>
+        <p className="mt-4 leading-7 text-ink-600">
           Your receipt has been uploaded to Supabase Storage. The cashier can now confirm or reject the payment online.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">

@@ -70,11 +70,11 @@ export function CartManager({ products }: { products: Product[] }) {
   if (lines.length === 0) {
     return (
       <DesignSurface className="p-12 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-3xl">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-ink-100 text-3xl">
           🛒
         </div>
-        <p className="text-lg font-black text-slate-950">Your cart is empty</p>
-        <p className="mt-2 text-sm text-slate-600">Browse products and add items before checkout.</p>
+        <p className="text-lg font-black text-ink-950">Your cart is empty</p>
+        <p className="mt-2 text-sm text-ink-600">Browse products and add items before checkout.</p>
         <Link
           href="/products"
           className="btn-primary mt-5"
@@ -95,10 +95,10 @@ export function CartManager({ products }: { products: Product[] }) {
           return (
             <div
               key={line.product.id}
-              className={`grid gap-4 p-4 sm:grid-cols-[80px_1fr_140px_100px_40px] sm:items-center ${index > 0 ? "border-t border-slate-100" : ""}`}
+              className={`grid gap-4 p-4 sm:grid-cols-[80px_1fr_140px_100px_40px] sm:items-center ${index > 0 ? "border-t border-ink-100" : ""}`}
             >
               {/* Image */}
-              <div className="relative hidden h-16 w-20 overflow-hidden rounded-xl bg-slate-100 sm:block">
+              <div className="relative hidden h-16 w-20 overflow-hidden rounded-xl bg-ink-100 sm:block">
                 <Image
                   src={line.product.image || FALLBACK_IMAGE}
                   alt={line.product.name}
@@ -113,18 +113,18 @@ export function CartManager({ products }: { products: Product[] }) {
               <div>
                 <Link
                   href={`/products/${line.product.slug}`}
-                  className="font-black text-slate-950 hover:text-emerald-700"
+                  className="font-black text-ink-950 hover:text-accent-700"
                 >
                   {line.product.name}
                 </Link>
-                <p className="mt-0.5 text-xs text-slate-500">
+                <p className="mt-0.5 text-xs text-ink-500">
                   {line.product.condition}
                   {line.product.stock <= 3 && line.product.stock > 0
                     ? ` · Only ${line.product.stock} left`
                     : ""}
                 </p>
                 {hasDiscount ? (
-                  <p className="mt-0.5 text-xs text-slate-400 line-through">{formatNaira(line.product.price)}</p>
+                  <p className="mt-0.5 text-xs text-ink-400 line-through">{formatNaira(line.product.price)}</p>
                 ) : null}
               </div>
 
@@ -132,7 +132,7 @@ export function CartManager({ products }: { products: Product[] }) {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => updateQuantity(line.product.id, Math.max(0, line.quantity - 1))}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 text-sm font-bold hover:bg-slate-100"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-ink-300 text-sm font-bold hover:bg-ink-50"
                   aria-label="Decrease quantity"
                   type="button"
                 >
@@ -144,12 +144,12 @@ export function CartManager({ products }: { products: Product[] }) {
                   onChange={(e) => updateQuantity(line.product.id, Math.max(1, Number(e.target.value)))}
                   type="number"
                   value={line.quantity}
-                  className="h-8 w-14 rounded-lg border border-slate-300 text-center text-sm font-semibold"
+                  className="h-8 w-14 rounded-lg border border-ink-300 text-center text-sm font-semibold"
                   aria-label="Quantity"
                 />
                 <button
                   onClick={() => updateQuantity(line.product.id, Math.min(line.product.stock, line.quantity + 1))}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 text-sm font-bold hover:bg-slate-100"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-ink-300 text-sm font-bold hover:bg-ink-50"
                   aria-label="Increase quantity"
                   type="button"
                 >
@@ -158,12 +158,12 @@ export function CartManager({ products }: { products: Product[] }) {
               </div>
 
               {/* Subtotal */}
-              <p className="font-black text-slate-950">{formatNaira(unitPrice * line.quantity)}</p>
+              <p className="font-black text-ink-950">{formatNaira(unitPrice * line.quantity)}</p>
 
               {/* Remove */}
               <button
                 onClick={() => removeLine(line.product.id)}
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-red-200 text-red-500 hover:bg-red-50"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-danger/20 text-danger hover:bg-danger-bg"
                 aria-label={`Remove ${line.product.name}`}
                 type="button"
               >
@@ -176,10 +176,10 @@ export function CartManager({ products }: { products: Product[] }) {
 
       {/* Summary */}
       <DesignSurface className="h-fit p-5">
-        <p className="text-sm font-black uppercase text-slate-500">Order summary</p>
+        <p className="text-sm font-black uppercase text-ink-500">Order summary</p>
         <div className="mt-4 space-y-2 text-sm">
           {lines.map((line) => (
-            <div key={line.product.id} className="flex justify-between gap-2 text-slate-700">
+            <div key={line.product.id} className="flex justify-between gap-2 text-ink-700">
               <span className="truncate">{line.product.name} × {line.quantity}</span>
               <span className="shrink-0 font-semibold">
                 {formatNaira((line.product.discountPrice ?? line.product.price) * line.quantity)}
@@ -187,9 +187,9 @@ export function CartManager({ products }: { products: Product[] }) {
             </div>
           ))}
         </div>
-        <div className="mt-4 flex items-center justify-between border-t border-slate-200 pt-4">
-          <p className="font-black text-slate-950">Total</p>
-          <p className="text-2xl font-black text-slate-950">{formatNaira(total)}</p>
+        <div className="mt-4 flex items-center justify-between border-t border-ink-200 pt-4">
+          <p className="font-black text-ink-950">Total</p>
+          <p className="text-2xl font-black text-ink-950">{formatNaira(total)}</p>
         </div>
         <div className="mt-5 grid gap-2">
           <Link
@@ -205,7 +205,7 @@ export function CartManager({ products }: { products: Product[] }) {
             Continue Shopping
           </Link>
         </div>
-        <p className="mt-4 text-center text-xs text-slate-500">
+        <p className="mt-4 text-center text-xs text-ink-500">
           Payment by manual bank transfer. Receipt upload required.
         </p>
       </DesignSurface>

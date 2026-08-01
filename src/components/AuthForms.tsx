@@ -46,10 +46,10 @@ export function AuthForms({
 
   return (
     <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-      <section className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 p-8 text-white shadow-2xl shadow-slate-950/15">
+      <section className="relative overflow-hidden rounded-3xl border border-primary-800 bg-primary-900 p-8 text-white shadow-2xl shadow-primary-950/15">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(16,185,129,0.24),transparent_22rem)]" aria-hidden="true" />
         <div className="relative">
-        <p className="text-sm font-bold uppercase text-emerald-300">WAPTEK COMPUTER SERVICES</p>
+        <p className="text-sm font-bold uppercase text-accent-300">WAPTEK COMPUTER SERVICES</p>
         <h1 className="mt-3 text-3xl font-black">Sales of Computers & Repairs</h1>
         <p className="mt-3 text-sm leading-6 text-slate-300">
           Sign in to complete checkout, upload payment receipts, manage orders, or access staff and vendor dashboards.
@@ -69,58 +69,58 @@ export function AuthForms({
       </section>
 
       <section className="grid gap-6">
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5">
+        <div className="rounded-3xl border border-ink-200 bg-white p-6 shadow-xl shadow-ink-950/5">
           <div>
-            <p className="text-sm font-bold uppercase text-emerald-700">Sign in</p>
-            <h2 className="mt-2 text-3xl font-black text-slate-950">Welcome back</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
+            <p className="text-sm font-bold uppercase text-accent-700">Sign in</p>
+            <h2 className="mt-2 text-3xl font-black text-ink-950">Welcome back</h2>
+            <p className="mt-2 text-sm leading-6 text-ink-600">
               Use your confirmed email and password. Staff accounts must exist in Supabase Auth and must have a matching profile role.
             </p>
           </div>
 
           {!isConfigured ? (
-            <div className="mt-5 rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+            <div className="mt-5 rounded-md border border-warm-500/30 bg-warm-100 p-4 text-sm text-warm-600">
               Supabase env vars are not configured yet. Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
             </div>
           ) : null}
 
-          {errorMessage ? <div className="mt-5 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800">{errorMessage}</div> : null}
-          {successMessage ? <div className="mt-5 rounded-md border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">{successMessage}</div> : null}
+          {errorMessage ? <div className="mt-5 rounded-md border border-danger/20 bg-danger-bg p-4 text-sm text-danger">{errorMessage}</div> : null}
+          {successMessage ? <div className="mt-5 rounded-md border border-success/20 bg-success-bg p-4 text-sm text-success">{successMessage}</div> : null}
 
           <form action={loginAction} className="mt-6 grid gap-4">
             <input type="hidden" name="next" value={next} />
-            <label className="grid gap-2 text-sm font-semibold text-slate-700">
+            <label className="grid gap-2 text-sm font-semibold text-ink-700">
               Email address
               <input className="wcs-input font-normal" name="email" type="email" autoComplete="email" placeholder="you@example.com" required />
             </label>
-            <label className="grid gap-2 text-sm font-semibold text-slate-700">
+            <label className="grid gap-2 text-sm font-semibold text-ink-700">
               Password
-              <div className="flex overflow-hidden rounded-xl border border-slate-300">
+              <div className="flex overflow-hidden rounded-xl border border-ink-300">
                 <input className="h-11 min-w-0 flex-1 px-3 font-normal outline-none" name="password" type={showLoginPassword ? "text" : "password"} autoComplete="current-password" placeholder="Enter password" required />
-                <button className="border-l border-slate-300 px-3 text-xs font-bold text-slate-700" onClick={() => setShowLoginPassword((current) => !current)} type="button">
+                <button className="border-l border-ink-300 px-3 text-xs font-bold text-ink-700" onClick={() => setShowLoginPassword((current) => !current)} type="button">
                   {showLoginPassword ? "Hide" : "Show"}
                 </button>
               </div>
             </label>
             <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
-              <label className="flex items-center gap-2 text-slate-600">
-                <input className="size-4 rounded border-slate-300" name="remember" type="checkbox" />
+              <label className="flex items-center gap-2 text-ink-600">
+                <input className="size-4 rounded border-ink-300" name="remember" type="checkbox" />
                 Remember me on this device
               </label>
-              <Link className="font-bold text-emerald-800" href="/auth/forgot-password">
+              <Link className="font-bold text-accent-700" href="/auth/forgot-password">
                 Forgot password?
               </Link>
             </div>
-            <SubmitButton className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-400" pendingText="Signing in...">
+            <SubmitButton className="rounded-xl bg-primary-700 px-5 py-3 text-sm font-bold text-white hover:bg-accent-600 disabled:cursor-not-allowed disabled:bg-ink-400" pendingText="Signing in...">
               Sign in securely
             </SubmitButton>
           </form>
         </div>
 
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5">
-          <p className="text-sm font-bold uppercase text-emerald-700">Customer registration</p>
-          <h2 className="mt-2 text-3xl font-black text-slate-950">Create your account</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
+        <div className="rounded-3xl border border-ink-200 bg-white p-6 shadow-xl shadow-ink-950/5">
+          <p className="text-sm font-bold uppercase text-accent-700">Customer registration</p>
+          <h2 className="mt-2 text-3xl font-black text-ink-950">Create your account</h2>
+          <p className="mt-2 text-sm leading-6 text-ink-600">
             Customer accounts require email confirmation before checkout, receipt upload, or order tracking.
           </p>
           <form
@@ -132,47 +132,47 @@ export function AuthForms({
           >
             <input type="hidden" name="next" value={next} />
             <div className="grid gap-4 sm:grid-cols-2">
-              <label className="grid gap-2 text-sm font-semibold text-slate-700">
+              <label className="grid gap-2 text-sm font-semibold text-ink-700">
                 Full name
                 <input className="wcs-input font-normal" name="full_name" placeholder="Full name" required />
               </label>
-              <label className="grid gap-2 text-sm font-semibold text-slate-700">
+              <label className="grid gap-2 text-sm font-semibold text-ink-700">
                 Phone number
                 <input className="wcs-input font-normal" name="phone" placeholder="+234..." required />
               </label>
             </div>
-            <label className="grid gap-2 text-sm font-semibold text-slate-700">
+            <label className="grid gap-2 text-sm font-semibold text-ink-700">
               Email address
               <input className="wcs-input font-normal" name="email" type="email" autoComplete="email" placeholder="you@example.com" onChange={(event) => setRegisterEmail(event.target.value)} required />
             </label>
             <div className="grid gap-4 sm:grid-cols-2">
-              <label className="grid gap-2 text-sm font-semibold text-slate-700">
+              <label className="grid gap-2 text-sm font-semibold text-ink-700">
                 Password
-                <div className="flex overflow-hidden rounded-xl border border-slate-300">
+                <div className="flex overflow-hidden rounded-xl border border-ink-300">
                   <input className="h-11 min-w-0 flex-1 px-3 font-normal outline-none" name="password" type={showRegisterPassword ? "text" : "password"} autoComplete="new-password" minLength={8} onChange={(event) => setRegisterPassword(event.target.value)} placeholder="Min 8 chars, upper, lower, number, symbol" required />
-                  <button className="border-l border-slate-300 px-3 text-xs font-bold text-slate-700" onClick={() => setShowRegisterPassword((current) => !current)} type="button">
+                  <button className="border-l border-ink-300 px-3 text-xs font-bold text-ink-700" onClick={() => setShowRegisterPassword((current) => !current)} type="button">
                     {showRegisterPassword ? "Hide" : "Show"}
                   </button>
                 </div>
               </label>
-              <label className="grid gap-2 text-sm font-semibold text-slate-700">
+              <label className="grid gap-2 text-sm font-semibold text-ink-700">
                 Confirm password
                 <input className="wcs-input font-normal" name="confirm_password" type={showRegisterPassword ? "text" : "password"} autoComplete="new-password" minLength={8} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Repeat password" required />
               </label>
             </div>
-            {passwordWeak ? <p className="text-sm font-semibold text-amber-700">Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character.</p> : null}
-            {passwordMismatch ? <p className="text-sm font-semibold text-red-700">Password and confirm password must match.</p> : null}
-            <SubmitButton className="rounded-xl bg-emerald-700 px-5 py-3 text-sm font-bold text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-slate-400" pendingText="Creating account...">
+            {passwordWeak ? <p className="text-sm font-semibold text-warm-600">Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character.</p> : null}
+            {passwordMismatch ? <p className="text-sm font-semibold text-danger">Password and confirm password must match.</p> : null}
+            <SubmitButton className="rounded-xl bg-accent-600 px-5 py-3 text-sm font-bold text-white hover:bg-accent-500 disabled:cursor-not-allowed disabled:bg-ink-400" pendingText="Creating account...">
               Create account
             </SubmitButton>
           </form>
 
-          <div className="mt-5 rounded-md border border-slate-200 bg-slate-50 p-4">
-            <p className="text-sm font-bold text-slate-950">Check your email to confirm your account.</p>
+          <div className="mt-5 rounded-md border border-ink-200 bg-ink-50 p-4">
+            <p className="text-sm font-bold text-ink-950">Check your email to confirm your account.</p>
             <form action={resendConfirmationAction} className="mt-3 flex flex-col gap-3 sm:flex-row">
               <input type="hidden" name="next" value={next} />
-              <input className="h-10 flex-1 rounded-md border border-slate-300 px-3 text-sm" name="email" type="email" placeholder="Email for confirmation resend" defaultValue={registerEmail} required />
-              <SubmitButton className="rounded-md border border-slate-300 px-4 py-2 text-sm font-bold text-slate-800 disabled:cursor-not-allowed disabled:text-slate-400" pendingText="Sending...">
+              <input className="h-10 flex-1 rounded-md border border-ink-300 px-3 text-sm" name="email" type="email" placeholder="Email for confirmation resend" defaultValue={registerEmail} required />
+              <SubmitButton className="rounded-md border border-ink-300 px-4 py-2 text-sm font-bold text-ink-800 disabled:cursor-not-allowed disabled:text-ink-400" pendingText="Sending...">
                 Resend confirmation email
               </SubmitButton>
             </form>

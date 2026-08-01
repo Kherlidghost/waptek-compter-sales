@@ -49,17 +49,17 @@ export default async function CheckoutPage({
       <main className="px-4 py-8">
         <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1fr_360px]">
         <DesignSurface className="p-6">
-          <p className="text-sm font-black uppercase text-emerald-700">Receipt-confirmed payment</p>
-          <h1 className="text-3xl font-black text-slate-950">Manual bank transfer checkout</h1>
-          <p className="mt-2 text-sm text-slate-600">Pay by manual bank transfer and upload your receipt for cashier confirmation.</p>
+          <p className="text-sm font-black uppercase text-accent-700">Receipt-confirmed payment</p>
+          <h1 className="text-3xl font-black text-ink-950">Manual bank transfer checkout</h1>
+          <p className="mt-2 text-sm text-ink-600">Pay by manual bank transfer and upload your receipt for cashier confirmation.</p>
           {params.error ? (
-            <div className="mt-5 rounded-md border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-800">
+            <div className="mt-5 rounded-md border border-danger/20 bg-danger-bg p-4 text-sm font-semibold text-danger">
               {params.error}
             </div>
           ) : null}
           <CheckoutForm action={createCheckoutOrder} products={products} catalogSource={catalogSource} />
         </DesignSurface>
-        <DesignSurface className="h-fit bg-slate-950 p-6 text-white">
+        <DesignSurface className="h-fit bg-primary-900 p-6 text-white">
           <h2 className="text-lg font-black text-white">Company bank account</h2>
           {hasBankDetails ? (
             <dl className="mt-4 space-y-3 text-sm">
@@ -71,7 +71,7 @@ export default async function CheckoutPage({
               ) : null}
             </dl>
           ) : (
-            <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">
+            <div className="mt-4 rounded-md border border-warm-500/30 bg-warm-100 p-4 text-sm font-semibold text-warm-600">
               Bank account details will be provided by support.
             </div>
           )}

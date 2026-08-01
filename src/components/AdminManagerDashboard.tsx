@@ -52,7 +52,7 @@ function slugify(value: string) {
   return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
-export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { role: DashboardRole; branchScopeId?: string; branchLabel?: string }) {
+export function AdminManagerDashboard({ role, branchScopeId }: { role: DashboardRole; branchScopeId?: string; branchLabel?: string }) {
   const canApprove = role === "admin";
   const isBranchScoped = role === "manager" && Boolean(branchScopeId);
   const visibleSections = role === "admin" ? sections : sections.filter((section) => ["analytics", "products", "orders", "repairs", "inventory", "reports"].includes(section.id));
@@ -246,34 +246,16 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-8">
-      <header className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 p-6 text-white shadow-2xl shadow-slate-950/15">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-        <div>
-          <p className="w-fit rounded-full border border-emerald-300/30 bg-emerald-300/10 px-4 py-2 text-sm font-black uppercase text-emerald-200">{role === "admin" ? "Marketplace control" : branchLabel ?? "Assigned branch"}</p>
-          <h1 className="mt-4 text-3xl font-black text-white sm:text-4xl">{role === "admin" ? "Welcome back, Admin" : "Welcome back, Branch Manager"}</h1>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
-            {role === "admin"
-              ? "Choose the next action for the marketplace: review payments, approve vendors, manage products, or check branch activity."
-              : "Start with the branch work that needs attention: orders, payments, stock, and repair requests."}
-          </p>
-        </div>
-        <div className="grid min-w-52 gap-2 rounded-2xl border border-white/10 bg-white/10 p-4 text-sm backdrop-blur">
-          <span className="font-bold text-slate-300">Workspace</span>
-          <span className="text-xl font-black text-white">{role === "admin" ? "All branches" : branchLabel ?? "Assigned branch"}</span>
-          <span className="text-emerald-200">Ready for action</span>
-        </div>
-        </div>
-        {notice ? <p className="mt-5 rounded-xl border border-emerald-300/30 bg-emerald-300/10 px-4 py-3 text-sm font-semibold text-emerald-100">{notice}</p> : null}
-      </header>
+    <div className="space-y-8">
+      {notice ? <p className="rounded-xl border border-accent-300/30 bg-accent-100 px-4 py-3 text-sm font-semibold text-accent-700">{notice}</p> : null}
 
-      <nav className="flex gap-2 overflow-x-auto rounded-2xl border border-slate-200 bg-white/90 p-2 shadow-xl shadow-slate-950/5 backdrop-blur">
+      <nav className="flex gap-2 overflow-x-auto rounded-2xl border border-ink-200 bg-white/90 p-2 shadow-xl shadow-ink-950/5 backdrop-blur">
         {visibleSections.map((section) => (
           <button
             key={section.id}
             onClick={() => setActiveSection(section.id)}
             className={`whitespace-nowrap rounded-xl px-4 py-3 text-sm font-black ${
-              activeSection === section.id ? "bg-slate-950 text-white shadow-sm" : "text-slate-700 hover:bg-slate-100"
+              activeSection === section.id ? "bg-primary-700 text-white shadow-sm" : "text-ink-700 hover:bg-ink-50"
             }`}
             type="button"
           >
@@ -287,10 +269,10 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
           <QuickActions actions={dashboardActions} onSelect={setActiveSection} />
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <h2 className="text-2xl font-black text-slate-950">What needs attention?</h2>
-              <p className="mt-1 text-sm text-slate-600">Start with these before opening detailed reports.</p>
+              <h2 className="text-2xl font-black text-ink-950">What needs attention?</h2>
+              <p className="mt-1 text-sm text-ink-600">Start with these before opening detailed reports.</p>
             </div>
-            <span className="rounded-full bg-emerald-50 px-4 py-2 text-sm font-black text-emerald-800">Today’s workspace</span>
+            <span className="rounded-full bg-accent-100 px-4 py-2 text-sm font-black text-accent-700">Today’s workspace</span>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {dashboardCards.map((card) => (
@@ -301,8 +283,8 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
           {role === "admin" ? (
             <section className="space-y-3">
               <div>
-                <h2 className="text-xl font-black text-slate-950">Branch overview</h2>
-                <p className="mt-1 text-sm text-slate-600">A quick view of each branch.</p>
+                <h2 className="text-xl font-black text-ink-950">Branch overview</h2>
+                <p className="mt-1 text-sm text-ink-600">A quick view of each branch.</p>
               </div>
               <div className="grid gap-4 md:grid-cols-3">
                 {branchOverview.map((item) => (
@@ -313,8 +295,8 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
           ) : (
             <section className="space-y-3">
               <div>
-                <h2 className="text-xl font-black text-slate-950">Branch summary</h2>
-                <p className="mt-1 text-sm text-slate-600">Your assigned branch only.</p>
+                <h2 className="text-xl font-black text-ink-950">Branch summary</h2>
+                <p className="mt-1 text-sm text-ink-600">Your assigned branch only.</p>
               </div>
               <div className="grid gap-4 md:grid-cols-2">
                 {branchOverview.map((item) => (
@@ -346,19 +328,19 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
 
       {activeSection === "vendors" ? (
         <section className="space-y-6">
-          <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="text-xl font-black text-slate-950">Vendor approval queue</h2>
-            <p className="mt-1 text-sm text-slate-600">Admin reviews vendor applications before products are listed publicly.</p>
+          <div className="rounded-lg border border-ink-200 bg-white p-5 shadow-sm">
+            <h2 className="text-xl font-black text-ink-950">Vendor approval queue</h2>
+            <p className="mt-1 text-sm text-ink-600">Admin reviews vendor applications before products are listed publicly.</p>
             <div className="mt-4 grid gap-3 md:grid-cols-2">
               {pendingVendorRows.length === 0 ? (
-                <p className="rounded-md border border-dashed border-slate-300 p-4 text-sm text-slate-600">No pending vendor approvals.</p>
+                <p className="rounded-md border border-dashed border-ink-300 p-4 text-sm text-ink-600">No pending vendor approvals.</p>
               ) : pendingVendorRows.map((vendor) => (
-                <div key={vendor.id} className="rounded-md bg-slate-50 p-4">
-                  <p className="font-black text-slate-950">{vendor.businessName}</p>
-                  <p className="mt-1 text-sm text-slate-600">{vendor.ownerName} · {getBranch(vendor.branchId)?.state}</p>
+                <div key={vendor.id} className="rounded-md bg-ink-50 p-4">
+                  <p className="font-black text-ink-950">{vendor.businessName}</p>
+                  <p className="mt-1 text-sm text-ink-600">{vendor.ownerName} · {getBranch(vendor.branchId)?.state}</p>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    <button className="rounded-md bg-emerald-700 px-3 py-2 text-sm font-bold text-white" onClick={() => updateVendorStatus(vendor.id, "approved")}>Approve</button>
-                    <button className="rounded-md border border-red-300 px-3 py-2 text-sm font-bold text-red-700" onClick={() => updateVendorStatus(vendor.id, "rejected")}>Reject</button>
+                    <button className="rounded-md bg-accent-600 px-3 py-2 text-sm font-bold text-white" onClick={() => updateVendorStatus(vendor.id, "approved")}>Approve</button>
+                    <button className="rounded-md border border-danger/30 px-3 py-2 text-sm font-bold text-danger" onClick={() => updateVendorStatus(vendor.id, "rejected")}>Reject</button>
                   </div>
                 </div>
               ))}
@@ -366,16 +348,16 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
           </div>
           <div className="grid gap-4 md:grid-cols-3">
           {vendorRows.map((vendor) => (
-            <article key={vendor.id} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-              <p className="text-lg font-black text-slate-950">{vendor.businessName}</p>
-              <p className="mt-1 text-sm text-slate-600">Owner: {vendor.ownerName}</p>
-              <p className="mt-1 text-sm text-slate-600">Branch: {getBranch(vendor.branchId)?.state}</p>
+            <article key={vendor.id} className="rounded-lg border border-ink-200 bg-white p-5 shadow-sm">
+              <p className="text-lg font-black text-ink-950">{vendor.businessName}</p>
+              <p className="mt-1 text-sm text-ink-600">Owner: {vendor.ownerName}</p>
+              <p className="mt-1 text-sm text-ink-600">Branch: {getBranch(vendor.branchId)?.state}</p>
               <p className="mt-3"><StatusBadge status={vendor.status} /></p>
               <div className="mt-4 flex flex-wrap gap-2">
-                <button className="rounded-md bg-emerald-700 px-3 py-2 text-sm font-bold text-white disabled:bg-slate-300" disabled={!canApprove} onClick={() => updateVendorStatus(vendor.id, "approved")}>
+                <button className="rounded-md bg-accent-600 px-3 py-2 text-sm font-bold text-white disabled:bg-ink-300" disabled={!canApprove} onClick={() => updateVendorStatus(vendor.id, "approved")}>
                   Approve
                 </button>
-                <button className="rounded-md border border-red-300 px-3 py-2 text-sm font-bold text-red-700 disabled:border-slate-200 disabled:text-slate-400" disabled={!canApprove} onClick={() => updateVendorStatus(vendor.id, "rejected")}>
+                <button className="rounded-md border border-danger/30 px-3 py-2 text-sm font-bold text-danger disabled:border-ink-200 disabled:text-ink-400" disabled={!canApprove} onClick={() => updateVendorStatus(vendor.id, "rejected")}>
                   Reject
                 </button>
               </div>
@@ -394,13 +376,13 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
             getBranch(product.branchId)?.state ?? "Unknown",
             <input
               key={`${product.id}-price`}
-              className="h-9 w-32 rounded-md border border-slate-300 px-2"
+              className="h-9 w-32 rounded-md border border-ink-300 px-2"
               inputMode="numeric"
               onChange={(event) => updateProductPrice(product.id, Number(event.target.value))}
               value={product.price}
             />,
             product.featured ? "Yes" : "No",
-            <button key={`${product.id}-featured`} className="rounded-md border border-slate-300 px-3 py-2 text-xs font-bold" onClick={() => toggleProductFeatured(product.id)}>
+            <button key={`${product.id}-featured`} className="rounded-md border border-ink-300 px-3 py-2 text-xs font-bold" onClick={() => toggleProductFeatured(product.id)}>
               Toggle featured
             </button>,
           ])}
@@ -409,10 +391,10 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
 
       {activeSection === "categories" ? (
         <section className="grid gap-6 lg:grid-cols-[360px_1fr]">
-          <form onSubmit={addCategory} className="h-fit rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="text-xl font-black text-slate-950">Add category</h2>
-            <input className="mt-4 h-11 w-full rounded-md border border-slate-300 px-3" onChange={(event) => setCategoryName(event.target.value)} placeholder="Category name" value={categoryName} />
-            <button className="mt-3 rounded-md bg-emerald-700 px-4 py-2 text-sm font-bold text-white">Add category</button>
+          <form onSubmit={addCategory} className="h-fit rounded-lg border border-ink-200 bg-white p-5 shadow-sm">
+            <h2 className="text-xl font-black text-ink-950">Add category</h2>
+            <input className="mt-4 h-11 w-full rounded-md border border-ink-300 px-3" onChange={(event) => setCategoryName(event.target.value)} placeholder="Category name" value={categoryName} />
+            <button className="mt-3 rounded-md bg-accent-600 px-4 py-2 text-sm font-bold text-white">Add category</button>
           </form>
           <DataTable headers={["Category", "Description", "Products"]} rows={categoryRows.map((category) => [category.name, category.description, productRows.filter((product) => product.categoryId === category.id).length])} />
         </section>
@@ -420,10 +402,10 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
 
       {activeSection === "branches" ? (
         <section className="grid gap-6 lg:grid-cols-[360px_1fr]">
-          <form onSubmit={addBranch} className="h-fit rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="text-xl font-black text-slate-950">Add branch</h2>
-            <input className="mt-4 h-11 w-full rounded-md border border-slate-300 px-3" onChange={(event) => setBranchName(event.target.value)} placeholder="Branch name" value={branchName} />
-            <button className="mt-3 rounded-md bg-emerald-700 px-4 py-2 text-sm font-bold text-white">Add branch</button>
+          <form onSubmit={addBranch} className="h-fit rounded-lg border border-ink-200 bg-white p-5 shadow-sm">
+            <h2 className="text-xl font-black text-ink-950">Add branch</h2>
+            <input className="mt-4 h-11 w-full rounded-md border border-ink-300 px-3" onChange={(event) => setBranchName(event.target.value)} placeholder="Branch name" value={branchName} />
+            <button className="mt-3 rounded-md bg-accent-600 px-4 py-2 text-sm font-bold text-white">Add branch</button>
           </form>
           <DataTable headers={["Branch", "State", "City", "Manager", "Orders"]} rows={branchRows.map((branch) => [branch.name, branch.state, branch.city, branch.manager, orderRows.filter((order) => order.branchId === branch.id).length])} />
         </section>
@@ -439,7 +421,7 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
             <StatusBadge key={`${order.id}-receipt`} status={order.receiptStatus} />,
             <StatusBadge key={`${order.id}-status-badge`} status={order.status} />,
             formatNaira(order.total),
-            <select key={`${order.id}-status`} className="h-9 rounded-md border border-slate-300 px-2" onChange={(event) => updateOrderStatus(order.id, event.target.value as OrderStatus)} value={order.status}>
+            <select key={`${order.id}-status`} className="h-9 rounded-md border border-ink-300 px-2" onChange={(event) => updateOrderStatus(order.id, event.target.value as OrderStatus)} value={order.status}>
               {orderStatuses.map((status) => (
                 <option key={status} value={status}>
                   {status.replaceAll("_", " ")}
@@ -458,7 +440,7 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
             return [
               product.name,
               getBranch(product.branchId)?.state ?? "Unknown",
-              <input key={`${product.id}-stock`} className="h-9 w-24 rounded-md border border-slate-300 px-2" inputMode="numeric" onChange={(event) => updateProductStock(product.id, Number(event.target.value))} value={product.stock} />,
+              <input key={`${product.id}-stock`} className="h-9 w-24 rounded-md border border-ink-300 px-2" inputMode="numeric" onChange={(event) => updateProductStock(product.id, Number(event.target.value))} value={product.stock} />,
               <StatusBadge key={`${product.id}-status`} status={status.status} label={status.label} />,
               product.stock <= 3 ? "Restock recommended" : "No action",
             ];
@@ -489,21 +471,21 @@ export function AdminManagerDashboard({ role, branchScopeId, branchLabel }: { ro
 
 function DataTable({ headers, rows }: { headers: string[]; rows: Array<Array<React.ReactNode>> }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-lg border border-ink-200 bg-white shadow-sm">
       <table className="w-full min-w-[760px] text-left text-sm">
-        <thead className="bg-slate-100 text-xs uppercase text-slate-500">
+        <thead className="bg-ink-100 text-xs uppercase text-ink-500">
           <tr>
             {headers.map((header) => (
               <th key={header} className="px-4 py-3">{header}</th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100">
+        <tbody className="divide-y divide-ink-100">
           {rows.length === 0 ? (
             <tr>
               <td colSpan={headers.length} className="px-4 py-8 text-center">
-                <p className="font-bold text-slate-950">No records found.</p>
-                <p className="mt-1 text-sm text-slate-600">Relevant marketplace activity will appear here when available.</p>
+                <p className="font-bold text-ink-950">No records found.</p>
+                <p className="mt-1 text-sm text-ink-600">Relevant marketplace activity will appear here when available.</p>
               </td>
             </tr>
           ) : rows.map((row, index) => (
@@ -521,12 +503,12 @@ function DataTable({ headers, rows }: { headers: string[]; rows: Array<Array<Rea
 
 function QuickActions({ actions, onSelect }: { actions: DashboardAction[]; onSelect: (section: Section) => void }) {
   return (
-    <section className="rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-xl shadow-slate-950/5 backdrop-blur">
+    <section className="rounded-3xl border border-ink-200 bg-white/95 p-6 shadow-xl shadow-ink-950/5 backdrop-blur">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-sm font-black uppercase text-emerald-700">Next best actions</p>
-          <h2 className="mt-1 text-2xl font-black text-slate-950">What do you want to do now?</h2>
-          <p className="mt-1 text-sm text-slate-600">Pick a task card to jump straight into the work.</p>
+          <p className="text-sm font-black uppercase text-accent-700">Next best actions</p>
+          <h2 className="mt-1 text-2xl font-black text-ink-950">What do you want to do now?</h2>
+          <p className="mt-1 text-sm text-ink-600">Pick a task card to jump straight into the work.</p>
         </div>
       </div>
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -534,21 +516,21 @@ function QuickActions({ actions, onSelect }: { actions: DashboardAction[]; onSel
           action.href ? (
             <a
               key={action.label}
-              className="group flex min-h-28 items-center justify-between rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 px-5 py-4 text-left text-sm font-black text-slate-800 shadow-sm hover:border-emerald-300 hover:from-emerald-50 hover:to-white"
+              className="group flex min-h-28 items-center justify-between rounded-2xl border border-ink-200 bg-gradient-to-br from-white to-ink-50 px-5 py-4 text-left text-sm font-black text-ink-800 shadow-sm hover:border-accent-300 hover:from-accent-100 hover:to-white"
               href={action.href}
             >
               <span>{action.label}</span>
-              <span className="rounded-full bg-slate-950 px-3 py-1 text-xs text-white group-hover:bg-emerald-700" aria-hidden="true">Open</span>
+              <span className="rounded-full bg-primary-700 px-3 py-1 text-xs text-white group-hover:bg-accent-600" aria-hidden="true">Open</span>
             </a>
           ) : (
             <button
               key={action.label}
-              className="group flex min-h-28 items-center justify-between rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 px-5 py-4 text-left text-sm font-black text-slate-800 shadow-sm hover:border-emerald-300 hover:from-emerald-50 hover:to-white"
+              className="group flex min-h-28 items-center justify-between rounded-2xl border border-ink-200 bg-gradient-to-br from-white to-ink-50 px-5 py-4 text-left text-sm font-black text-ink-800 shadow-sm hover:border-accent-300 hover:from-accent-100 hover:to-white"
               onClick={() => action.section && onSelect(action.section)}
               type="button"
             >
               <span>{action.label}</span>
-              <span className="rounded-full bg-slate-950 px-3 py-1 text-xs text-white group-hover:bg-emerald-700" aria-hidden="true">View</span>
+              <span className="rounded-full bg-primary-700 px-3 py-1 text-xs text-white group-hover:bg-accent-600" aria-hidden="true">View</span>
             </button>
           ),
         )}
@@ -573,16 +555,16 @@ function SummaryCard({
   onSelect: (section: Section) => void;
 }) {
   return (
-    <article className="flex min-h-52 flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5">
+    <article className="flex min-h-52 flex-col justify-between rounded-3xl border border-ink-200 bg-white p-6 shadow-xl shadow-ink-950/5">
       <div>
-        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-2xl">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-100 text-2xl">
           {cardIcon(title)}
         </div>
-        <p className="text-sm font-black text-slate-500">{title}</p>
-        <p className="mt-2 text-3xl font-black text-slate-950">{value}</p>
-        <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
+        <p className="text-sm font-black text-ink-500">{title}</p>
+        <p className="mt-2 text-3xl font-black text-ink-950">{value}</p>
+        <p className="mt-2 text-sm leading-6 text-ink-600">{description}</p>
       </div>
-      <button className="mt-5 w-fit rounded-full bg-emerald-50 px-4 py-2 text-sm font-black text-emerald-800 hover:bg-emerald-100" onClick={() => onSelect(section)} type="button">
+      <button className="mt-5 w-fit rounded-full bg-accent-100 px-4 py-2 text-sm font-black text-accent-700 hover:bg-accent-400/20" onClick={() => onSelect(section)} type="button">
         {action} →
       </button>
     </article>
@@ -601,17 +583,17 @@ function cardIcon(title: string) {
 
 function RecentActivityPanel({ rows }: { rows: Array<{ title: string; detail: string; status: string }> }) {
   return (
-    <section className="rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-xl shadow-slate-950/5">
-      <h2 className="text-2xl font-black text-slate-950">Recent activity</h2>
-      <p className="mt-1 text-sm text-slate-600">What happened recently.</p>
+    <section className="rounded-3xl border border-ink-200 bg-white/95 p-6 shadow-xl shadow-ink-950/5">
+      <h2 className="text-2xl font-black text-ink-950">Recent activity</h2>
+      <p className="mt-1 text-sm text-ink-600">What happened recently.</p>
       <div className="mt-4 grid gap-3">
         {rows.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-slate-300 p-5 text-sm text-slate-600">No recent activity yet. Everything looks good.</p>
+          <p className="rounded-2xl border border-dashed border-ink-300 p-5 text-sm text-ink-600">No recent activity yet. Everything looks good.</p>
         ) : rows.map((row, index) => (
-          <div key={`${row.title}-${index}`} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-slate-50 px-4 py-4 text-sm">
+          <div key={`${row.title}-${index}`} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-ink-50 px-4 py-4 text-sm">
             <div>
-              <p className="font-black text-slate-950">{row.title}</p>
-              <p className="mt-1 text-slate-600">{row.detail}</p>
+              <p className="font-black text-ink-950">{row.title}</p>
+              <p className="mt-1 text-ink-600">{row.detail}</p>
             </div>
             <StatusBadge status={row.status} />
           </div>
@@ -635,9 +617,9 @@ function BranchOverviewCard({
   repairRequests: number;
 }) {
   return (
-    <article className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-lg font-black text-slate-950">{branch.state} branch</p>
-      <p className="mt-1 text-sm text-slate-600">{branch.city}</p>
+    <article className="rounded-lg border border-ink-200 bg-white p-5 shadow-sm">
+      <p className="text-lg font-black text-ink-950">{branch.state} branch</p>
+      <p className="mt-1 text-sm text-ink-600">{branch.city}</p>
       <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
         {[
           ["Orders", orderCount],
@@ -645,9 +627,9 @@ function BranchOverviewCard({
           ["Products", productCount],
           ["Repair requests", repairRequests],
         ].map(([label, value]) => (
-          <div key={label} className="rounded-md bg-slate-50 p-3">
-            <p className="text-slate-500">{label}</p>
-            <p className="mt-1 text-xl font-black text-slate-950">{value}</p>
+          <div key={label} className="rounded-md bg-ink-50 p-3">
+            <p className="text-ink-500">{label}</p>
+            <p className="mt-1 text-xl font-black text-ink-950">{value}</p>
           </div>
         ))}
       </div>
@@ -657,15 +639,15 @@ function BranchOverviewCard({
 
 function ActivityPanel({ title, emptyMessage, rows }: { title: string; emptyMessage: string; rows: Array<Array<React.ReactNode>> }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-      <h2 className="text-xl font-black text-slate-950">{title}</h2>
+    <div className="rounded-lg border border-ink-200 bg-white p-5 shadow-sm">
+      <h2 className="text-xl font-black text-ink-950">{title}</h2>
       <div className="mt-4 grid gap-3">
         {rows.length === 0 ? (
-          <p className="rounded-md border border-dashed border-slate-300 p-4 text-sm text-slate-600">{emptyMessage}</p>
+          <p className="rounded-md border border-dashed border-ink-300 p-4 text-sm text-ink-600">{emptyMessage}</p>
         ) : rows.map((row, index) => (
-          <div key={index} className="grid gap-2 rounded-md bg-slate-50 px-3 py-3 text-sm sm:grid-cols-4 sm:items-center">
+          <div key={index} className="grid gap-2 rounded-md bg-ink-50 px-3 py-3 text-sm sm:grid-cols-4 sm:items-center">
             {row.map((cell, cellIndex) => (
-              <div key={cellIndex} className={cellIndex === 0 ? "font-black text-slate-950" : "text-slate-700"}>
+              <div key={cellIndex} className={cellIndex === 0 ? "font-black text-ink-950" : "text-ink-700"}>
                 {cell}
               </div>
             ))}
@@ -678,15 +660,15 @@ function ActivityPanel({ title, emptyMessage, rows }: { title: string; emptyMess
 
 function ReportPanel({ title, rows }: { title: string; rows: Array<[string, string]> }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-      <h2 className="text-xl font-black text-slate-950">{title}</h2>
+    <div className="rounded-lg border border-ink-200 bg-white p-5 shadow-sm">
+      <h2 className="text-xl font-black text-ink-950">{title}</h2>
       <div className="mt-4 grid gap-3">
         {rows.length === 0 ? (
-          <p className="rounded-md border border-dashed border-slate-300 p-4 text-sm text-slate-600">No report data yet.</p>
+          <p className="rounded-md border border-dashed border-ink-300 p-4 text-sm text-ink-600">No report data yet.</p>
         ) : rows.map(([label, value]) => (
-          <div key={label} className="flex items-center justify-between gap-4 rounded-md bg-slate-50 px-3 py-2 text-sm">
-            <span className="font-semibold text-slate-700 capitalize">{label}</span>
-            <span className="font-black text-slate-950">{value}</span>
+          <div key={label} className="flex items-center justify-between gap-4 rounded-md bg-ink-50 px-3 py-2 text-sm">
+            <span className="font-semibold text-ink-700 capitalize">{label}</span>
+            <span className="font-black text-ink-950">{value}</span>
           </div>
         ))}
       </div>

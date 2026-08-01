@@ -70,7 +70,7 @@ export function SessionNavigation({ user, className = "", mode = "desktop" }: Se
 
   if (!user) {
     return (
-      <Link className={`rounded-md px-3 py-2 font-semibold hover:bg-slate-100 ${className}`} href="/login">
+      <Link className={`rounded-md px-3 py-2 font-semibold hover:bg-ink-50 ${className}`} href="/login">
         Sign In
       </Link>
     );
@@ -79,19 +79,19 @@ export function SessionNavigation({ user, className = "", mode = "desktop" }: Se
   if (mode === "mobile") {
     return (
       <div className={`grid gap-2 ${className}`}>
-        <Link className="rounded-md px-3 py-2 font-semibold hover:bg-slate-100" href={user.home}>
+        <Link className="rounded-md px-3 py-2 font-semibold hover:bg-ink-50" href={user.home}>
           {user.role.charAt(0).toUpperCase() + user.role.slice(1)} dashboard
         </Link>
-        <p className="px-3 text-xs font-semibold text-slate-500">{user.email}</p>
+        <p className="px-3 text-xs font-semibold text-ink-500">{user.email}</p>
         <button
-          className="rounded-md bg-slate-950 px-3 py-2 text-left text-sm font-bold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-70"
+          className="rounded-md bg-primary-700 px-3 py-2 text-left text-sm font-bold text-white hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-70"
           disabled={isSigningOut}
           onClick={handleLogout}
           type="button"
         >
           {isSigningOut ? "Signing out..." : "Logout"}
         </button>
-        {error ? <p className="px-3 text-sm font-semibold text-red-700">{error}</p> : null}
+        {error ? <p className="px-3 text-sm font-semibold text-danger">{error}</p> : null}
       </div>
     );
   }
@@ -100,42 +100,42 @@ export function SessionNavigation({ user, className = "", mode = "desktop" }: Se
     return (
       <div className={`flex flex-wrap items-center gap-3 ${className}`}>
         <div className="text-sm">
-          <p className="font-bold capitalize text-slate-950">{user.role}</p>
-          <p className="text-slate-500">{user.email}</p>
+          <p className="font-bold capitalize text-ink-950">{user.role}</p>
+          <p className="text-ink-500">{user.email}</p>
         </div>
         <button
-          className="rounded-md bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-70"
+          className="rounded-md bg-primary-700 px-4 py-2 text-sm font-bold text-white hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-70"
           disabled={isSigningOut}
           onClick={handleLogout}
           type="button"
         >
           {isSigningOut ? "Signing out..." : "Logout"}
         </button>
-        {error ? <p className="basis-full text-sm font-semibold text-red-700">{error}</p> : null}
+        {error ? <p className="basis-full text-sm font-semibold text-danger">{error}</p> : null}
       </div>
     );
   }
 
   return (
     <details className={`relative ${className}`}>
-      <summary className="cursor-pointer list-none rounded-md px-3 py-2 text-sm font-semibold hover:bg-slate-100">
+      <summary className="cursor-pointer list-none rounded-md px-3 py-2 text-sm font-semibold hover:bg-ink-50">
         {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
       </summary>
-      <div className="absolute right-0 z-40 mt-2 w-72 rounded-md border border-slate-200 bg-white p-3 text-sm shadow-lg">
-        <p className="font-bold text-slate-950">{user.email}</p>
-        <p className="mt-1 capitalize text-slate-500">{user.role}</p>
-        <Link className="mt-3 block rounded-md px-3 py-2 font-semibold hover:bg-slate-100" href={user.home}>
+      <div className="absolute right-0 z-40 mt-2 w-72 rounded-md border border-ink-200 bg-white p-3 text-sm shadow-lg">
+        <p className="font-bold text-ink-950">{user.email}</p>
+        <p className="mt-1 capitalize text-ink-500">{user.role}</p>
+        <Link className="mt-3 block rounded-md px-3 py-2 font-semibold hover:bg-ink-50" href={user.home}>
           Dashboard
         </Link>
         <button
-          className="mt-2 w-full rounded-md bg-slate-950 px-3 py-2 text-left text-sm font-bold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-70"
+          className="mt-2 w-full rounded-md bg-primary-700 px-3 py-2 text-left text-sm font-bold text-white hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-70"
           disabled={isSigningOut}
           onClick={handleLogout}
           type="button"
         >
           {isSigningOut ? "Signing out..." : "Logout"}
         </button>
-        {error ? <p className="mt-2 text-sm font-semibold text-red-700">{error}</p> : null}
+        {error ? <p className="mt-2 text-sm font-semibold text-danger">{error}</p> : null}
       </div>
     </details>
   );

@@ -1,6 +1,6 @@
 import { reviewPayment } from "@/app/cashier/actions";
 import { CashierDashboard, type CashierOrder } from "@/components/CashierDashboard";
-import { DashboardSessionBar } from "@/components/DashboardSessionBar";
+import { DashboardLayout } from "@/components/DashboardLayout";
 import { getAuthProfile } from "@/lib/auth";
 import { supabaseConfig } from "@/lib/supabase-config";
 import { createClient } from "@/lib/supabase/server";
@@ -81,9 +81,8 @@ export default async function CashierDashboardPage() {
   const onlineOrders = await getOnlineReceiptOrders();
 
   return (
-    <main className="min-h-screen space-y-6 dashboard-shell px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
-      <DashboardSessionBar role="cashier" />
+    <DashboardLayout role="cashier" title="Dashboard">
       <CashierDashboard initialOrders={onlineOrders} reviewAction={reviewPayment} />
-    </main>
+    </DashboardLayout>
   );
 }

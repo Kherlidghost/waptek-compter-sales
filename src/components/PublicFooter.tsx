@@ -32,7 +32,7 @@ const legalLinks = [
 
 export function PublicFooter() {
   return (
-    <footer className="border-t border-slate-200 bg-slate-950 text-white">
+    <footer className="border-t border-ink-200 bg-primary-900 text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr_1.2fr]">
           {/* Brand */}
@@ -45,11 +45,11 @@ export function PublicFooter() {
 
           <FooterLinks title="Products" links={productLinks} />
           <FooterLinks title="Services" links={serviceLinks} />
-          <FooterLinks title="Support &amp; Legal" links={[...supportLinks, ...legalLinks]} />
+          <FooterLinks title="Support & Legal" links={[...supportLinks, ...legalLinks]} />
 
           {/* Contact */}
           <section>
-            <h2 className="mb-3 text-xs font-black uppercase tracking-widest text-emerald-400">Contact</h2>
+            <h2 className="mb-3 text-xs font-black uppercase tracking-widest text-accent-400">Contact</h2>
             <address className="not-italic space-y-2 text-sm text-slate-400">
               <p>
                 <span className="font-semibold text-slate-300">WhatsApp:</span>{" "}
@@ -84,7 +84,7 @@ function FooterLinks({ title, links }: { title: string; links: { href: string; l
   return (
     <section>
       <h2
-        className="mb-3 text-xs font-black uppercase tracking-widest text-emerald-400"
+        className="mb-3 text-xs font-black uppercase tracking-widest text-accent-400"
         dangerouslySetInnerHTML={{ __html: title }}
       />
       <nav className="grid gap-2 text-sm">

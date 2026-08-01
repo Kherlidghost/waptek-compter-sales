@@ -90,7 +90,7 @@ export default async function Home({
 
       <main>
         {/* ── Hero ──────────────────────────────────────────────────────── */}
-        <section className="relative overflow-hidden bg-slate-950 text-white">
+        <section className="relative overflow-hidden bg-primary-900 text-white">
           <div
             className="absolute inset-0"
             style={{
@@ -102,8 +102,8 @@ export default async function Home({
           <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
             <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
               <div>
-                <span className="inline-block rounded-full border border-emerald-300/30 bg-emerald-300/10 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-emerald-200">
-                  Sales of Computers &amp; Repairs
+                <span className="inline-block rounded-full border border-accent-300/30 bg-accent-300/10 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-accent-200">
+                  Sales of Computers & Repairs
                 </span>
                 <h1 className="mt-5 text-4xl font-black leading-tight tracking-tight sm:text-5xl lg:text-6xl">
                   Computers, Accessories, and Professional Repair Services You Can Trust.
@@ -114,7 +114,7 @@ export default async function Home({
                 <div className="mt-8 flex flex-wrap gap-3">
                   <Link
                     href="/products"
-                    className="rounded-lg bg-emerald-500 px-7 py-3.5 text-sm font-black text-slate-950 shadow-lg shadow-emerald-950/20 transition hover:bg-emerald-400 focus-visible:outline-emerald-400"
+                    className="rounded-lg bg-accent-500 px-7 py-3.5 text-sm font-black text-primary-950 shadow-lg shadow-accent-950/20 transition hover:bg-accent-400 focus-visible:outline-accent-400"
                   >
                     Shop Now
                   </Link>
@@ -152,10 +152,10 @@ export default async function Home({
         </section>
 
         {/* ── Search ────────────────────────────────────────────────────── */}
-        <section className="border-b border-slate-200 bg-white/90 backdrop-blur">
+        <section className="border-b border-ink-200 bg-white/90 backdrop-blur">
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <p className="section-eyebrow mb-1">Find computer products</p>
-            <h2 className="mb-5 text-2xl font-black text-slate-950">Search the marketplace</h2>
+            <h2 className="mb-5 text-2xl font-black text-ink-950">Search the marketplace</h2>
             <DesignSurface className="p-4 sm:p-5">
               <ProductExplorer
                 branches={catalogBranches}
@@ -172,9 +172,9 @@ export default async function Home({
           <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
             <div>
               <p className="section-eyebrow mb-1">Shop by category</p>
-              <h2 className="text-2xl font-black text-slate-950">Computer products and services</h2>
+              <h2 className="text-2xl font-black text-ink-950">Computer products and services</h2>
             </div>
-            <Link className="text-sm font-bold text-emerald-700 hover:text-emerald-900" href="/categories">
+            <Link className="text-sm font-bold text-accent-700 hover:text-accent-900" href="/categories">
               View all categories →
             </Link>
           </div>
@@ -183,14 +183,14 @@ export default async function Home({
               <Link
                 key={category.id}
                 href={`/products?category=${category.id}`}
-                className="wcs-card group flex flex-col gap-3 rounded-2xl p-5 hover:border-emerald-300 focus-visible:outline-emerald-600"
+                className="wcs-card group flex flex-col gap-3 rounded-2xl p-5 hover:border-accent-300 focus-visible:outline-primary-400"
               >
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-2xl" aria-hidden="true">
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-accent-100 text-2xl" aria-hidden="true">
                   {categoryIcons[category.name] ?? "📦"}
                 </span>
                 <div>
-                  <p className="font-black text-slate-950 group-hover:text-emerald-700">{category.name}</p>
-                  <p className="mt-1 text-xs leading-5 text-slate-500">{category.description}</p>
+                  <p className="font-black text-ink-950 group-hover:text-accent-700">{category.name}</p>
+                  <p className="mt-1 text-xs leading-5 text-ink-500">{category.description}</p>
                 </div>
               </Link>
             ))}
@@ -199,14 +199,14 @@ export default async function Home({
 
         {/* ── Featured products ─────────────────────────────────────────── */}
         {featuredProducts.length > 0 ? (
-          <section className="bg-slate-50">
+          <section className="bg-ink-50">
             <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
               <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <p className="section-eyebrow mb-1">Featured stock</p>
-                  <h2 className="text-2xl font-black text-slate-950">Ready-to-buy products</h2>
+                  <h2 className="text-2xl font-black text-ink-950">Ready-to-buy products</h2>
                 </div>
-                <Link className="text-sm font-bold text-emerald-700 hover:text-emerald-900" href="/products">
+                <Link className="text-sm font-bold text-accent-700 hover:text-accent-900" href="/products">
                   View all products →
                 </Link>
               </div>
@@ -220,9 +220,9 @@ export default async function Home({
           <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
             <div>
               <p className="section-eyebrow mb-1">New arrivals</p>
-              <h2 className="text-2xl font-black text-slate-950">Latest marketplace listings</h2>
+              <h2 className="text-2xl font-black text-ink-950">Latest marketplace listings</h2>
             </div>
-            <Link className="text-sm font-bold text-emerald-700 hover:text-emerald-900" href="/products">
+            <Link className="text-sm font-bold text-accent-700 hover:text-accent-900" href="/products">
               Browse all →
             </Link>
           </div>
@@ -234,16 +234,16 @@ export default async function Home({
           <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
             <div className="mb-8 max-w-2xl">
               <p className="section-eyebrow mb-1">Why choose us</p>
-              <h2 className="text-2xl font-black text-slate-950">Why Shop with WAPTEK COMPUTER SERVICES?</h2>
+              <h2 className="text-2xl font-black text-ink-950">Why Shop with WAPTEK COMPUTER SERVICES?</h2>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {trustPoints.map((point) => (
                 <div key={point.title} className="wcs-card rounded-2xl p-5">
-                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-sm font-black text-emerald-800">
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-accent-100 text-sm font-black text-accent-700">
                     {point.icon}
                   </div>
-                  <p className="font-black text-slate-950">{point.title}</p>
-                  <p className="mt-1.5 text-sm leading-6 text-slate-600">{point.body}</p>
+                  <p className="font-black text-ink-950">{point.title}</p>
+                  <p className="mt-1.5 text-sm leading-6 text-ink-600">{point.body}</p>
                 </div>
               ))}
             </div>
@@ -251,11 +251,11 @@ export default async function Home({
         </section>
 
         {/* ── Repair services ───────────────────────────────────────────── */}
-        <section className="bg-slate-950 text-white">
+        <section className="bg-primary-900 text-white">
           <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
             <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-center">
               <div>
-                <p className="section-eyebrow mb-2 text-emerald-300">Repair services</p>
+                <p className="section-eyebrow mb-2 text-accent-300">Repair services</p>
                 <h2 className="text-3xl font-black">Professional Computer Repair Support</h2>
                 <p className="mt-4 leading-7 text-slate-300">
                   Bring your device to the nearest WAPTEK branch or submit a repair request online. Our technicians handle screen replacements, board repairs, software issues, and full diagnostics.
@@ -263,7 +263,7 @@ export default async function Home({
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link
                     href="/repairs"
-                    className="rounded-lg bg-emerald-500 px-6 py-3 text-sm font-black text-slate-950 transition hover:bg-emerald-400"
+                    className="rounded-lg bg-accent-500 px-6 py-3 text-sm font-black text-primary-950 transition hover:bg-accent-400"
                   >
                     Request Repair
                   </Link>
@@ -291,28 +291,28 @@ export default async function Home({
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="mb-8 max-w-2xl">
             <p className="section-eyebrow mb-1">Simple ordering</p>
-            <h2 className="text-2xl font-black text-slate-950">How It Works</h2>
+            <h2 className="text-2xl font-black text-ink-950">How It Works</h2>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {howItWorks.map((item) => (
               <div key={item.step} className="wcs-card rounded-2xl p-5">
-                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-sm font-black text-emerald-800">
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accent-100 text-sm font-black text-accent-700">
                   {item.step}
                 </div>
-                <p className="font-black text-slate-950">{item.title}</p>
-                <p className="mt-1.5 text-sm leading-6 text-slate-600">{item.body}</p>
+                <p className="font-black text-ink-950">{item.title}</p>
+                <p className="mt-1.5 text-sm leading-6 text-ink-600">{item.body}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* ── Trust & safety ────────────────────────────────────────────── */}
-        <section className="bg-slate-50">
+        <section className="bg-ink-50">
           <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
             <div className="mb-8 max-w-2xl">
-              <p className="section-eyebrow mb-1">Trust &amp; safety</p>
-              <h2 className="text-2xl font-black text-slate-950">Built for Safer Computer Buying</h2>
-              <p className="mt-3 leading-7 text-slate-600">
+              <p className="section-eyebrow mb-1">Trust & safety</p>
+              <h2 className="text-2xl font-black text-ink-950">Built for Safer Computer Buying</h2>
+              <p className="mt-3 leading-7 text-ink-600">
                 WAPTEK COMPUTER SERVICES adds review steps before orders move forward, reducing fake listings and payment confusion.
               </p>
             </div>
@@ -324,8 +324,8 @@ export default async function Home({
                 "Vendors are verified before selling.",
               ].map((item) => (
                 <div key={item} className="wcs-card rounded-2xl p-5">
-                  <div className="mb-3 h-2 w-8 rounded-full bg-emerald-500" aria-hidden="true" />
-                  <p className="text-sm font-bold leading-6 text-slate-800">{item}</p>
+                  <div className="mb-3 h-2 w-8 rounded-full bg-accent-500" aria-hidden="true" />
+                  <p className="text-sm font-bold leading-6 text-ink-800">{item}</p>
                 </div>
               ))}
             </div>
@@ -333,10 +333,10 @@ export default async function Home({
         </section>
 
         {/* ── Vendor CTA ────────────────────────────────────────────────── */}
-        <section className="bg-slate-900 text-white">
+        <section className="bg-primary-800 text-white">
           <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-12 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
             <div className="max-w-2xl">
-              <p className="section-eyebrow mb-2 text-emerald-300">For vendors</p>
+              <p className="section-eyebrow mb-2 text-accent-300">For vendors</p>
               <h2 className="text-2xl font-black">Sell Your Computer Products on WAPTEK COMPUTER SERVICES</h2>
               <p className="mt-3 text-sm leading-7 text-slate-300">
                 Join our verified vendor network and reach customers looking for computers, accessories, and repair-related products across Adamawa, Yobe, and Borno.
@@ -344,7 +344,7 @@ export default async function Home({
             </div>
             <Link
               href="/become-a-vendor"
-              className="w-fit shrink-0 rounded-lg bg-emerald-500 px-7 py-3.5 text-sm font-black text-slate-950 transition hover:bg-emerald-400"
+              className="w-fit shrink-0 rounded-lg bg-accent-500 px-7 py-3.5 text-sm font-black text-primary-950 transition hover:bg-accent-400"
             >
               Become a Vendor
             </Link>

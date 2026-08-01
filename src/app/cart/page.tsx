@@ -15,8 +15,8 @@ export default async function CartPage() {
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         <DesignSurface className="mb-6 p-6">
           <p className="section-eyebrow mb-1">Secure cart</p>
-          <h1 className="text-3xl font-black text-slate-950">Shopping Cart</h1>
-          <p className="mt-2 text-sm text-slate-600">
+          <h1 className="text-3xl font-black text-ink-950">Shopping Cart</h1>
+          <p className="mt-2 text-sm text-ink-600">
             Review your items before proceeding to receipt-confirmed manual bank transfer checkout.
           </p>
         </DesignSurface>
