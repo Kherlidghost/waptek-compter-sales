@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChartBar as BarChart3, ClipboardList, LayoutGrid, Package, ReceiptText, Settings, ShieldCheck, Store, Users } from "lucide-react";
 import { getAuthProfile, roleHome } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/supabase-config";
 import { createClient } from "@/lib/supabase/server";
@@ -70,97 +71,108 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
       <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 sm:px-6">
         <nav className="flex flex-wrap gap-1 text-sm font-semibold" aria-label="Dashboard navigation">
           <Link
-            className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+            className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
             href={roleHome[role]}
           >
+            <LayoutGrid className="h-4 w-4" />
             Dashboard
           </Link>
 
           {role === "admin" || role === "manager" || role === "vendor" ? (
             <Link
-              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
               href={`/${role}/products`}
             >
-              📦 Products
+              <Package className="h-4 w-4" />
+              Products
             </Link>
           ) : null}
 
           {role === "admin" ? (
             <Link
-              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
               href="/admin/vendors"
             >
-              👥 Vendors
+              <Users className="h-4 w-4" />
+              Vendors
             </Link>
           ) : null}
 
           {role === "admin" ? (
             <Link
-              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
               href="/admin/users"
             >
-              ⚙ Users
+              <Users className="h-4 w-4" />
+              Users
             </Link>
           ) : null}
 
           {role === "admin" || role === "manager" || role === "vendor" ? (
             <Link
-              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
               href={`/${role}/inventory`}
             >
-              🏪 Inventory
+              <Store className="h-4 w-4" />
+              Inventory
             </Link>
           ) : null}
 
           <Link
-            className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+            className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
             href={roleOrderHref}
           >
-            🧾 Orders
+            <ClipboardList className="h-4 w-4" />
+            Orders
           </Link>
 
           {role === "cashier" ? (
             <Link
-              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
               href="/cashier"
             >
-              💰 Payments
+              <ReceiptText className="h-4 w-4" />
+              Payments
             </Link>
           ) : null}
 
           {role === "admin" || role === "manager" || role === "cashier" || role === "vendor" ? (
             <Link
-              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
               href={`/${role}/reports`}
             >
-              📊 Reports
+              <BarChart3 className="h-4 w-4" />
+              Reports
             </Link>
           ) : null}
 
           {role === "admin" || role === "manager" || role === "cashier" || role === "vendor" ? (
             <Link
-              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
               href={`/${role}/settings`}
             >
-              ⚙ Settings
+              <Settings className="h-4 w-4" />
+              Settings
             </Link>
           ) : null}
 
           {role === "admin" ? (
             <Link
-              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
               href="/admin/audit-logs"
             >
-              🔐 Audit Logs
+              <ShieldCheck className="h-4 w-4" />
+              Audit Logs
             </Link>
           ) : null}
 
           {role === "admin" ? (
             <Link
-              className="rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-slate-700 transition-colors hover:bg-slate-950 hover:text-white"
               href="/admin/inventory/movements"
             >
-              📋 Stock Movements
+              <ClipboardList className="h-4 w-4" />
+              Stock Movements
             </Link>
           ) : null}
         </nav>

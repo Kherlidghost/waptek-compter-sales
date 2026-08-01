@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Bell } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 type NotificationRow = {
@@ -54,7 +55,7 @@ export function NotificationBell() {
         className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-emerald-400 hover:text-emerald-700"
         aria-label="Open notifications"
       >
-        <span aria-hidden="true">🔔</span>
+        <Bell className="h-5 w-5" />
         {items.length > 0 ? (
           <span className="absolute right-1 top-1 h-2.5 w-2.5 rounded-full bg-emerald-600 ring-2 ring-white" />
         ) : null}

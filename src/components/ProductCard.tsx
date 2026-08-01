@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { PackageSearch } from "lucide-react";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import type { Product } from "@/lib/types";
 import { formatNaira, getBranch, getCategory, getVendor } from "@/lib/marketplace-data";
@@ -133,8 +134,8 @@ export function ProductGrid({
   if (products.length === 0) {
     return (
       <div className="rounded-3xl border border-dashed border-ink-300 bg-white/90 p-10 text-center shadow-xl shadow-ink-950/5">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-ink-100 text-2xl">
-          📦
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-ink-100 text-accent-700">
+          <PackageSearch className="h-7 w-7" />
         </div>
         <p className="text-base font-black text-ink-950">{emptyMessage}</p>
         <p className="mt-2 text-sm text-ink-500">

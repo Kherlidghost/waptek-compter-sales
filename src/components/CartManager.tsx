@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { ShoppingCart } from "lucide-react";
 import { DesignSurface } from "@/components/DesignSurface";
 import { cartStorageKey, defaultCart, type CartLine } from "@/lib/customer-flow";
 import { formatNaira } from "@/lib/marketplace-data";
@@ -70,8 +71,8 @@ export function CartManager({ products }: { products: Product[] }) {
   if (lines.length === 0) {
     return (
       <DesignSurface className="p-12 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-ink-100 text-3xl">
-          🛒
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-ink-100 text-accent-700">
+          <ShoppingCart className="h-8 w-8" />
         </div>
         <p className="text-lg font-black text-ink-950">Your cart is empty</p>
         <p className="mt-2 text-sm text-ink-600">Browse products and add items before checkout.</p>

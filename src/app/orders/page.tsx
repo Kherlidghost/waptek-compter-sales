@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ClipboardList, Package, ReceiptText, Wrench, type LucideIcon } from "lucide-react";
 import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -135,13 +136,16 @@ export default async function OrdersPage() {
 
         {isCustomerAccount ? (
           <section className="mb-6 grid gap-4 md:grid-cols-4">
-            {[
-              ["🧾 View My Orders", "/orders", "Check order status"],
-              ["📦 Continue Shopping", "/products", "Browse computers and accessories"],
-              ["💰 Upload Receipt", firstPendingOrder ? `/orders/${firstPendingOrder.id}` : "/orders", "Send payment proof"],
-              ["🛠 Request Repair", "/repair", "Ask for diagnosis or repair"],
-            ].map(([label, href, description]) => (
+            {([
+              [ClipboardList, "View My Orders", "/orders", "Check order status"],
+              [Package, "Continue Shopping", "/products", "Browse computers and accessories"],
+              [ReceiptText, "Upload Receipt", firstPendingOrder ? `/orders/${firstPendingOrder.id}` : "/orders", "Send payment proof"],
+              [Wrench, "Request Repair", "/repair", "Ask for diagnosis or repair"],
+            ] as Array<[LucideIcon, string, string, string]>).map(([Icon, label, href, description]) => (
               <Link key={label} className="wcs-card min-h-28 rounded-[24px] p-5 hover:border-emerald-300" href={href}>
+                <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accent-100 text-accent-700" aria-hidden="true">
+                  <Icon className="h-5 w-5" />
+                </span>
                 <p className="font-black text-ink-950">{label}</p>
                 <p className="mt-1 text-sm text-ink-600">{description}</p>
               </Link>

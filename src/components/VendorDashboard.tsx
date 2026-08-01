@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { ClipboardList, Package, PackageCheck, Settings, type LucideIcon } from "lucide-react";
 import type { Product } from "@/lib/types";
 import { branches, categories, formatNaira, getBranch, getCategory, orders, products } from "@/lib/marketplace-data";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -160,13 +161,14 @@ export function VendorDashboard() {
           </Link>
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            ["📦 Add Product", "Create a live marketplace listing", "#add-product"],
-            ["📦 Manage Products", "View and edit your listings", "#vendor-products"],
-            ["⚙ Update Stock", `${lowStockCount} low-stock items`, "#vendor-inventory"],
-            ["🧾 View Orders", "Orders for your products", "#vendor-orders"],
-          ].map(([label, description, href]) => (
+          {([
+            [Package, "Add Product", "Create a live marketplace listing", "#add-product"],
+            [Package, "Manage Products", "View and edit your listings", "#vendor-products"],
+            [Settings, "Update Stock", `${lowStockCount} low-stock items`, "#vendor-inventory"],
+            [ClipboardList, "View Orders", "Orders for your products", "#vendor-orders"],
+          ] as Array<[LucideIcon, string, string, string]>).map(([Icon, label, description, href]) => (
             <Link key={label} className="min-h-28 rounded-[24px] border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 shadow-sm hover:border-emerald-300 hover:from-emerald-50 hover:to-white" href={href}>
+              <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accent-100 text-accent-700" aria-hidden="true"><Icon className="h-5 w-5" /></span>
               <p className="font-black text-slate-950">{label}</p>
               <p className="mt-1 text-sm text-slate-600">{description}</p>
             </Link>
@@ -175,20 +177,23 @@ export function VendorDashboard() {
       </section>
 
       <section className="grid gap-4 md:grid-cols-4">
-        {[
-          ["My products", vendorProducts.length.toString(), vendorProducts.length ? "Products listed by your business." : "No products added yet.", "Manage"],
-          ["Orders waiting", pendingOrderCount.toString(), pendingOrderCount ? "Orders still waiting for payment." : "No orders waiting.", "View"],
-          ["Paid orders", paidOrderCount.toString(), paidOrderCount ? "Confirmed customer orders." : "No paid orders yet.", "View"],
-          ["Low stock products", lowStockCount.toString(), lowStockCount ? "Products need stock attention." : "Everything looks good.", "Manage"],
-        ].map(([label, value, description, action]) => (
-          <div key={label} className="wcs-card p-6">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-2xl">{String(label).toLowerCase().includes("product") ? "📦" : String(label).toLowerCase().includes("paid") ? "💰" : String(label).toLowerCase().includes("waiting") || String(label).toLowerCase().includes("order") ? "🧾" : "📋"}</div>
-            <p className="text-sm font-semibold text-slate-500">{label}</p>
-            <p className="mt-2 text-3xl font-black text-slate-950">{value}</p>
-            <p className="mt-2 text-sm text-slate-600">{description}</p>
-            <p className="mt-5 w-fit rounded-full bg-emerald-50 px-4 py-2 text-sm font-black text-emerald-800">{action} →</p>
-          </div>
-        ))}
+        {([
+          { icon: Package, label: "My products", value: vendorProducts.length.toString(), description: vendorProducts.length ? "Products listed by your business." : "No products added yet.", action: "Manage" },
+          { icon: ClipboardList, label: "Orders waiting", value: pendingOrderCount.toString(), description: pendingOrderCount ? "Orders still waiting for payment." : "No orders waiting.", action: "View" },
+          { icon: PackageCheck, label: "Paid orders", value: paidOrderCount.toString(), description: paidOrderCount ? "Confirmed customer orders." : "No paid orders yet.", action: "View" },
+          { icon: Package, label: "Low stock products", value: lowStockCount.toString(), description: lowStockCount ? "Products need stock attention." : "Everything looks good.", action: "Manage" },
+        ] as Array<{ icon: LucideIcon; label: string; value: string; description: string; action: string }>).map((card) => {
+          const Icon = card.icon;
+          return (
+            <div key={card.label} className="wcs-card p-6">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-accent-700"><Icon className="h-6 w-6" /></div>
+              <p className="text-sm font-semibold text-slate-500">{card.label}</p>
+              <p className="mt-2 text-3xl font-black text-slate-950">{card.value}</p>
+              <p className="mt-2 text-sm text-slate-600">{card.description}</p>
+              <p className="mt-5 w-fit rounded-full bg-emerald-50 px-4 py-2 text-sm font-black text-emerald-800">{card.action} →</p>
+            </div>
+          );
+        })}
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">

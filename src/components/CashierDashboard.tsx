@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
+import { CheckCircle2, ReceiptText, Search, XCircle, type LucideIcon } from "lucide-react";
 import type { Order, OrderStatus, ReceiptStatus } from "@/lib/types";
 import { formatNaira, getBranch, orders } from "@/lib/marketplace-data";
 import { InAppNotice } from "@/components/InAppNotice";
@@ -155,19 +156,19 @@ export function CashierDashboard({
         <h2 className="mt-1 text-2xl font-black text-ink-950">What can I do here?</h2>
         <p className="mt-1 text-sm text-ink-600">Choose the payment task you want to handle now.</p>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            ["🧾 Review Pending Receipts", () => { setShowAll(false); setQuery(""); }],
-            ["🔎 Search Order", () => { setShowAll(true); }],
-            ["💰 View Confirmed Payments", () => { setShowAll(true); setQuery("confirmed"); }],
-            ["🚫 View Rejected Payments", () => { setShowAll(true); setQuery("rejected"); }],
-          ].map(([label, action]) => (
+          {([
+            [ReceiptText, "Review Pending Receipts", () => { setShowAll(false); setQuery(""); }],
+            [Search, "Search Order", () => { setShowAll(true); }],
+            [CheckCircle2, "View Confirmed Payments", () => { setShowAll(true); setQuery("confirmed"); }],
+            [XCircle, "View Rejected Payments", () => { setShowAll(true); setQuery("rejected"); }],
+          ] as Array<[LucideIcon, string, () => void]>).map(([Icon, label, action]) => (
             <button
-              key={String(label)}
+              key={label}
               className="group flex min-h-28 items-center justify-between rounded-[24px] border border-slate-200 bg-gradient-to-br from-white to-slate-50 px-5 py-4 text-left text-sm font-black text-slate-800 shadow-sm hover:border-emerald-300 hover:from-emerald-50 hover:to-white"
-              onClick={action as () => void}
+              onClick={action}
               type="button"
             >
-              <span>{String(label)}</span>
+              <span className="flex items-center gap-2"><Icon className="h-5 w-5 text-accent-700" />{label}</span>
               <span className="rounded-full bg-primary-700 px-3 py-1 text-xs text-white group-hover:bg-accent-600" aria-hidden="true">View</span>
             </button>
           ))}
@@ -175,20 +176,23 @@ export function CashierDashboard({
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {[
-          { title: "Receipts waiting", value: pendingCount.toString(), description: pendingCount ? "Customers are waiting for review." : "No payments waiting.", action: () => { setShowAll(false); setQuery(""); } },
-          { title: "Confirmed today", value: confirmedCount.toString(), description: "Payments marked as confirmed.", action: () => { setShowAll(true); setQuery("confirmed"); } },
-          { title: "Rejected today", value: rejectedCount.toString(), description: "Receipts rejected after review.", action: () => { setShowAll(true); setQuery("rejected"); } },
-          { title: "Orders needing payment", value: awaitingConfirmationCount.toString(), description: awaitingConfirmationCount ? "Orders need payment action." : "Everything looks good.", action: () => { setShowAll(true); setQuery(""); } },
-        ].map((card) => (
-          <div key={card.title} className="wcs-card p-6">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-100 text-2xl">{card.title.includes("Receipt") ? "🧾" : card.title.includes("Confirmed") ? "💰" : card.title.includes("Rejected") ? "🚫" : "🧾"}</div>
-            <p className="text-sm font-semibold text-ink-500">{card.title}</p>
-            <p className="mt-2 text-3xl font-black text-ink-950">{card.value}</p>
-            <p className="mt-2 text-sm text-ink-600">{card.description}</p>
-            <button className="btn btn-outline mt-5" onClick={card.action} type="button">View →</button>
-          </div>
-        ))}
+        {([
+          { icon: ReceiptText, title: "Receipts waiting", value: pendingCount.toString(), description: pendingCount ? "Customers are waiting for review." : "No payments waiting.", action: () => { setShowAll(false); setQuery(""); } },
+          { icon: CheckCircle2, title: "Confirmed today", value: confirmedCount.toString(), description: "Payments marked as confirmed.", action: () => { setShowAll(true); setQuery("confirmed"); } },
+          { icon: XCircle, title: "Rejected today", value: rejectedCount.toString(), description: "Receipts rejected after review.", action: () => { setShowAll(true); setQuery("rejected"); } },
+          { icon: ReceiptText, title: "Orders needing payment", value: awaitingConfirmationCount.toString(), description: awaitingConfirmationCount ? "Orders need payment action." : "Everything looks good.", action: () => { setShowAll(true); setQuery(""); } },
+        ] as Array<{ icon: LucideIcon; title: string; value: string; description: string; action: () => void }>).map((card) => {
+          const Icon = card.icon;
+          return (
+            <div key={card.title} className="wcs-card p-6">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-100 text-accent-700"><Icon className="h-6 w-6" /></div>
+              <p className="text-sm font-semibold text-ink-500">{card.title}</p>
+              <p className="mt-2 text-3xl font-black text-ink-950">{card.value}</p>
+              <p className="mt-2 text-sm text-ink-600">{card.description}</p>
+              <button className="btn btn-outline mt-5" onClick={card.action} type="button">View →</button>
+            </div>
+          );
+        })}
       </section>
 
       <section className="rounded-3xl border border-ink-200 bg-white/95 p-6 shadow-xl shadow-ink-950/5">

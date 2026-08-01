@@ -1,6 +1,19 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import {
+  BarChart3,
+  Bell,
+  ClipboardList,
+  LayoutGrid,
+  Package,
+  ReceiptText,
+  ShieldCheck,
+  Store,
+  Users,
+  Wrench,
+  type LucideIcon,
+} from "lucide-react";
 import type { Branch, Category, Order, OrderStatus, Product, Vendor, VendorStatus } from "@/lib/types";
 import { branches, categories, formatNaira, getBranch, getCategory, orders, products, vendors } from "@/lib/marketplace-data";
 import { NotificationLog } from "@/components/NotificationLog";
@@ -21,20 +34,21 @@ type Section =
   | "inventory"
   | "reports";
 
-const sections: Array<{ id: Section; label: string }> = [
-  { id: "analytics", label: "📊 Overview" },
-  { id: "vendors", label: "👥 Vendors" },
-  { id: "products", label: "📦 Products" },
-  { id: "categories", label: "🗂 Categories" },
-  { id: "branches", label: "🏪 Branches" },
-  { id: "orders", label: "🧾 Orders" },
-  { id: "repairs", label: "🛠 Repairs" },
-  { id: "notifications", label: "🔔 Notifications" },
-  { id: "inventory", label: "📋 Inventory" },
-  { id: "reports", label: "📈 Reports" },
+const sections: Array<{ id: Section; label: string; icon: LucideIcon }> = [
+  { id: "analytics", label: "Overview", icon: BarChart3 },
+  { id: "vendors", label: "Vendors", icon: Users },
+  { id: "products", label: "Products", icon: Package },
+  { id: "categories", label: "Categories", icon: LayoutGrid },
+  { id: "branches", label: "Branches", icon: Store },
+  { id: "orders", label: "Orders", icon: ClipboardList },
+  { id: "repairs", label: "Repairs", icon: Wrench },
+  { id: "notifications", label: "Notifications", icon: Bell },
+  { id: "inventory", label: "Inventory", icon: Package },
+  { id: "reports", label: "Reports", icon: BarChart3 },
 ];
 
 type DashboardAction = {
+  icon: LucideIcon;
   label: string;
   section?: Section;
   href?: string;
@@ -97,19 +111,19 @@ export function AdminManagerDashboard({ role, branchScopeId }: { role: Dashboard
   const dashboardActions: DashboardAction[] =
     role === "admin"
       ? [
-          { label: "📦 Add Product", href: "#add-product" },
-          { label: "👥 Approve Vendors", section: "vendors" },
-          { label: "🧾 View Orders", section: "orders" },
-          { label: "💰 Check Payments", section: "orders" },
-          { label: "🏪 Manage Branches", section: "branches" },
-          { label: "👤 Manage Users", href: "/admin/users" },
+          { icon: Package, label: "Add Product", href: "#add-product" },
+          { icon: Users, label: "Approve Vendors", section: "vendors" },
+          { icon: ClipboardList, label: "View Orders", section: "orders" },
+          { icon: ReceiptText, label: "Check Payments", section: "orders" },
+          { icon: Store, label: "Manage Branches", section: "branches" },
+          { icon: Users, label: "Manage Users", href: "/admin/users" },
         ]
       : [
-          { label: "📦 Add Branch Product", href: "#add-product" },
-          { label: "🧾 View Branch Orders", section: "orders" },
-          { label: "💰 Check Branch Payments", section: "orders" },
-          { label: "📦 View Inventory", section: "inventory" },
-          { label: "🛠 Repair Requests", section: "repairs" },
+          { icon: Package, label: "Add Branch Product", href: "#add-product" },
+          { icon: ClipboardList, label: "View Branch Orders", section: "orders" },
+          { icon: ReceiptText, label: "Check Branch Payments", section: "orders" },
+          { icon: Package, label: "View Inventory", section: "inventory" },
+          { icon: Wrench, label: "Repair Requests", section: "repairs" },
         ];
   const dashboardCards =
     role === "admin"
@@ -250,18 +264,22 @@ export function AdminManagerDashboard({ role, branchScopeId }: { role: Dashboard
       {notice ? <p className="rounded-xl border border-accent-300/30 bg-accent-100 px-4 py-3 text-sm font-semibold text-accent-700">{notice}</p> : null}
 
       <nav className="flex gap-2 overflow-x-auto rounded-2xl border border-ink-200 bg-white/90 p-2 shadow-xl shadow-ink-950/5 backdrop-blur">
-        {visibleSections.map((section) => (
-          <button
-            key={section.id}
-            onClick={() => setActiveSection(section.id)}
-            className={`whitespace-nowrap rounded-xl px-4 py-3 text-sm font-black ${
-              activeSection === section.id ? "bg-primary-700 text-white shadow-sm" : "text-ink-700 hover:bg-ink-50"
-            }`}
-            type="button"
-          >
-            {section.label}
-          </button>
-        ))}
+        {visibleSections.map((section) => {
+          const Icon = section.icon;
+          return (
+            <button
+              key={section.id}
+              onClick={() => setActiveSection(section.id)}
+              className={`inline-flex items-center gap-2 whitespace-nowrap rounded-xl px-4 py-3 text-sm font-black ${
+                activeSection === section.id ? "bg-primary-700 text-white shadow-sm" : "text-ink-700 hover:bg-ink-50"
+              }`}
+              type="button"
+            >
+              <Icon className="h-4 w-4" />
+              {section.label}
+            </button>
+          );
+        })}
       </nav>
 
       {activeSection === "analytics" ? (
@@ -512,14 +530,15 @@ function QuickActions({ actions, onSelect }: { actions: DashboardAction[]; onSel
         </div>
       </div>
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {actions.map((action) =>
-          action.href ? (
+        {actions.map((action) => {
+          const Icon = action.icon;
+          return action.href ? (
             <a
               key={action.label}
               className="group flex min-h-28 items-center justify-between rounded-2xl border border-ink-200 bg-gradient-to-br from-white to-ink-50 px-5 py-4 text-left text-sm font-black text-ink-800 shadow-sm hover:border-accent-300 hover:from-accent-100 hover:to-white"
               href={action.href}
             >
-              <span>{action.label}</span>
+              <span className="flex items-center gap-2"><Icon className="h-5 w-5 text-accent-700" />{action.label}</span>
               <span className="rounded-full bg-primary-700 px-3 py-1 text-xs text-white group-hover:bg-accent-600" aria-hidden="true">Open</span>
             </a>
           ) : (
@@ -529,11 +548,11 @@ function QuickActions({ actions, onSelect }: { actions: DashboardAction[]; onSel
               onClick={() => action.section && onSelect(action.section)}
               type="button"
             >
-              <span>{action.label}</span>
+              <span className="flex items-center gap-2"><Icon className="h-5 w-5 text-accent-700" />{action.label}</span>
               <span className="rounded-full bg-primary-700 px-3 py-1 text-xs text-white group-hover:bg-accent-600" aria-hidden="true">View</span>
             </button>
-          ),
-        )}
+          );
+        })}
       </div>
     </section>
   );
@@ -554,11 +573,12 @@ function SummaryCard({
   section: Section;
   onSelect: (section: Section) => void;
 }) {
+  const Icon = cardIcon(title);
   return (
     <article className="flex min-h-52 flex-col justify-between rounded-3xl border border-ink-200 bg-white p-6 shadow-xl shadow-ink-950/5">
       <div>
-        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-100 text-2xl">
-          {cardIcon(title)}
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-100 text-accent-700">
+          <Icon className="h-6 w-6" />
         </div>
         <p className="text-sm font-black text-ink-500">{title}</p>
         <p className="mt-2 text-3xl font-black text-ink-950">{value}</p>
@@ -571,14 +591,14 @@ function SummaryCard({
   );
 }
 
-function cardIcon(title: string) {
+function cardIcon(title: string): LucideIcon {
   const normalized = title.toLowerCase();
-  if (normalized.includes("payment")) return "💰";
-  if (normalized.includes("vendor")) return "👥";
-  if (normalized.includes("order")) return "🧾";
-  if (normalized.includes("stock") || normalized.includes("product")) return "📦";
-  if (normalized.includes("repair")) return "🛠";
-  return "✓";
+  if (normalized.includes("payment")) return ReceiptText;
+  if (normalized.includes("vendor")) return Users;
+  if (normalized.includes("order")) return ClipboardList;
+  if (normalized.includes("stock") || normalized.includes("product")) return Package;
+  if (normalized.includes("repair")) return Wrench;
+  return ShieldCheck;
 }
 
 function RecentActivityPanel({ rows }: { rows: Array<{ title: string; detail: string; status: string }> }) {

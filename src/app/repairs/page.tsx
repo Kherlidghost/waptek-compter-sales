@@ -1,3 +1,4 @@
+import { BatteryCharging, Cpu, MonitorDown, Search, Thermometer, Wrench, type LucideIcon } from "lucide-react";
 import { DesignSurface } from "@/components/DesignSurface";
 import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
@@ -22,13 +23,13 @@ async function getWhatsAppNumber(): Promise<string | null> {
   }
 }
 
-const repairServices = [
-  { icon: "🖥️", title: "Screen Replacement", desc: "Cracked, flickering, or dead displays on laptops and desktops." },
-  { icon: "🔌", title: "Power & Charging", desc: "Won't turn on, battery issues, or charging port faults." },
-  { icon: "🧩", title: "Board Repair", desc: "Motherboard faults, component-level diagnosis, and soldering." },
-  { icon: "💿", title: "Software & OS", desc: "Windows installation, virus removal, and system recovery." },
-  { icon: "🌡️", title: "Overheating", desc: "Fan replacement, thermal paste, and cooling system service." },
-  { icon: "🔍", title: "Full Diagnostics", desc: "Complete hardware check with written estimate before any repair." },
+const repairServices: Array<{ icon: LucideIcon; title: string; desc: string }> = [
+  { icon: MonitorDown, title: "Screen Replacement", desc: "Cracked, flickering, or dead displays on laptops and desktops." },
+  { icon: BatteryCharging, title: "Power & Charging", desc: "Won't turn on, battery issues, or charging port faults." },
+  { icon: Cpu, title: "Board Repair", desc: "Motherboard faults, component-level diagnosis, and soldering." },
+  { icon: Wrench, title: "Software & OS", desc: "Windows installation, virus removal, and system recovery." },
+  { icon: Thermometer, title: "Overheating", desc: "Fan replacement, thermal paste, and cooling system service." },
+  { icon: Search, title: "Full Diagnostics", desc: "Complete hardware check with written estimate before any repair." },
 ];
 
 const repairSteps = [
@@ -73,13 +74,18 @@ export default async function RepairsPage() {
           <p className="section-eyebrow mb-1">What we fix</p>
           <h2 className="mb-6 text-2xl font-black text-ink-950">Common Repair Services</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {repairServices.map((service) => (
-              <div key={service.title} className="wcs-card rounded-2xl p-5">
-                <span className="mb-3 block text-3xl" aria-hidden="true">{service.icon}</span>
-                <p className="font-black text-ink-950">{service.title}</p>
-                <p className="mt-1.5 text-sm leading-6 text-ink-600">{service.desc}</p>
-              </div>
-            ))}
+            {repairServices.map((service) => {
+              const Icon = service.icon;
+              return (
+                <div key={service.title} className="wcs-card rounded-2xl p-5">
+                  <span className="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-accent-100 text-accent-700" aria-hidden="true">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <p className="font-black text-ink-950">{service.title}</p>
+                  <p className="mt-1.5 text-sm leading-6 text-ink-600">{service.desc}</p>
+                </div>
+              );
+            })}
           </div>
         </section>
 

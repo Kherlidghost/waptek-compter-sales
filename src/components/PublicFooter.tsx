@@ -83,10 +83,9 @@ export function PublicFooter() {
 function FooterLinks({ title, links }: { title: string; links: { href: string; label: string }[] }) {
   return (
     <section>
-      <h2
-        className="mb-3 text-xs font-black uppercase tracking-widest text-accent-400"
-        dangerouslySetInnerHTML={{ __html: title }}
-      />
+      <h2 className="mb-3 text-xs font-black uppercase tracking-widest text-accent-400">
+        {title}
+      </h2>
       <nav className="grid gap-2 text-sm">
         {links.map((link) => (
           <Link key={`${link.href}-${link.label}`} className="text-slate-400 hover:text-white" href={link.href}>

@@ -1,4 +1,17 @@
 import Link from "next/link";
+import {
+  BadgeCheck,
+  Disc,
+  HardDrive,
+  Keyboard,
+  Laptop,
+  Monitor,
+  Printer,
+  Router,
+  ShieldCheck,
+  Wrench,
+  type LucideIcon,
+} from "lucide-react";
 import { DesignSurface } from "@/components/DesignSurface";
 import { ProductGrid } from "@/components/ProductCard";
 import { ProductExplorer } from "@/components/ProductExplorer";
@@ -10,48 +23,24 @@ import { branches, categories, products } from "@/lib/marketplace-data";
 
 export const dynamic = "force-dynamic";
 
-const categoryIcons: Record<string, string> = {
-  Laptops: "💻",
-  "Desktop Computers": "🖥️",
-  Printers: "🖨️",
-  "Computer Accessories": "🖱️",
-  "Networking Equipment": "📡",
-  "Storage Devices": "💾",
-  "Repair Services": "🔧",
-  Software: "📀",
+const categoryIcons: Record<string, LucideIcon> = {
+  Laptops: Laptop,
+  "Desktop Computers": Monitor,
+  Printers: Printer,
+  "Computer Accessories": Keyboard,
+  "Networking Equipment": Router,
+  "Storage Devices": HardDrive,
+  "Repair Services": Wrench,
+  Software: Disc,
 };
 
 const trustPoints = [
-  {
-    icon: "✓",
-    title: "Verified Vendors",
-    body: "Every seller is reviewed and approved before listing products.",
-  },
-  {
-    icon: "✓",
-    title: "Receipt-Confirmed Payments",
-    body: "Orders only move forward after a cashier reviews your payment proof.",
-  },
-  {
-    icon: "✓",
-    title: "Branch-Supported Service",
-    body: "Physical support across Adamawa, Yobe, and Borno.",
-  },
-  {
-    icon: "✓",
-    title: "Professional Repairs",
-    body: "Request computer diagnosis and repair from certified technicians.",
-  },
-  {
-    icon: "✓",
-    title: "Genuine Products",
-    body: "Laptops, desktops, accessories, and components from trusted sources.",
-  },
-  {
-    icon: "✓",
-    title: "Customer Support",
-    body: "Reach us by phone, email, or WhatsApp for order and repair help.",
-  },
+  { title: "Verified Vendors", body: "Every seller is reviewed and approved before listing products." },
+  { title: "Receipt-Confirmed Payments", body: "Orders only move forward after a cashier reviews your payment proof." },
+  { title: "Branch-Supported Service", body: "Physical support across Adamawa, Yobe, and Borno." },
+  { title: "Professional Repairs", body: "Request computer diagnosis and repair from certified technicians." },
+  { title: "Genuine Products", body: "Laptops, desktops, accessories, and components from trusted sources." },
+  { title: "Customer Support", body: "Reach us by phone, email, or WhatsApp for order and repair help." },
 ];
 
 const howItWorks = [
@@ -170,21 +159,24 @@ export default async function Home({
             </Link>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
-            {catalogCategories.map((category) => (
-              <Link
-                key={category.id}
-                href={`/products?category=${category.id}`}
-                className="wcs-card group flex flex-col gap-3 rounded-2xl p-5 hover:border-accent-300 focus-visible:outline-primary-400"
-              >
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-accent-100 text-2xl" aria-hidden="true">
-                  {categoryIcons[category.name] ?? "📦"}
-                </span>
-                <div>
-                  <p className="font-black text-ink-950 group-hover:text-accent-700">{category.name}</p>
-                  <p className="mt-1 text-xs leading-5 text-ink-500">{category.description}</p>
-                </div>
-              </Link>
-            ))}
+            {catalogCategories.map((category) => {
+              const Icon = categoryIcons[category.name] ?? Disc;
+              return (
+                <Link
+                  key={category.id}
+                  href={`/products?category=${category.id}`}
+                  className="wcs-card group flex flex-col gap-3 rounded-2xl p-5 hover:border-accent-300 focus-visible:outline-primary-400"
+                >
+                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-accent-100 text-accent-700" aria-hidden="true">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <p className="font-black text-ink-950 group-hover:text-accent-700">{category.name}</p>
+                    <p className="mt-1 text-xs leading-5 text-ink-500">{category.description}</p>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </section>
 
@@ -230,8 +222,8 @@ export default async function Home({
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {trustPoints.map((point) => (
                 <div key={point.title} className="wcs-card rounded-2xl p-5">
-                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-accent-100 text-sm font-black text-accent-700">
-                    {point.icon}
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-accent-100 text-accent-700">
+                    <BadgeCheck className="h-5 w-5" />
                   </div>
                   <p className="font-black text-ink-950">{point.title}</p>
                   <p className="mt-1.5 text-sm leading-6 text-ink-600">{point.body}</p>
@@ -315,7 +307,9 @@ export default async function Home({
                 "Vendors are verified before selling.",
               ].map((item) => (
                 <div key={item} className="wcs-card rounded-2xl p-5">
-                  <div className="mb-3 h-2 w-8 rounded-full bg-accent-500" aria-hidden="true" />
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-accent-100 text-accent-700">
+                    <ShieldCheck className="h-5 w-5" />
+                  </div>
                   <p className="text-sm font-bold leading-6 text-ink-800">{item}</p>
                 </div>
               ))}
