@@ -138,7 +138,7 @@ export function ProductActions({
       </div>
       <button
         onClick={addToCart}
-        className="btn-dark w-full"
+        className="btn btn-primary w-full"
         type="button"
         disabled={outOfStock}
       >

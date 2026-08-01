@@ -24,9 +24,9 @@ export default async function OrderConfirmationPage({
           Your receipt has been uploaded to Supabase Storage. The cashier can now confirm or reject the payment online.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <Link className="btn-dark" href={`/orders/${orderNumber}`}>Track order</Link>
-          <Link className="btn-outline" href="/orders">My orders</Link>
-          <Link className="btn-outline" href="/">Back home</Link>
+          <Link className="btn btn-primary" href={`/orders/${orderNumber}`}>Track order</Link>
+          <Link className="btn btn-outline" href="/orders">My orders</Link>
+          <Link className="btn btn-outline" href="/">Back home</Link>
         </div>
       </DesignSurface>
     </main>

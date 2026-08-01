@@ -112,22 +112,13 @@ export default async function Home({
                   Shop quality computer products from WAPTEK and verified vendors, or request expert computer repair support.
                 </p>
                 <div className="mt-8 flex flex-wrap gap-3">
-                  <Link
-                    href="/products"
-                    className="rounded-lg bg-accent-500 px-7 py-3.5 text-sm font-black text-primary-950 shadow-lg shadow-accent-950/20 transition hover:bg-accent-400 focus-visible:outline-accent-400"
-                  >
+                  <Link href="/products" className="btn btn-accent shadow-lg shadow-accent-950/20">
                     Shop Now
                   </Link>
-                  <Link
-                    href="/repairs"
-                    className="rounded-lg border border-white/25 px-7 py-3.5 text-sm font-black transition hover:bg-white/10 focus-visible:outline-white"
-                  >
+                  <Link href="/repairs" className="btn btn-secondary text-white border-white/25 bg-white/10 hover:bg-white/15">
                     Request Repair
                   </Link>
-                  <Link
-                    href="/become-a-vendor"
-                    className="rounded-lg border border-white/25 px-7 py-3.5 text-sm font-black transition hover:bg-white/10 focus-visible:outline-white"
-                  >
+                  <Link href="/become-a-vendor" className="btn btn-secondary text-white border-white/25 bg-white/10 hover:bg-white/15">
                     Become a Vendor
                   </Link>
                 </div>

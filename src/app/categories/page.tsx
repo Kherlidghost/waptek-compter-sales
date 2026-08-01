@@ -38,7 +38,7 @@ export default async function CategoriesPage() {
                       <p className="mt-2 leading-7 text-slate-600">{category.description}</p>
                     </div>
                     <Link
-                      className="btn-dark"
+                      className="btn btn-primary"
                       href={`/products?category=${category.id}`}
                     >
                       View {categoryProducts.length}
