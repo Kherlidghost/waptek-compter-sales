@@ -118,7 +118,7 @@ export function SessionNavigation({ user, className = "", mode = "desktop" }: Se
 
   return (
     <details className={`relative ${className}`}>
-      <summary className="cursor-pointer list-none rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-primary-300 hover:text-primary-700">
+      <summary className="cursor-pointer list-none rounded-full border border-slate-200 bg-surface px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-primary-300 hover:text-primary-700">
         {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
       </summary>
       <div className="absolute right-0 z-40 mt-2 w-72 rounded-3xl border border-slate-200 bg-white/95 p-3 text-sm shadow-2xl shadow-slate-900/10">

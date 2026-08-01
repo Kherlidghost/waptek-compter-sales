@@ -328,7 +328,7 @@ export function AdminManagerDashboard({ role, branchScopeId }: { role: Dashboard
 
       {activeSection === "vendors" ? (
         <section className="space-y-6">
-          <div className="rounded-lg border border-ink-200 bg-white p-5 shadow-sm">
+          <div className="rounded-lg border border-ink-200 bg-surface p-5 shadow-sm">
             <h2 className="text-xl font-black text-ink-950">Vendor approval queue</h2>
             <p className="mt-1 text-sm text-ink-600">Admin reviews vendor applications before products are listed publicly.</p>
             <div className="mt-4 grid gap-3 md:grid-cols-2">
@@ -348,7 +348,7 @@ export function AdminManagerDashboard({ role, branchScopeId }: { role: Dashboard
           </div>
           <div className="grid gap-4 md:grid-cols-3">
           {vendorRows.map((vendor) => (
-            <article key={vendor.id} className="rounded-lg border border-ink-200 bg-white p-5 shadow-sm">
+            <article key={vendor.id} className="rounded-lg border border-ink-200 bg-surface p-5 shadow-sm">
               <p className="text-lg font-black text-ink-950">{vendor.businessName}</p>
               <p className="mt-1 text-sm text-ink-600">Owner: {vendor.ownerName}</p>
               <p className="mt-1 text-sm text-ink-600">Branch: {getBranch(vendor.branchId)?.state}</p>
@@ -391,7 +391,7 @@ export function AdminManagerDashboard({ role, branchScopeId }: { role: Dashboard
 
       {activeSection === "categories" ? (
         <section className="grid gap-6 lg:grid-cols-[360px_1fr]">
-          <form onSubmit={addCategory} className="h-fit rounded-lg border border-ink-200 bg-white p-5 shadow-sm">
+          <form onSubmit={addCategory} className="h-fit rounded-lg border border-ink-200 bg-surface p-5 shadow-sm">
             <h2 className="text-xl font-black text-ink-950">Add category</h2>
             <input className="mt-4 h-11 w-full rounded-md border border-ink-300 px-3" onChange={(event) => setCategoryName(event.target.value)} placeholder="Category name" value={categoryName} />
             <button className="mt-3 rounded-md bg-accent-600 px-4 py-2 text-sm font-bold text-white">Add category</button>
@@ -402,7 +402,7 @@ export function AdminManagerDashboard({ role, branchScopeId }: { role: Dashboard
 
       {activeSection === "branches" ? (
         <section className="grid gap-6 lg:grid-cols-[360px_1fr]">
-          <form onSubmit={addBranch} className="h-fit rounded-lg border border-ink-200 bg-white p-5 shadow-sm">
+          <form onSubmit={addBranch} className="h-fit rounded-lg border border-ink-200 bg-surface p-5 shadow-sm">
             <h2 className="text-xl font-black text-ink-950">Add branch</h2>
             <input className="mt-4 h-11 w-full rounded-md border border-ink-300 px-3" onChange={(event) => setBranchName(event.target.value)} placeholder="Branch name" value={branchName} />
             <button className="mt-3 rounded-md bg-accent-600 px-4 py-2 text-sm font-bold text-white">Add branch</button>
@@ -471,7 +471,7 @@ export function AdminManagerDashboard({ role, branchScopeId }: { role: Dashboard
 
 function DataTable({ headers, rows }: { headers: string[]; rows: Array<Array<React.ReactNode>> }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-ink-200 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-lg border border-ink-200 bg-surface shadow-sm">
       <table className="w-full min-w-[760px] text-left text-sm">
         <thead className="bg-ink-100 text-xs uppercase text-ink-500">
           <tr>
@@ -555,7 +555,7 @@ function SummaryCard({
   onSelect: (section: Section) => void;
 }) {
   return (
-    <article className="flex min-h-52 flex-col justify-between rounded-3xl border border-ink-200 bg-white p-6 shadow-xl shadow-ink-950/5">
+    <article className="flex min-h-52 flex-col justify-between rounded-3xl border border-ink-200 bg-surface p-6 shadow-xl shadow-ink-950/5">
       <div>
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-100 text-2xl">
           {cardIcon(title)}
@@ -617,7 +617,7 @@ function BranchOverviewCard({
   repairRequests: number;
 }) {
   return (
-    <article className="rounded-lg border border-ink-200 bg-white p-5 shadow-sm">
+    <article className="rounded-lg border border-ink-200 bg-surface p-5 shadow-sm">
       <p className="text-lg font-black text-ink-950">{branch.state} branch</p>
       <p className="mt-1 text-sm text-ink-600">{branch.city}</p>
       <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
@@ -639,7 +639,7 @@ function BranchOverviewCard({
 
 function ActivityPanel({ title, emptyMessage, rows }: { title: string; emptyMessage: string; rows: Array<Array<React.ReactNode>> }) {
   return (
-    <div className="rounded-lg border border-ink-200 bg-white p-5 shadow-sm">
+    <div className="rounded-lg border border-ink-200 bg-surface p-5 shadow-sm">
       <h2 className="text-xl font-black text-ink-950">{title}</h2>
       <div className="mt-4 grid gap-3">
         {rows.length === 0 ? (
@@ -660,7 +660,7 @@ function ActivityPanel({ title, emptyMessage, rows }: { title: string; emptyMess
 
 function ReportPanel({ title, rows }: { title: string; rows: Array<[string, string]> }) {
   return (
-    <div className="rounded-lg border border-ink-200 bg-white p-5 shadow-sm">
+    <div className="rounded-lg border border-ink-200 bg-surface p-5 shadow-sm">
       <h2 className="text-xl font-black text-ink-950">{title}</h2>
       <div className="mt-4 grid gap-3">
         {rows.length === 0 ? (

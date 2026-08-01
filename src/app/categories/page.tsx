@@ -14,7 +14,7 @@ export default async function CategoriesPage() {
     <div className="min-h-screen marketplace-shell text-slate-900">
       <PublicHeader />
       <main>
-        <section className="border-b border-slate-200 bg-white">
+        <section className="border-b border-slate-200 bg-surface">
           <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
             <p className="text-sm font-bold uppercase text-emerald-700">Categories</p>
             <h1 className="mt-2 text-4xl font-black text-slate-950">Shop computers, accessories, and repair services.</h1>

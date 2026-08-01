@@ -342,7 +342,7 @@ export async function ReportsDashboard({ role, searchParams }: { role: ReportsRo
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
-      <header className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <header className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
         <p className="text-sm font-bold uppercase text-emerald-700">Business Reports</p>
         <h1 className="mt-2 text-3xl font-black text-slate-950">
           {role === "admin" ? "Marketplace analytics" : role === "manager" ? "Assigned branch reports" : role === "cashier" ? "Payment confirmation reports" : "Vendor performance reports"}
@@ -350,7 +350,7 @@ export async function ReportsDashboard({ role, searchParams }: { role: ReportsRo
         <p className="mt-2 text-sm text-slate-600">Date-filtered production reports with role-safe visibility and lightweight visual analytics.</p>
       </header>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
         <form className="grid gap-3 md:grid-cols-5">
           <select className="h-11 rounded-md border border-slate-300 px-3" name="date" defaultValue={searchParams.date ?? ""}>
             <option value="">All dates</option>
@@ -384,7 +384,7 @@ export async function ReportsDashboard({ role, searchParams }: { role: ReportsRo
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {summaryCards.map(([title, value, description]) => (
-          <div key={title} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div key={title} className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
             <p className="text-sm text-slate-500">{title}</p>
             <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
             <p className="mt-1 text-xs text-slate-500">{description}</p>
@@ -393,7 +393,7 @@ export async function ReportsDashboard({ role, searchParams }: { role: ReportsRo
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
           <h2 className="text-lg font-black text-slate-950">Order status breakdown</h2>
           <div className="mt-5 grid gap-4">
             <Bar label="Pending" value={pendingPayments} max={maxOrderCount} />
@@ -402,7 +402,7 @@ export async function ReportsDashboard({ role, searchParams }: { role: ReportsRo
             <Bar label="Completed" value={completedOrders} max={maxOrderCount} />
           </div>
         </div>
-        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
           <h2 className="text-lg font-black text-slate-950">{role === "admin" ? "Branch comparison" : role === "vendor" ? "Best-performing products" : "Inventory risk"}</h2>
           <div className="mt-5 grid gap-4">
             {role === "vendor"
@@ -494,7 +494,7 @@ export async function ReportsDashboard({ role, searchParams }: { role: ReportsRo
 
 function ReportTable({ title, headers, children, exportHref }: { title: string; headers: string[]; children: ReactNode; exportHref: string }) {
   return (
-    <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+    <section className="overflow-hidden rounded-lg border border-slate-200 bg-surface shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4">
         <div>
           <h2 className="text-lg font-black text-slate-950">{title}</h2>

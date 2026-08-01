@@ -25,10 +25,10 @@ export function DashboardErrorFallback({
           >
             Try Again
           </button>
-          <Link className="rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-900 hover:border-emerald-500" href="/login">
+          <Link className="rounded-lg border border-slate-300 bg-surface px-5 py-3 text-sm font-black text-slate-900 hover:border-emerald-500" href="/login">
             Sign In Again
           </Link>
-          <Link className="rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-900 hover:border-emerald-500" href="/">
+          <Link className="rounded-lg border border-slate-300 bg-surface px-5 py-3 text-sm font-black text-slate-900 hover:border-emerald-500" href="/">
             Go Home
           </Link>
         </div>

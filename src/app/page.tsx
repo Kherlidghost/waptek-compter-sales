@@ -132,7 +132,7 @@ export default async function Home({
                   { title: "Branch Support", body: "Adamawa, Yobe, and Borno." },
                   { title: "Repair Services", body: "Professional computer diagnosis." },
                 ].map((card) => (
-                  <div key={card.title} className="rounded-xl bg-white p-4 text-slate-950 shadow-lg">
+                  <div key={card.title} className="rounded-xl bg-surface p-4 text-slate-950 shadow-lg">
                     <p className="text-sm font-black">{card.title}</p>
                     <p className="mt-1.5 text-xs leading-5 text-slate-600">{card.body}</p>
                   </div>
@@ -221,7 +221,7 @@ export default async function Home({
         </section>
 
         {/* ── Why WAPTEK ───────────────────────────────────────────────── */}
-        <section className="bg-white">
+        <section className="bg-surface">
           <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
             <div className="mb-8 max-w-2xl">
               <p className="section-eyebrow mb-1">Why choose us</p>

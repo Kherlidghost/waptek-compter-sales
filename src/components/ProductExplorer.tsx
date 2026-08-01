@@ -162,7 +162,7 @@ export function ProductExplorer({
             <option value="price-high">Price: high to low</option>
             <option value="stock-high">Stock: high to low</option>
           </select>
-          <label className="flex h-12 items-center gap-2 rounded-2xl border border-ink-300 bg-white px-3 text-sm font-semibold">
+          <label className="flex h-12 items-center gap-2 rounded-2xl border border-ink-300 bg-surface px-3 text-sm font-semibold">
             <input
               checked={inStockOnly}
               onChange={(event) => setInStockOnly(event.target.checked)}
@@ -208,7 +208,7 @@ export function ProductExplorer({
             setInStockOnly(false);
             setSort("featured");
           }}
-          className="rounded-xl border border-ink-300 bg-white/80 px-4 py-2 font-black hover:bg-white"
+          className="rounded-xl border border-ink-300 bg-white/80 px-4 py-2 font-black hover:bg-surface"
           type="button"
         >
           Reset filters

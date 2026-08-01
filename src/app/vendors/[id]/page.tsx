@@ -129,7 +129,7 @@ export default async function PublicVendorPage({ params }: { params: Promise<{ i
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <PublicHeader />
       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <section className="rounded-lg border border-slate-200 bg-surface p-6 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="flex gap-4">
               <div className="h-20 w-20 rounded-lg bg-slate-100 bg-cover bg-center" style={{ backgroundImage: logo ? `url(${logo})` : undefined }} />
@@ -159,7 +159,7 @@ export default async function PublicVendorPage({ params }: { params: Promise<{ i
         </section>
 
         <section className="mt-8 grid gap-6 lg:grid-cols-[340px_1fr]">
-          <aside className="h-fit rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <aside className="h-fit rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
             <h2 className="text-lg font-black text-slate-950">Business information</h2>
             <dl className="mt-4 space-y-3 text-sm">
               <div><dt className="text-slate-500">Owner</dt><dd className="font-bold">{vendor.owner_name ?? "Vendor owner"}</dd></div>

@@ -29,7 +29,7 @@ export default async function BecomeVendorPage({
           </p>
           <div className="grid gap-3">
             {["Admin reviews each application.", "Approved vendors can upload products and manage inventory.", "Rejected or suspended vendors cannot publish products."].map((item) => (
-              <p key={item} className="rounded-md border border-slate-200 bg-white p-4 text-sm font-semibold text-slate-700">{item}</p>
+              <p key={item} className="rounded-md border border-slate-200 bg-surface p-4 text-sm font-semibold text-slate-700">{item}</p>
             ))}
           </div>
           {!user ? (
@@ -39,7 +39,7 @@ export default async function BecomeVendorPage({
           ) : null}
         </section>
 
-        <form action={submitVendorApplication} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl shadow-slate-950/8">
+        <form action={submitVendorApplication} className="rounded-3xl border border-slate-200 bg-surface p-6 shadow-2xl shadow-slate-950/8">
           <input type="hidden" name="return_to" value="/vendor/register" />
           <h2 className="text-2xl font-black text-slate-950">Vendor registration form</h2>
           <p className="mt-2 text-sm text-slate-600">Your application will be saved as Pending Approval until an admin reviews it.</p>

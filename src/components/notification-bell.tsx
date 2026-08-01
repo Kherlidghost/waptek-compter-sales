@@ -51,7 +51,7 @@ export function NotificationBell() {
   return (
     <details className="relative">
       <summary
-        className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-emerald-400 hover:text-emerald-700"
+        className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-xl border border-slate-200 bg-surface text-slate-700 shadow-sm transition hover:border-emerald-400 hover:text-emerald-700"
         aria-label="Open notifications"
       >
         <span aria-hidden="true">🔔</span>
@@ -59,7 +59,7 @@ export function NotificationBell() {
           <span className="absolute right-1 top-1 h-2.5 w-2.5 rounded-full bg-emerald-600 ring-2 ring-white" />
         ) : null}
       </summary>
-      <div className="absolute right-0 top-12 z-50 w-80 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-950/10">
+      <div className="absolute right-0 top-12 z-50 w-80 overflow-hidden rounded-2xl border border-slate-200 bg-surface shadow-2xl shadow-slate-950/10">
         <div className="border-b border-slate-100 px-4 py-3">
           <p className="text-sm font-black text-slate-950">Notifications</p>
           <p className="text-xs text-slate-500">Latest marketplace updates</p>

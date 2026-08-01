@@ -176,7 +176,7 @@ export async function ProductManagementPage({
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
-      <header className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <header className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
         <p className="text-sm font-bold uppercase text-emerald-700">Product Management</p>
         <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -206,7 +206,7 @@ export async function ProductManagementPage({
         vendors={uploadVendors}
       />
 
-      <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
         <form className="grid gap-3 lg:grid-cols-7">
           <input className="h-11 rounded-md border border-slate-300 px-3 lg:col-span-2" name="q" placeholder="Search name, SKU, brand, vendor, branch" defaultValue={searchParams.q} />
           <select className="h-11 rounded-md border border-slate-300 px-3" name="category" defaultValue={searchParams.category ?? ""}>
@@ -245,7 +245,7 @@ export async function ProductManagementPage({
         <div className="rounded-lg border border-red-200 bg-red-50 p-5 text-sm font-semibold text-red-800">Could not load products. Confirm the production SQL upgrade has been applied.</div>
       ) : null}
 
-      <section className="rounded-lg border border-slate-200 bg-white shadow-sm">
+      <section className="rounded-lg border border-slate-200 bg-surface shadow-sm">
         {role === "admin" ? (
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4">
             <p className="text-sm font-bold text-slate-700">{rawProducts.length} products found</p>
@@ -310,7 +310,7 @@ export async function ProductManagementPage({
         </div>
       </section>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white p-4 text-sm shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 bg-surface p-4 text-sm shadow-sm">
         <p className="font-semibold text-slate-700">Page {currentPage} of {totalPages}</p>
         <div className="flex gap-2">
           <Link className="rounded-md border border-slate-300 px-3 py-2 font-bold" href={`${returnTo}?page=${Math.max(1, currentPage - 1)}`}>Previous</Link>

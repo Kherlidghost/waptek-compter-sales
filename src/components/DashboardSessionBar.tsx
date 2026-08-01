@@ -59,7 +59,7 @@ export async function DashboardSessionBar({ role }: { role: UserRole }) {
               </p>
               <p className="max-w-52 truncate text-xs text-slate-300">{userSummary.email}</p>
             </div>
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white text-xs font-black text-slate-950 shadow-sm">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-surface text-xs font-black text-slate-950 shadow-sm">
               {userSummary.email.charAt(0).toUpperCase()}
             </div>
           </div>

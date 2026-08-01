@@ -139,7 +139,7 @@ export async function OrderManagementPage({ role, searchParams }: { role: OrderM
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
-      <header className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <header className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
         <p className="text-sm font-bold uppercase text-emerald-700">Order Management</p>
         <h1 className="mt-2 text-3xl font-black text-slate-950">
           {role === "admin" ? "All marketplace orders" : role === "manager" ? "Branch orders" : role === "cashier" ? "Payment review queue" : "Vendor orders"}
@@ -157,14 +157,14 @@ export async function OrderManagementPage({ role, searchParams }: { role: OrderM
           ["Completed Orders", completed],
           [role === "cashier" ? "Rejected Today" : "Cancelled Orders", role === "cashier" ? orders.filter((order) => order.status === "payment_rejected").length : cancelled],
         ].map(([label, value]) => (
-          <div key={String(label)} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div key={String(label)} className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
             <p className="text-sm text-slate-500">{label}</p>
             <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
           </div>
         ))}
       </section>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
         <form className="grid gap-3 lg:grid-cols-6">
           <input className="h-11 rounded-md border border-slate-300 px-3 lg:col-span-2" name="q" placeholder="Search order, customer, phone, vendor, branch" defaultValue={searchParams.q} />
           <select className="h-11 rounded-md border border-slate-300 px-3" name="status" defaultValue={searchParams.status ?? ""}>
@@ -189,7 +189,7 @@ export async function OrderManagementPage({ role, searchParams }: { role: OrderM
 
       {error ? <p className="rounded-lg border border-red-200 bg-red-50 p-5 text-sm font-semibold text-red-800">Could not load orders. Confirm production SQL has been applied.</p> : null}
 
-      <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+      <section className="overflow-hidden rounded-lg border border-slate-200 bg-surface shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[1180px] text-left text-sm">
             <thead className="bg-slate-100 text-xs uppercase text-slate-500">

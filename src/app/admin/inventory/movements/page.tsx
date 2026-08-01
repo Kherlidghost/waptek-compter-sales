@@ -65,7 +65,7 @@ export default async function InventoryMovementsPage() {
           Could not load stock movements. Details: {error.message}
         </section>
       ) : (
-        <section className="mx-auto max-w-7xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-950/5">
+        <section className="mx-auto max-w-7xl overflow-hidden rounded-2xl border border-slate-200 bg-surface shadow-xl shadow-slate-950/5">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[980px] text-left text-sm">
               <thead className="bg-slate-100 text-xs uppercase text-slate-500">

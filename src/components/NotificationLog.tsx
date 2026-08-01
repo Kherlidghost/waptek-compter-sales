@@ -31,7 +31,7 @@ export function NotificationLog({ title = "Simulated notification logs" }: { tit
 
       <div className="grid gap-3">
         {log.map((entry) => (
-          <article key={entry.id} className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <article key={entry.id} className="rounded-lg border border-slate-200 bg-surface p-4 shadow-sm">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <p className="text-sm font-bold uppercase text-slate-500">

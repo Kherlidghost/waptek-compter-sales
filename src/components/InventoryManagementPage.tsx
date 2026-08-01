@@ -210,7 +210,7 @@ export async function InventoryManagementPage({
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
-      <header className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <header className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
         <p className="text-sm font-bold uppercase text-emerald-700">Inventory Management</p>
         <h1 className="mt-2 text-3xl font-black text-slate-950">
           {role === "admin" ? "All branch inventory" : role === "manager" ? "Branch stock control" : "My product inventory"}
@@ -231,7 +231,7 @@ export async function InventoryManagementPage({
           ["Recently Updated", recentlyUpdated.toString(), "Changed within 7 days."],
           ["Pending Transfers", pendingTransfers.toString(), "Awaiting receipt."],
         ].map(([title, value, description]) => (
-          <div key={title} className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <div key={title} className="rounded-lg border border-slate-200 bg-surface p-4 shadow-sm">
             <p className="text-sm text-slate-500">{title}</p>
             <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
             <p className="mt-1 text-xs text-slate-500">{description}</p>
@@ -240,7 +240,7 @@ export async function InventoryManagementPage({
       </section>
 
       <section className="grid gap-6 lg:grid-cols-[1fr_360px]">
-        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
           <h2 className="text-lg font-black text-slate-950">{role === "admin" ? "Stock by branch" : role === "manager" ? "Branch inventory report" : "Own inventory report"}</h2>
           <p className="mt-1 text-sm text-slate-600">Estimated stock value: <span className="font-bold text-slate-950">{formatNaira(stockValue)}</span></p>
           <div className="mt-4 grid gap-3">
@@ -258,7 +258,7 @@ export async function InventoryManagementPage({
           </div>
         </div>
         {role === "admin" ? (
-          <form action={transferInventoryStock} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <form action={transferInventoryStock} className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
             <h2 className="text-lg font-black text-slate-950">Transfer stock</h2>
             <p className="mt-1 text-sm text-slate-600">Move stock between Adamawa, Yobe, and Borno.</p>
             <input type="hidden" name="return_to" value={returnTo} />
@@ -283,7 +283,7 @@ export async function InventoryManagementPage({
         ) : null}
       </section>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
         <form className="grid gap-3 lg:grid-cols-7">
           <input className="h-11 rounded-md border border-slate-300 px-3 lg:col-span-2" name="q" placeholder="Search product, SKU, vendor, branch, category" defaultValue={searchParams.q} />
           {role === "admin" ? (
@@ -316,7 +316,7 @@ export async function InventoryManagementPage({
 
       {error ? <p className="rounded-lg border border-red-200 bg-red-50 p-5 text-sm font-semibold text-red-800">Could not load inventory. Run the production inventory SQL upgrade first.</p> : null}
 
-      <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+      <section className="overflow-hidden rounded-lg border border-slate-200 bg-surface shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[1280px] text-left text-sm">
             <thead className="bg-slate-100 text-xs uppercase text-slate-500">
@@ -354,7 +354,7 @@ export async function InventoryManagementPage({
         </div>
       </section>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white p-4 text-sm shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 bg-surface p-4 text-sm shadow-sm">
         <p className="font-semibold text-slate-700">Page {currentPage} of {totalPages}</p>
         <div className="flex gap-2">
           <Link className="rounded-md border border-slate-300 px-3 py-2 font-bold" href={`${returnTo}?page=${Math.max(1, currentPage - 1)}`}>Previous</Link>
@@ -363,7 +363,7 @@ export async function InventoryManagementPage({
       </div>
 
       <section className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
           <h2 className="text-lg font-black text-slate-950">Stock movement history</h2>
           <div className="mt-4 grid gap-3">
             {((movementRows ?? []) as unknown as MovementRow[]).length === 0 ? <p className="rounded-md border border-dashed border-slate-300 p-4 text-sm text-slate-600">No movement history yet.</p> : null}
@@ -376,7 +376,7 @@ export async function InventoryManagementPage({
             ))}
           </div>
         </div>
-        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
           <h2 className="text-lg font-black text-slate-950">Recent branch transfers</h2>
           <div className="mt-4 grid gap-3">
             {((transferRows ?? []) as unknown as TransferRow[]).length === 0 ? <p className="rounded-md border border-dashed border-slate-300 p-4 text-sm text-slate-600">No stock transfers yet.</p> : null}

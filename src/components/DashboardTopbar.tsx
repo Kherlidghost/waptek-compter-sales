@@ -59,7 +59,7 @@ export function DashboardTopbar({ showNotificationDot = true }: DashboardTopbarP
     <header className="sticky top-0 z-30 flex min-h-[88px] items-center justify-between gap-6 border-b border-slate-200/80 bg-white/95 px-6 py-4 backdrop-blur xl:px-10">
       <div className="flex items-center gap-4">
         <button
-          className="rounded-xl border border-slate-200 bg-white p-2 text-slate-700 shadow-sm lg:hidden"
+          className="rounded-xl border border-slate-200 bg-surface p-2 text-slate-700 shadow-sm lg:hidden"
           onClick={() => {
             const event = new Event("toggle-sidebar", { bubbles: true });
             window.dispatchEvent(event);
@@ -103,7 +103,7 @@ export function DashboardTopbar({ showNotificationDot = true }: DashboardTopbarP
             placeholder="Search orders, products..."
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="h-11 w-full rounded-full border border-slate-200 bg-slate-50 py-2 pl-9 pr-4 text-sm text-slate-800 shadow-inner shadow-slate-950/[0.02] transition-colors placeholder:text-slate-400 focus:border-slate-300 focus:bg-white focus:outline-none"
+            className="h-11 w-full rounded-full border border-slate-200 bg-slate-50 py-2 pl-9 pr-4 text-sm text-slate-800 shadow-inner shadow-slate-950/[0.02] transition-colors placeholder:text-slate-400 focus:border-slate-300 focus:bg-surface focus:outline-none"
           />
         </div>
 

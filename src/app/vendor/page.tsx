@@ -68,14 +68,14 @@ export default async function VendorDashboardPage({
       <DashboardSessionBar role="vendor" />
       {loadError ? <p className="mx-auto max-w-7xl rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">{loadError}</p> : null}
       {!vendor ? (
-        <section className="mx-auto max-w-5xl rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <section className="mx-auto max-w-5xl rounded-lg border border-slate-200 bg-surface p-6 shadow-sm">
           <p className="text-sm font-bold uppercase text-emerald-700">Vendor onboarding required</p>
           <h1 className="mt-2 text-3xl font-black text-slate-950">Submit your vendor application</h1>
           <p className="mt-2 text-sm text-slate-600">Vendor tools become available after you submit the registration form and admin approves your business.</p>
           <Link className="btn btn-primary mt-5" href="/become-a-vendor">Become a Vendor</Link>
         </section>
       ) : vendor.status !== "approved" ? (
-        <section className="mx-auto max-w-5xl rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <section className="mx-auto max-w-5xl rounded-lg border border-slate-200 bg-surface p-6 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <p className="text-sm font-bold uppercase text-emerald-700">Vendor application</p>

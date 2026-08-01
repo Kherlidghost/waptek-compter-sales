@@ -101,7 +101,7 @@ export function ProductActions({
             <p className="text-xs font-black uppercase tracking-wide text-slate-500">Quantity</p>
             <p className="mt-1 text-sm font-semibold text-slate-700">{product.stock} available</p>
           </div>
-          <div className="flex items-center overflow-hidden rounded-xl border border-slate-300 bg-white">
+          <div className="flex items-center overflow-hidden rounded-xl border border-slate-300 bg-surface">
             <button
               aria-label="Reduce quantity"
               className="h-10 w-10 text-lg font-black text-slate-700 hover:bg-slate-100 disabled:text-slate-300"

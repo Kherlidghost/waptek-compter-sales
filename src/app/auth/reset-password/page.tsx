@@ -25,7 +25,7 @@ function ResetPasswordForm() {
   const [show, setShow] = useState(false);
 
   return (
-    <section className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-xl shadow-slate-950/5">
+    <section className="w-full max-w-md rounded-2xl border border-slate-200 bg-surface p-8 shadow-xl shadow-slate-950/5">
       <p className="text-sm font-black uppercase text-emerald-700">Account recovery</p>
       <h1 className="mt-2 text-3xl font-black text-slate-950">Set a new password</h1>
       <p className="mt-2 text-sm leading-6 text-slate-600">

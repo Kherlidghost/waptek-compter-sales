@@ -323,7 +323,7 @@ export function VendorDashboard() {
             <h2 className="text-xl font-black text-slate-950">Own products and inventory</h2>
             <p className="mt-1 text-sm text-slate-600">Only products for the active approved vendor are shown here.</p>
           </div>
-          <div className="overflow-hidden rounded-[24px] border border-slate-200/80 bg-white shadow-[0_20px_60px_-30px_rgba(15,23,42,0.2)]">
+          <div className="overflow-hidden rounded-[24px] border border-slate-200/80 bg-surface shadow-[0_20px_60px_-30px_rgba(15,23,42,0.2)]">
             <table className="w-full min-w-[820px] text-left text-sm">
               <thead className="bg-slate-100 text-xs uppercase text-slate-500">
                 <tr>
@@ -371,7 +371,7 @@ export function VendorDashboard() {
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
           <h2 className="text-xl font-black text-slate-950">Low stock products</h2>
           <p className="mt-1 text-sm text-slate-600">Prioritize stock updates before customers place new orders.</p>
           <div className="mt-4 grid gap-3">
@@ -394,7 +394,7 @@ export function VendorDashboard() {
             })}
           </div>
         </div>
-        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
           <h2 className="text-xl font-black text-slate-950">Recent product activity</h2>
           <p className="mt-1 text-sm text-slate-600">Latest listings and stock condition for your own catalogue.</p>
           <div className="mt-4 grid gap-3">
@@ -421,7 +421,7 @@ export function VendorDashboard() {
           <h2 className="text-xl font-black text-slate-950">Orders for own products</h2>
           <p className="mt-1 text-sm text-slate-600">Filtered to orders that include products owned by this vendor.</p>
         </div>
-        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-lg border border-slate-200 bg-surface shadow-sm">
           <table className="w-full min-w-[760px] text-left text-sm">
             <thead className="bg-slate-100 text-xs uppercase text-slate-500">
               <tr>

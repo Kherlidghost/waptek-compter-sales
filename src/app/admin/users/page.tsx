@@ -278,7 +278,7 @@ export default async function AdminUsersPage({
                             <input type="hidden" name="profile_id" value={item.id} />
                             <Field label="New temporary password" name="temporary_password" type="password" required />
                             <button
-                              className="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
+                              className="rounded-2xl border border-slate-300 bg-surface px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
                               disabled={!authAdminReady}
                             >
                               {authAdminReady ? "Reset password" : "Service role key required"}

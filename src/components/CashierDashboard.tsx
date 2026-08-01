@@ -223,7 +223,7 @@ export function CashierDashboard({
         </div>
       </section>
 
-      <section className="overflow-hidden rounded-[24px] border border-slate-200/80 bg-white shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)]">
+      <section className="overflow-hidden rounded-[24px] border border-slate-200/80 bg-surface shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)]">
         {visibleOrders.length === 0 ? (
           <div className="p-8 text-center">
             <p className="text-lg font-bold text-ink-950">{query ? "No receipts match your search." : "No pending receipts."}</p>
@@ -278,7 +278,7 @@ export function CashierDashboard({
 
       {openOrder ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-ink-950/70 p-4">
-          <div className="w-full max-w-3xl overflow-hidden rounded-[28px] bg-white shadow-[0_20px_60px_-30px_rgba(15,23,42,0.3)]">
+          <div className="w-full max-w-3xl overflow-hidden rounded-[28px] bg-surface shadow-[0_20px_60px_-30px_rgba(15,23,42,0.3)]">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-200 p-4">
               <div>
                 <p className="text-sm font-bold uppercase text-accent-700">Receipt image</p>

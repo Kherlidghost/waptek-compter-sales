@@ -34,7 +34,7 @@ export function ReviewSection({ product }: { product: Product }) {
   }
 
   return (
-    <section className="mx-auto mt-10 max-w-6xl rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+    <section className="mx-auto mt-10 max-w-6xl rounded-lg border border-slate-200 bg-surface p-6 shadow-sm">
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
         <div>
           <p className="text-sm font-bold uppercase text-emerald-700">Reviews</p>

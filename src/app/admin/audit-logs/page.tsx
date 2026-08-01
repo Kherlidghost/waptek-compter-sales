@@ -112,7 +112,7 @@ export default async function AdminAuditLogsPage({
           <label className="grid gap-1 text-sm font-bold text-slate-700">
             Filter by action
             <select
-              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium"
+              className="rounded-lg border border-slate-300 bg-surface px-3 py-2 text-sm font-medium"
               name="action"
               defaultValue={actionFilter ?? ""}
             >
@@ -138,7 +138,7 @@ export default async function AdminAuditLogsPage({
           Could not load audit logs. Run <span className="font-black">audit-log-upgrade.sql</span> in Supabase first.
         </div>
       ) : (
-        <section className="mx-auto max-w-7xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-950/5">
+        <section className="mx-auto max-w-7xl overflow-hidden rounded-2xl border border-slate-200 bg-surface shadow-xl shadow-slate-950/5">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[900px] text-left text-sm">
               <thead className="bg-slate-100 text-xs uppercase text-slate-500">

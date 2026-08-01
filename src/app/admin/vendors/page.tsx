@@ -61,7 +61,7 @@ export default async function AdminVendorsPage({
   return (
     <main className="min-h-screen space-y-6 dashboard-shell px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
       <DashboardSessionBar role="admin" />
-      <section className="mx-auto max-w-7xl rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="mx-auto max-w-7xl rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
         <p className="text-sm font-bold uppercase text-emerald-700">Vendor Management</p>
         <h1 className="mt-2 text-3xl font-black text-slate-950">Vendor approvals and performance</h1>
         <p className="mt-2 text-sm text-slate-600">Review onboarding applications, manage approval status, and monitor vendor marketplace activity.</p>
@@ -77,14 +77,14 @@ export default async function AdminVendorsPage({
           ["Suspended", vendors.filter((vendor) => vendor.status === "suspended").length],
           ["Rejected", vendors.filter((vendor) => vendor.status === "rejected").length],
         ].map(([label, value]) => (
-          <div key={label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div key={label} className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
             <p className="text-sm text-slate-500">{label}</p>
             <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
           </div>
         ))}
       </section>
 
-      <section className="mx-auto max-w-7xl rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="mx-auto max-w-7xl rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
         <form className="grid gap-3 lg:grid-cols-5">
           <input className="h-11 rounded-md border border-slate-300 px-3 lg:col-span-2" name="q" placeholder="Search business, owner, email, phone, status" defaultValue={params.q} />
           <select className="h-11 rounded-md border border-slate-300 px-3" name="status" defaultValue={params.status ?? ""}>
@@ -107,7 +107,7 @@ export default async function AdminVendorsPage({
 
       {error ? <p className="mx-auto max-w-7xl rounded-lg border border-red-200 bg-red-50 p-5 text-sm font-semibold text-red-800">Could not load vendors. Run the vendor production SQL upgrade first.</p> : null}
 
-      <section className="mx-auto max-w-7xl overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+      <section className="mx-auto max-w-7xl overflow-hidden rounded-lg border border-slate-200 bg-surface shadow-sm">
         <div className="border-b border-slate-200 p-4">
           <h2 className="text-lg font-black text-slate-950">Approval queue</h2>
           <p className="mt-1 text-sm text-slate-600">{pending.length === 0 ? "No pending vendor applications." : `${pending.length} vendor applications need review.`}</p>

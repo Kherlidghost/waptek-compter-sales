@@ -1,12 +1,37 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { Geist, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { WhatsAppFloatingButtonGuard } from "@/components/WhatsAppFloatingButtonGuard";
 import { resolveWhatsAppNumber } from "@/lib/whatsapp";
 import { isSupabaseConfigured } from "@/lib/supabase-config";
 
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "WAPTEK COMPUTER SERVICES",
-  description: "Sales of Computers & Repairs.",
+  description:
+    "Premium computers, accessories, and expert repairs from verified vendors across North-Eastern Nigeria.",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0e1511",
+  colorScheme: "dark",
 };
 
 async function getWhatsAppNumber(): Promise<string | null> {
@@ -33,8 +58,11 @@ export default async function RootLayout({
   const waNumber = await getWhatsAppNumber();
 
   return (
-    <html lang="en" className="h-full antialiased">
-      <body className="flex min-h-full flex-col">
+    <html
+      lang="en"
+      className={`h-full antialiased bg-background ${geist.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+    >
+      <body className="flex min-h-full flex-col bg-background text-ink-800">
         {children}
         {waNumber ? <WhatsAppFloatingButtonGuard number={waNumber} /> : null}
       </body>

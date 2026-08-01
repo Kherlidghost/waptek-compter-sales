@@ -119,14 +119,14 @@ export function AuthForms({
             <button
               type="button"
               onClick={() => setActiveTab("signin")}
-              className={`rounded-[20px] px-4 py-3 text-sm font-semibold transition ${activeTab === "signin" ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+              className={`rounded-[20px] px-4 py-3 text-sm font-semibold transition ${activeTab === "signin" ? "bg-surface text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
             >
               Sign In
             </button>
             <button
               type="button"
               onClick={() => setActiveTab("signup")}
-              className={`rounded-[20px] px-4 py-3 text-sm font-semibold transition ${activeTab === "signup" ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+              className={`rounded-[20px] px-4 py-3 text-sm font-semibold transition ${activeTab === "signup" ? "bg-surface text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
             >
               Create Account
             </button>

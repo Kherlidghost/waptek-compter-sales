@@ -26,7 +26,7 @@ export function OrderTimeline({ status, events = [] }: { status: string; events?
           const isDone = index <= currentIndex;
           const event = eventByType.get(step.key);
           return (
-            <div key={step.key} className={`rounded-md border p-4 ${isDone ? "border-emerald-200 bg-emerald-50/60" : "border-slate-200 bg-white"}`}>
+            <div key={step.key} className={`rounded-md border p-4 ${isDone ? "border-emerald-200 bg-emerald-50/60" : "border-slate-200 bg-surface"}`}>
               <div className={`mb-3 flex size-8 items-center justify-center rounded-full text-sm font-black ${isDone ? "bg-emerald-600 text-white" : "bg-slate-200 text-slate-500"}`}>
                 {isDone ? "✓" : index + 1}
               </div>

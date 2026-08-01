@@ -61,7 +61,7 @@ export async function PublicHeader() {
           {userSummary ? <NotificationBell /> : null}
           <Link
             href="/cart"
-            className="relative flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition-all duration-200 hover:border-primary-300 hover:text-primary-700 focus-visible:outline-primary-400"
+            className="relative flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-surface text-slate-700 shadow-sm transition-all duration-200 hover:border-primary-300 hover:text-primary-700 focus-visible:outline-primary-400"
             aria-label="Shopping cart"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
@@ -75,7 +75,7 @@ export async function PublicHeader() {
           {userSummary ? <NotificationBell /> : null}
           <Link
             href="/cart"
-            className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm"
+            className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-surface text-slate-700 shadow-sm"
             aria-label="Cart"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
@@ -83,7 +83,7 @@ export async function PublicHeader() {
             </svg>
           </Link>
           <details className="relative">
-            <summary className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm" aria-label="Open menu">
+            <summary className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-2xl border border-slate-200 bg-surface shadow-sm" aria-label="Open menu">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
               </svg>

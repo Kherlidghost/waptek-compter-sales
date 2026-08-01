@@ -11,7 +11,7 @@ export function DashboardCards() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {cards.map(([label, value]) => (
-        <div key={label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <div key={label} className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
           <p className="text-sm text-slate-500">{label}</p>
           <p className="mt-2 text-2xl font-bold text-slate-950">{value}</p>
         </div>
@@ -22,7 +22,7 @@ export function DashboardCards() {
 
 export function OrdersTable() {
   return (
-    <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-lg border border-slate-200 bg-surface shadow-sm">
       <table className="w-full min-w-[720px] text-left text-sm">
         <thead className="bg-slate-100 text-xs uppercase text-slate-500">
           <tr>
@@ -55,7 +55,7 @@ export function VendorsTable() {
   return (
     <div className="grid gap-4 md:grid-cols-3">
       {vendors.map((vendor) => (
-        <div key={vendor.id} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <div key={vendor.id} className="rounded-lg border border-slate-200 bg-surface p-5 shadow-sm">
           <p className="text-lg font-semibold text-slate-950">{vendor.businessName}</p>
           <p className="mt-1 text-sm text-slate-600">Owner: {vendor.ownerName}</p>
           <p className="mt-1 text-sm text-slate-600">Status: {vendor.status}</p>
@@ -70,7 +70,7 @@ export function VendorsTable() {
 
 export function InventoryTable() {
   return (
-    <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-lg border border-slate-200 bg-surface shadow-sm">
       <table className="w-full min-w-[680px] text-left text-sm">
         <thead className="bg-slate-100 text-xs uppercase text-slate-500">
           <tr>

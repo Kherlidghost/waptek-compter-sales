@@ -45,7 +45,7 @@ export function OnlineVendorProductForm({
   const defaultBranch = lockedBranchId ?? visibleBranches[0]?.id ?? "";
 
   return (
-    <section id="add-product" className="scroll-mt-24 rounded-lg border border-emerald-200 bg-white p-5 shadow-sm">
+    <section id="add-product" className="scroll-mt-24 rounded-lg border border-emerald-200 bg-surface p-5 shadow-sm">
       <p className="text-sm font-bold uppercase text-emerald-700">Online product upload</p>
       <h2 className="mt-1 text-xl font-black text-slate-950">{isStaffUpload ? "Add marketplace product" : "Create product with Supabase Storage image"}</h2>
       <p className="mt-2 text-sm leading-6 text-slate-600">

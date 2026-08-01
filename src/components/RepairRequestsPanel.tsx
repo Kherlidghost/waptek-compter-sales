@@ -28,7 +28,7 @@ export function RepairRequestsPanel({ compact = false }: { compact?: boolean }) 
         <span className="rounded-md bg-slate-100 px-3 py-2 text-sm font-bold text-slate-700">{requests.length} requests</span>
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-lg border border-slate-200 bg-surface shadow-sm">
         <table className="w-full min-w-[860px] text-left text-sm">
           <thead className="bg-slate-100 text-xs uppercase text-slate-500">
             <tr>
