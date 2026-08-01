@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { reuploadOrderReceipt, cancelManagedOrder } from "@/app/orders/manage/actions";
-import { DesignSurface } from "@/components/DesignSurface";
 import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 import { OrderTimeline } from "@/components/order-timeline";

@@ -338,13 +338,6 @@ body {
 }
 .btn-ghost:hover:not(:disabled) { color: var(--neutral-800); }
 
-/* Dark button retained for legacy call sites. */
-.btn-dark {
-  background: var(--primary-900);
-  color: var(--surface-elevated);
-}
-.btn-dark:hover:not(:disabled) { background: var(--primary-700); }
-
 .btn-whatsapp {
   background: var(--whatsapp);
   color: var(--surface-elevated);
