@@ -47,16 +47,16 @@ export async function DashboardLayout({ role, children }: DashboardLayoutProps) 
   }
 
   return (
-    <div className="flex min-h-screen bg-surface-page">
+    <div className="flex min-h-screen bg-[#f4f6f9]">
       <DashboardSidebar
         role={role}
         userName={userName}
         userRoleLabel={userRoleLabel}
         userInitials={userInitials}
       />
-      <div className="flex min-w-0 flex-1 flex-col lg:ml-64">
+      <div className="flex min-w-0 flex-1 flex-col lg:ml-[280px]">
         <DashboardTopbar />
-        <main className="mx-auto w-full max-w-[1280px] flex-1 p-8">{children}</main>
+        <main className="mx-auto w-full max-w-[1560px] flex-1 px-5 py-8 sm:px-8 xl:px-10">{children}</main>
       </div>
     </div>
   );

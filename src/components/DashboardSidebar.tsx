@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -15,9 +15,11 @@ import {
   Settings,
   FileText,
   LogOut,
+  X,
   type LucideIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 type NavItem = {
   href: string;
@@ -36,7 +38,6 @@ type DashboardSidebarProps = {
   userName: string;
   userRoleLabel: string;
   userInitials: string;
-  onLogout?: () => void;
 };
 
 const rolePanels: Record<DashboardSidebarProps["role"], { label: string; sections: NavSection[] }> = {
@@ -135,9 +136,31 @@ const rolePanels: Record<DashboardSidebarProps["role"], { label: string; section
   },
 };
 
-export function DashboardSidebar({ role, userName, userRoleLabel, userInitials, onLogout }: DashboardSidebarProps) {
+function clearAuthCache() {
+  const authKeyParts = ["supabase.auth.token", "auth-token", "auth.user", "auth.profile", "auth.role"];
+
+  [window.localStorage, window.sessionStorage].forEach((storage) => {
+    try {
+      for (let index = storage.length - 1; index >= 0; index -= 1) {
+        const key = storage.key(index);
+        if (!key) continue;
+
+        const isSupabaseSessionKey = key.startsWith("sb-") && key.endsWith("-auth-token");
+        const isAppAuthKey = authKeyParts.some((part) => key.includes(part));
+
+        if (isSupabaseSessionKey || isAppAuthKey) storage.removeItem(key);
+      }
+    } catch {
+      storage.clear();
+    }
+  });
+}
+
+export function DashboardSidebar({ role, userName, userRoleLabel, userInitials }: DashboardSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
   const panel = rolePanels[role];
 
   useEffect(() => {
@@ -149,6 +172,23 @@ export function DashboardSidebar({ role, userName, userRoleLabel, userInitials, 
   function isActive(href: string) {
     if (href === `/${role}`) return pathname === href;
     return pathname.startsWith(href);
+  }
+
+  async function handleLogout() {
+    setIsSigningOut(true);
+
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      clearAuthCache();
+      await fetch("/auth/logout", { method: "POST", credentials: "include" });
+      router.refresh();
+      window.location.assign("/?signed_out=1");
+    } catch {
+      clearAuthCache();
+      router.refresh();
+      window.location.assign("/?signed_out=1");
+    }
   }
 
   return (
@@ -163,36 +203,36 @@ export function DashboardSidebar({ role, userName, userRoleLabel, userInitials, 
       ) : null}
 
       <aside
-        className={`fixed bottom-0 left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-slate-200 bg-white transition-transform duration-200 ease-out lg:translate-x-0 ${
+        className={`fixed bottom-0 left-0 top-0 z-50 flex h-screen w-[280px] flex-col border-r border-white/10 bg-[#06253b] text-white shadow-2xl shadow-slate-950/20 transition-transform duration-200 ease-out lg:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Header */}
-        <div className="flex h-16 items-center gap-2 border-b border-slate-100 px-5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-lg font-bold text-white">
+        <div className="flex h-[92px] items-center gap-4 border-b border-white/10 px-7">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#0b72b9] text-xl font-black text-white shadow-lg shadow-sky-950/30">
             W
           </div>
           <div className="leading-tight">
-            <div className="text-sm font-bold tracking-tight text-slate-900">WAPTEK</div>
-            <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+            <div className="text-lg font-black tracking-tight text-white">WAPTEK</div>
+            <div className="text-[11px] font-black uppercase tracking-wider text-emerald-300">
               {panel.label}
             </div>
           </div>
           <button
-            className="ml-auto text-slate-500 lg:hidden"
+            className="ml-auto rounded-lg p-2 text-white/70 hover:bg-white/10 hover:text-white lg:hidden"
             onClick={() => setIsOpen(false)}
             type="button"
             aria-label="Close sidebar"
           >
-            <LogOut className="h-5 w-5" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+        <nav className="flex-1 space-y-2 overflow-y-auto px-4 py-7">
           {panel.sections.map((section) => (
             <div key={section.label}>
-              <span className="block px-3 pb-1 pt-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <span className="block px-3 pb-2 pt-5 text-[11px] font-black uppercase tracking-[0.16em] text-white/35">
                 {section.label}
               </span>
               {section.items.map((item) => {
@@ -203,16 +243,16 @@ export function DashboardSidebar({ role, userName, userRoleLabel, userInitials, 
                     key={item.href}
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
+                    className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-[15px] font-bold transition-all ${
                       active
-                        ? "bg-slate-900 text-white shadow-sm"
-                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                        ? "bg-white/10 text-white shadow-sm"
+                        : "text-slate-300 hover:bg-white/5 hover:text-white"
                     }`}
                   >
                     <Icon className="h-[18px] w-[18px] shrink-0" />
                     <span>{item.label}</span>
                     {item.badge ? (
-                      <span className="ml-auto rounded-full bg-orange-500 px-2 py-0.5 text-[10px] font-bold text-white">
+                      <span className="ml-auto rounded-full bg-orange-500 px-2.5 py-1 text-[11px] font-black text-white">
                         {item.badge}
                       </span>
                     ) : null}
@@ -224,25 +264,24 @@ export function DashboardSidebar({ role, userName, userRoleLabel, userInitials, 
         </nav>
 
         {/* Footer */}
-        <div className="border-t border-slate-100 p-3">
-          <div className="flex items-center gap-3 px-3 py-2">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-emerald-100 bg-emerald-50 text-sm font-bold text-emerald-700">
+        <div className="border-t border-white/10 p-4">
+          <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-3 py-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-emerald-300/30 bg-emerald-300/15 text-sm font-black text-emerald-200">
               {userInitials}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="truncate text-sm font-semibold text-slate-900">{userName}</div>
-              <div className="truncate text-xs capitalize text-slate-500">{userRoleLabel}</div>
+              <div className="truncate text-sm font-black text-white">{userName}</div>
+              <div className="truncate text-xs capitalize text-slate-300">{userRoleLabel}</div>
             </div>
-            {onLogout ? (
-              <button
-                onClick={onLogout}
-                className="flex items-center justify-center rounded-md p-2 text-slate-400 transition-colors hover:text-red-500"
-                aria-label="Logout"
-                type="button"
-              >
-                <LogOut className="h-4 w-4" />
-              </button>
-            ) : null}
+            <button
+              onClick={handleLogout}
+              disabled={isSigningOut}
+              className="flex items-center justify-center rounded-xl p-2 text-slate-300 transition-colors hover:bg-white/10 hover:text-red-200 disabled:cursor-not-allowed disabled:opacity-60"
+              aria-label="Logout"
+              type="button"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
           </div>
         </div>
       </aside>

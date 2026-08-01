@@ -3,7 +3,7 @@
 import { Menu, Search, Bell } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 
 type DashboardTopbarProps = {
   showNotificationDot?: boolean;
@@ -56,10 +56,10 @@ export function DashboardTopbar({ showNotificationDot = true }: DashboardTopbarP
   });
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between gap-6 border-b border-slate-200/80 bg-white/95 px-8 py-4 backdrop-blur">
+    <header className="sticky top-0 z-30 flex min-h-[88px] items-center justify-between gap-6 border-b border-slate-200/80 bg-white/95 px-6 py-4 backdrop-blur xl:px-10">
       <div className="flex items-center gap-4">
         <button
-          className="text-slate-700 lg:hidden"
+          className="rounded-xl border border-slate-200 bg-white p-2 text-slate-700 shadow-sm lg:hidden"
           onClick={() => {
             const event = new Event("toggle-sidebar", { bubbles: true });
             window.dispatchEvent(event);
@@ -73,10 +73,9 @@ export function DashboardTopbar({ showNotificationDot = true }: DashboardTopbarP
         {/* Breadcrumbs */}
         <nav className="hidden text-sm text-slate-500 sm:flex items-center gap-1">
           {breadcrumbs.map((crumb, index) => (
-            <>
+            <Fragment key={crumb.href}>
               {index > 0 ? <span className="mx-1 text-slate-300">/</span> : null}
               <Link
-                key={crumb.href}
                 href={crumb.href}
                 className={`font-medium transition-colors ${
                   index === breadcrumbs.length - 1
@@ -86,7 +85,7 @@ export function DashboardTopbar({ showNotificationDot = true }: DashboardTopbarP
               >
                 {crumb.label}
               </Link>
-            </>
+            </Fragment>
           ))}
         </nav>
         <h1 className="text-lg font-extrabold tracking-tight text-slate-900 sm:hidden">
@@ -95,21 +94,21 @@ export function DashboardTopbar({ showNotificationDot = true }: DashboardTopbarP
       </div>
 
       <div className="flex items-center gap-4">
-        <span className="hidden text-sm font-medium text-slate-500 md:block">{today}</span>
+        <span className="hidden text-sm font-semibold text-slate-500 md:block">{today}</span>
 
-        <div className="relative hidden w-60 md:block">
+        <div className="relative hidden w-72 md:block">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-[15px] w-[15px] -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             placeholder="Search orders, products..."
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="w-full rounded-full border border-slate-200 bg-slate-50 py-2 pl-9 pr-4 text-sm text-slate-800 transition-colors placeholder:text-slate-400 focus:border-slate-300 focus:bg-white focus:outline-none"
+            className="h-11 w-full rounded-full border border-slate-200 bg-slate-50 py-2 pl-9 pr-4 text-sm text-slate-800 shadow-inner shadow-slate-950/[0.02] transition-colors placeholder:text-slate-400 focus:border-slate-300 focus:bg-white focus:outline-none"
           />
         </div>
 
         <button
-          className="relative flex h-[38px] w-[38px] items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-600 transition-colors hover:bg-slate-100"
+          className="relative flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-600 shadow-sm transition-colors hover:bg-slate-100"
           type="button"
           aria-label="Notifications"
         >
