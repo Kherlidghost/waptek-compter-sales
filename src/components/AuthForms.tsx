@@ -4,6 +4,7 @@ import type React from "react";
 import { useState } from "react";
 import Link from "next/link";
 import { useFormStatus } from "react-dom";
+import { ArrowRight, BadgeCheck, Eye, EyeOff, LockKeyhole, Mail, ShieldCheck, Sparkles, Store } from "lucide-react";
 import { loginAction, resendConfirmationAction, signUpAction } from "@/app/auth/actions";
 
 function SubmitButton({ children, pendingText, className }: { children: React.ReactNode; pendingText: string; className: string }) {
@@ -45,84 +46,131 @@ export function AuthForms({
   );
 
   return (
-    <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-      <section className="relative overflow-hidden rounded-3xl border border-primary-800 bg-primary-900 p-8 text-white shadow-2xl shadow-primary-950/15">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(16,185,129,0.24),transparent_22rem)]" aria-hidden="true" />
-        <div className="relative">
-        <p className="text-sm font-bold uppercase text-accent-300">WAPTEK COMPUTER SERVICES</p>
-        <h1 className="mt-3 text-3xl font-black">Sales of Computers & Repairs</h1>
-        <p className="mt-3 text-sm leading-6 text-slate-300">
-          Sign in to complete checkout, upload payment receipts, manage orders, or access staff and vendor dashboards.
-        </p>
-        <div className="mt-6 grid gap-3 text-sm">
-          {[
-            "Verified email required for protected pages",
-            "Staff roles depend on a matching profile record",
-            "Manual payment receipts are reviewed before processing",
-          ].map((item) => (
-            <div key={item} className="rounded-md border border-white/10 bg-white/5 p-3 font-semibold text-slate-100">
-              {item}
+    <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[0.92fr_1.08fr]">
+      <section className="relative overflow-hidden rounded-[32px] border border-primary-800/60 bg-gradient-to-br from-primary-950 via-primary-800 to-primary-700 p-8 text-white shadow-[0_24px_80px_-24px_rgba(2,8,23,0.45)] lg:min-h-[700px]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.3),transparent_28rem)]" aria-hidden="true" />
+        <div className="relative flex h-full flex-col">
+          <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-100">
+            <Sparkles className="h-3.5 w-3.5" />
+            Trusted storefront
+          </div>
+
+          <div className="mt-8 max-w-md">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-accent-300">WAPTEK computer services</p>
+            <h1 className="mt-3 text-3xl font-black leading-tight sm:text-4xl">
+              Access your account and keep every order moving.
+            </h1>
+            <p className="mt-4 text-sm leading-7 text-slate-200/90">
+              Sign in to complete checkout, upload payment receipts, manage orders, or reach your staff and vendor dashboards in one place.
+            </p>
+          </div>
+
+          <div className="mt-8 grid gap-3 text-sm">
+            {[
+              { title: "Verified sign-in", text: "Protected pages require a confirmed email address." },
+              { title: "Role-aware access", text: "Staff accounts are matched to their profile role automatically." },
+              { title: "Faster support", text: "Manual payment receipts are reviewed quickly for smoother processing." },
+            ].map((item) => (
+              <div key={item.title} className="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur-sm">
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-400/20 text-emerald-200">
+                    <ShieldCheck className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white">{item.title}</p>
+                    <p className="mt-1 text-sm text-slate-200/85">{item.text}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-auto rounded-3xl border border-white/10 bg-slate-950/20 p-4 backdrop-blur">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-400/20 text-emerald-200">
+                <Store className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-white">Waptek marketplace</p>
+                <p className="text-sm text-slate-300">Sales, repairs, and vendor operations in one streamlined portal.</p>
+              </div>
             </div>
-          ))}
-        </div>
+          </div>
         </div>
       </section>
 
       <section className="grid gap-6">
-        <div className="rounded-3xl border border-ink-200 bg-white p-6 shadow-xl shadow-ink-950/5">
-          <div>
-            <p className="text-sm font-bold uppercase text-accent-700">Sign in</p>
-            <h2 className="mt-2 text-3xl font-black text-ink-950">Welcome back</h2>
-            <p className="mt-2 text-sm leading-6 text-ink-600">
-              Use your confirmed email and password. Staff accounts must exist in Supabase Auth and must have a matching profile role.
-            </p>
+        <div className="rounded-[28px] border border-slate-200/80 bg-white/95 p-6 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)] backdrop-blur">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-[0.24em] text-accent-700">Sign in</p>
+              <h2 className="mt-2 text-3xl font-black text-slate-950">Welcome back</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Use your confirmed email and password. Staff accounts must exist in Supabase Auth and must have a matching profile role.
+              </p>
+            </div>
+            <div className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700">
+              Secure access
+            </div>
           </div>
 
           {!isConfigured ? (
-            <div className="mt-5 rounded-md border border-warm-500/30 bg-warm-100 p-4 text-sm text-warm-600">
-              Supabase env vars are not configured yet. Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+            <div className="mt-5 rounded-2xl border border-amber-300/40 bg-amber-50 p-4 text-sm text-amber-700">
+              Supabase env vars are not configured yet. Add <span className="font-semibold">NEXT_PUBLIC_SUPABASE_URL</span> and <span className="font-semibold">NEXT_PUBLIC_SUPABASE_ANON_KEY</span>.
             </div>
           ) : null}
 
-          {errorMessage ? <div className="mt-5 rounded-md border border-danger/20 bg-danger-bg p-4 text-sm text-danger">{errorMessage}</div> : null}
-          {successMessage ? <div className="mt-5 rounded-md border border-success/20 bg-success-bg p-4 text-sm text-success">{successMessage}</div> : null}
+          {errorMessage ? <div className="mt-5 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{errorMessage}</div> : null}
+          {successMessage ? <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">{successMessage}</div> : null}
 
           <form action={loginAction} className="mt-6 grid gap-4">
             <input type="hidden" name="next" value={next} />
-            <label className="grid gap-2 text-sm font-semibold text-ink-700">
+            <label className="grid gap-2 text-sm font-semibold text-slate-700">
               Email address
-              <input className="wcs-input font-normal" name="email" type="email" autoComplete="email" placeholder="you@example.com" required />
+              <div className="relative">
+                <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <input className="wcs-input h-12 pl-11 font-normal" name="email" type="email" autoComplete="email" placeholder="you@example.com" required />
+              </div>
             </label>
-            <label className="grid gap-2 text-sm font-semibold text-ink-700">
+            <label className="grid gap-2 text-sm font-semibold text-slate-700">
               Password
-              <div className="flex overflow-hidden rounded-xl border border-ink-300">
-                <input className="h-11 min-w-0 flex-1 px-3 font-normal outline-none" name="password" type={showLoginPassword ? "text" : "password"} autoComplete="current-password" placeholder="Enter password" required />
-                <button className="border-l border-ink-300 px-3 text-xs font-bold text-ink-700" onClick={() => setShowLoginPassword((current) => !current)} type="button">
-                  {showLoginPassword ? "Hide" : "Show"}
+              <div className="relative">
+                <LockKeyhole className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <input className="wcs-input h-12 pl-11 pr-14 font-normal" name="password" type={showLoginPassword ? "text" : "password"} autoComplete="current-password" placeholder="Enter password" required />
+                <button className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700" onClick={() => setShowLoginPassword((current) => !current)} type="button" aria-label={showLoginPassword ? "Hide password" : "Show password"}>
+                  {showLoginPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
             </label>
             <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
-              <label className="flex items-center gap-2 text-ink-600">
-                <input className="size-4 rounded border-ink-300" name="remember" type="checkbox" />
+              <label className="flex items-center gap-2 text-slate-600">
+                <input className="size-4 rounded border-slate-300" name="remember" type="checkbox" />
                 Remember me on this device
               </label>
-              <Link className="font-bold text-accent-700" href="/auth/forgot-password">
+              <Link className="font-semibold text-accent-700 transition hover:text-accent-600" href="/auth/forgot-password">
                 Forgot password?
               </Link>
             </div>
-            <SubmitButton className="rounded-xl bg-primary-700 px-5 py-3 text-sm font-bold text-white hover:bg-accent-600 disabled:cursor-not-allowed disabled:bg-ink-400" pendingText="Signing in...">
-              Sign in securely
+            <SubmitButton className="btn btn-primary h-12 justify-center rounded-2xl" pendingText="Signing in...">
+              <span>Sign in securely</span>
+              <ArrowRight className="h-4 w-4" />
             </SubmitButton>
           </form>
         </div>
 
-        <div className="rounded-3xl border border-ink-200 bg-white p-6 shadow-xl shadow-ink-950/5">
-          <p className="text-sm font-bold uppercase text-accent-700">Customer registration</p>
-          <h2 className="mt-2 text-3xl font-black text-ink-950">Create your account</h2>
-          <p className="mt-2 text-sm leading-6 text-ink-600">
-            Customer accounts require email confirmation before checkout, receipt upload, or order tracking.
-          </p>
+        <div className="rounded-[28px] border border-slate-200/80 bg-white/95 p-6 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)] backdrop-blur">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-[0.24em] text-accent-700">Customer registration</p>
+              <h2 className="mt-2 text-3xl font-black text-slate-950">Create your account</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Customer accounts require email confirmation before checkout, receipt upload, or order tracking.
+              </p>
+            </div>
+            <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-sm font-semibold text-slate-600">
+              Fast setup
+            </div>
+          </div>
           <form
             action={signUpAction}
             className="mt-6 grid gap-4"
@@ -132,47 +180,52 @@ export function AuthForms({
           >
             <input type="hidden" name="next" value={next} />
             <div className="grid gap-4 sm:grid-cols-2">
-              <label className="grid gap-2 text-sm font-semibold text-ink-700">
+              <label className="grid gap-2 text-sm font-semibold text-slate-700">
                 Full name
-                <input className="wcs-input font-normal" name="full_name" placeholder="Full name" required />
+                <input className="wcs-input h-12 font-normal" name="full_name" placeholder="Full name" required />
               </label>
-              <label className="grid gap-2 text-sm font-semibold text-ink-700">
+              <label className="grid gap-2 text-sm font-semibold text-slate-700">
                 Phone number
-                <input className="wcs-input font-normal" name="phone" placeholder="+234..." required />
+                <input className="wcs-input h-12 font-normal" name="phone" placeholder="+234..." required />
               </label>
             </div>
-            <label className="grid gap-2 text-sm font-semibold text-ink-700">
+            <label className="grid gap-2 text-sm font-semibold text-slate-700">
               Email address
-              <input className="wcs-input font-normal" name="email" type="email" autoComplete="email" placeholder="you@example.com" onChange={(event) => setRegisterEmail(event.target.value)} required />
+              <div className="relative">
+                <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <input className="wcs-input h-12 pl-11 font-normal" name="email" type="email" autoComplete="email" placeholder="you@example.com" onChange={(event) => setRegisterEmail(event.target.value)} required />
+              </div>
             </label>
             <div className="grid gap-4 sm:grid-cols-2">
-              <label className="grid gap-2 text-sm font-semibold text-ink-700">
+              <label className="grid gap-2 text-sm font-semibold text-slate-700">
                 Password
-                <div className="flex overflow-hidden rounded-xl border border-ink-300">
-                  <input className="h-11 min-w-0 flex-1 px-3 font-normal outline-none" name="password" type={showRegisterPassword ? "text" : "password"} autoComplete="new-password" minLength={8} onChange={(event) => setRegisterPassword(event.target.value)} placeholder="Min 8 chars, upper, lower, number, symbol" required />
-                  <button className="border-l border-ink-300 px-3 text-xs font-bold text-ink-700" onClick={() => setShowRegisterPassword((current) => !current)} type="button">
-                    {showRegisterPassword ? "Hide" : "Show"}
+                <div className="relative">
+                  <LockKeyhole className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <input className="wcs-input h-12 pl-11 pr-14 font-normal" name="password" type={showRegisterPassword ? "text" : "password"} autoComplete="new-password" minLength={8} onChange={(event) => setRegisterPassword(event.target.value)} placeholder="Min 8 chars, upper, lower, number, symbol" required />
+                  <button className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700" onClick={() => setShowRegisterPassword((current) => !current)} type="button" aria-label={showRegisterPassword ? "Hide password" : "Show password"}>
+                    {showRegisterPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </label>
-              <label className="grid gap-2 text-sm font-semibold text-ink-700">
+              <label className="grid gap-2 text-sm font-semibold text-slate-700">
                 Confirm password
-                <input className="wcs-input font-normal" name="confirm_password" type={showRegisterPassword ? "text" : "password"} autoComplete="new-password" minLength={8} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Repeat password" required />
+                <input className="wcs-input h-12 font-normal" name="confirm_password" type={showRegisterPassword ? "text" : "password"} autoComplete="new-password" minLength={8} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Repeat password" required />
               </label>
             </div>
-            {passwordWeak ? <p className="text-sm font-semibold text-warm-600">Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character.</p> : null}
-            {passwordMismatch ? <p className="text-sm font-semibold text-danger">Password and confirm password must match.</p> : null}
-            <SubmitButton className="rounded-xl bg-accent-600 px-5 py-3 text-sm font-bold text-white hover:bg-accent-500 disabled:cursor-not-allowed disabled:bg-ink-400" pendingText="Creating account...">
-              Create account
+            {passwordWeak ? <p className="text-sm font-semibold text-amber-600">Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character.</p> : null}
+            {passwordMismatch ? <p className="text-sm font-semibold text-rose-600">Password and confirm password must match.</p> : null}
+            <SubmitButton className="btn btn-accent h-12 justify-center rounded-2xl" pendingText="Creating account...">
+              <span>Create account</span>
+              <BadgeCheck className="h-4 w-4" />
             </SubmitButton>
           </form>
 
-          <div className="mt-5 rounded-md border border-ink-200 bg-ink-50 p-4">
-            <p className="text-sm font-bold text-ink-950">Check your email to confirm your account.</p>
+          <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-sm font-bold text-slate-950">Check your email to confirm your account.</p>
             <form action={resendConfirmationAction} className="mt-3 flex flex-col gap-3 sm:flex-row">
               <input type="hidden" name="next" value={next} />
-              <input className="h-10 flex-1 rounded-md border border-ink-300 px-3 text-sm" name="email" type="email" placeholder="Email for confirmation resend" defaultValue={registerEmail} required />
-              <SubmitButton className="rounded-md border border-ink-300 px-4 py-2 text-sm font-bold text-ink-800 disabled:cursor-not-allowed disabled:text-ink-400" pendingText="Sending...">
+              <input className="h-10 flex-1 rounded-xl border border-slate-300 px-3 text-sm" name="email" type="email" placeholder="Email for confirmation resend" defaultValue={registerEmail} required />
+              <SubmitButton className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-800 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:text-slate-400" pendingText="Sending...">
                 Resend confirmation email
               </SubmitButton>
             </form>
