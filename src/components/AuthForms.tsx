@@ -46,8 +46,8 @@ export function AuthForms({
   );
 
   return (
-    <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[0.92fr_1.08fr]">
-      <section className="relative overflow-hidden rounded-[32px] border border-primary-800/60 bg-gradient-to-br from-primary-950 via-primary-800 to-primary-700 p-8 text-white shadow-[0_24px_80px_-24px_rgba(2,8,23,0.45)] lg:min-h-[700px]">
+    <div className="min-h-screen mx-auto grid max-w-7xl gap-6 lg:grid-cols-[1fr_0.96fr] items-center">
+      <section className="relative overflow-hidden rounded-[32px] border border-primary-800/60 bg-gradient-to-br from-primary-950 via-primary-800 to-primary-700 p-8 text-white shadow-[0_24px_80px_-24px_rgba(2,8,23,0.45)] lg:min-h-[720px]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.3),transparent_28rem)]" aria-hidden="true" />
         <div className="relative flex h-full flex-col">
           <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-100">
