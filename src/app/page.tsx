@@ -90,7 +90,7 @@ export default async function Home({
 
       <main>
         {/* ── Hero ──────────────────────────────────────────────────────── */}
-        <section className="relative overflow-hidden bg-primary-900 text-white">
+        <section className="relative overflow-hidden home-hero-bg text-white">
           <div
             className="absolute inset-0"
             style={{

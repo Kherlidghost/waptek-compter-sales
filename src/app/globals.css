@@ -785,6 +785,18 @@ select.wcs-input {
   color: var(--accent-100);
 }
 
+/* Home page hero background — vibrant layered gradients */
+.home-hero-bg {
+  background-color: var(--primary-900);
+  background-image: 
+    radial-gradient(circle at 18% 12%, oklch(58% 0.16 160 / 0.18), transparent 28rem),
+    radial-gradient(circle at 82% 0%, oklch(52% 0.14 245 / 0.12), transparent 24rem),
+    linear-gradient(180deg, var(--primary-700), var(--primary-900));
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
 /* Load-bearing for text-overflow rows inside flex containers. */
 .min-w-0-flex { min-width: 0; }
 
